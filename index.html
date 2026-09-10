@@ -32,7 +32,8 @@
       min-height: 100vh;
     }
 
-    button, input {
+    button,
+    input {
       font: inherit;
     }
 
@@ -43,7 +44,7 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      background: rgba(8,8,8,.95);
+      background: rgba(8, 8, 8, .95);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -65,7 +66,7 @@
       justify-content: center;
       font-size: 25px;
       font-weight: bold;
-      box-shadow: 0 0 25px rgba(229,9,20,.25);
+      box-shadow: 0 0 25px rgba(229, 9, 20, .25);
     }
 
     .brand-text h1 {
@@ -136,6 +137,61 @@
       font-size: 16px;
     }
 
+    /* =========================
+       CONSOLE HOME
+    ========================= */
+
+    .console-home {
+      margin-bottom: 35px;
+    }
+
+    .console-home .section-title {
+      margin-bottom: 20px;
+    }
+
+    .video-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .video-card {
+      min-height: 180px;
+      background: linear-gradient(145deg, #151515, #0d0d0d);
+      border: 2px solid var(--border);
+      border-radius: 22px;
+      padding: 25px;
+      cursor: pointer;
+      transition: .2s;
+      user-select: none;
+    }
+
+    .video-card:hover,
+    .video-card:focus {
+      border-color: var(--red);
+      transform: scale(1.04);
+      box-shadow: 0 0 30px rgba(229, 9, 20, .25);
+      outline: none;
+    }
+
+    .card-icon {
+      font-size: 45px;
+    }
+
+    .video-card h3 {
+      margin-top: 18px;
+      font-size: 24px;
+    }
+
+    .video-card p {
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* =========================
+       PLAYER
+    ========================= */
+
     .player-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -163,7 +219,7 @@
 
     .url-input:focus {
       border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(229,9,20,.12);
+      box-shadow: 0 0 0 3px rgba(229, 9, 20, .12);
     }
 
     .play-btn {
@@ -221,6 +277,7 @@
       padding: 11px 16px;
       border-radius: 10px;
       cursor: pointer;
+      transition: .2s;
     }
 
     .control-btn:hover {
@@ -242,6 +299,10 @@
       color: var(--muted);
       font-size: 14px;
     }
+
+    /* =========================
+       HISTORY / SUPPORT
+    ========================= */
 
     .content-section {
       margin-top: 70px;
@@ -265,10 +326,13 @@
       cursor: pointer;
       color: #ddd;
       word-break: break-all;
+      transition: .2s;
     }
 
-    .history-item:hover {
-      border-color: #555;
+    .history-item:hover,
+    .history-item:focus {
+      border-color: var(--red);
+      outline: none;
     }
 
     .empty {
@@ -318,6 +382,117 @@
     body.rtl .history-item {
       direction: ltr;
       text-align: left;
+    }
+
+    /* =========================
+       NORMAL FOCUS
+    ========================= */
+
+    button:focus,
+    input:focus,
+    a:focus {
+      outline: 2px solid var(--red);
+      outline-offset: 2px;
+    }
+
+    /* =========================
+       TV MODE - CONSOLE STYLE
+    ========================= */
+
+    body.tv-mode {
+      overflow-x: hidden;
+    }
+
+    body.tv-mode header {
+      padding: 25px 6%;
+    }
+
+    body.tv-mode .logo {
+      width: 60px;
+      height: 60px;
+      font-size: 32px;
+    }
+
+    body.tv-mode .brand-text h1 {
+      font-size: 32px;
+    }
+
+    body.tv-mode .brand-text span {
+      font-size: 16px;
+    }
+
+    body.tv-mode main {
+      width: 90%;
+      max-width: 1400px;
+    }
+
+    body.tv-mode .hero h2 {
+      font-size: 70px;
+    }
+
+    body.tv-mode .hero p {
+      font-size: 24px;
+    }
+
+    body.tv-mode .player-card {
+      padding: 35px;
+      border-radius: 30px;
+    }
+
+    body.tv-mode .url-input {
+      height: 75px;
+      font-size: 28px;
+    }
+
+    body.tv-mode .play-btn {
+      height: 75px;
+      font-size: 28px;
+      padding: 0 45px;
+    }
+
+    body.tv-mode video {
+      max-height: 750px;
+    }
+
+    body.tv-mode .control-btn {
+      font-size: 24px;
+      padding: 18px 30px;
+    }
+
+    body.tv-mode .video-card {
+      min-height: 240px;
+      padding: 35px;
+    }
+
+    body.tv-mode .video-card h3 {
+      font-size: 34px;
+    }
+
+    body.tv-mode .video-card p {
+      font-size: 20px;
+    }
+
+    body.tv-mode .card-icon {
+      font-size: 60px;
+    }
+
+    body.tv-mode button:focus,
+    body.tv-mode input:focus,
+    body.tv-mode a:focus,
+    body.tv-mode .video-card:focus {
+      outline: 5px solid var(--red);
+      outline-offset: 5px;
+      transform: scale(1.08);
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 900px) {
+      .video-cards {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 700px) {
@@ -373,126 +548,11 @@
         padding: 12px;
         border-radius: 15px;
       }
+
+      .video-card {
+        min-height: 155px;
+      }
     }
-
-    button:focus,
-    input:focus,
-    a:focus {
-      outline: 2px solid var(--red);
-      outline-offset: 2px;
- /* =========================
-   TV MODE - CONSOLE STYLE
-========================= */
-
-body.tv-mode {
-
-  overflow-x: hidden;
-
-}
-
-
-body.tv-mode header {
-
-  padding: 25px 6%;
-
-}
-
-
-body.tv-mode .logo {
-
-  width: 60px;
-  height: 60px;
-  font-size: 32px;
-
-}
-
-
-body.tv-mode .brand-text h1 {
-
-  font-size: 32px;
-
-}
-
-
-body.tv-mode .brand-text span {
-
-  font-size: 16px;
-
-}
-
-
-body.tv-mode main {
-
-  width: 90%;
-  max-width: 1400px;
-
-}
-
-
-body.tv-mode .hero h2 {
-
-  font-size: 70px;
-
-}
-
-
-body.tv-mode .hero p {
-
-  font-size: 24px;
-
-}
-
-
-body.tv-mode .player-card {
-
-  padding: 35px;
-  border-radius: 30px;
-
-}
-
-
-body.tv-mode .url-input {
-
-  height: 75px;
-  font-size: 28px;
-
-}
-
-
-body.tv-mode .play-btn {
-
-  height: 75px;
-  font-size: 28px;
-  padding: 0 45px;
-
-}
-
-
-body.tv-mode video {
-
-  max-height: 750px;
-
-}
-
-
-body.tv-mode .control-btn {
-
-  font-size: 24px;
-  padding: 18px 30px;
-
-}
-
-
-/* انتخاب با دسته */
-
-body.tv-mode button:focus,
-body.tv-mode input:focus,
-body.tv-mode a:focus {
-
-  outline: 5px solid var(--red);
-  transform: scale(1.08);
-
-}   }
   </style>
 </head>
 
@@ -515,52 +575,108 @@ body.tv-mode a:focus {
       <button onclick="scrollToSection('support')" data-i18n="support">Support</button>
     </nav>
 
-    <button class="language-btn" onclick="toggleLanguage()" id="languageBtn">
+    <button
+      class="language-btn"
+      onclick="toggleLanguage()"
+      id="languageBtn">
       🇮🇷 فارسی
     </button>
   </div>
 </header>
 
 <main>
-<!-- CONSOLE HOME SCREEN -->
 
-<section id="consoleHome" class="console-home">
+  <!-- =========================
+       CONSOLE HOME SCREEN
+  ========================= -->
 
-  <h2 class="section-title">
-    Mr V Player
-  </h2>
+  <section id="consoleHome" class="console-home">
 
-  <div class="video-cards">
+    <h2 class="section-title">
+      Mr V Player
+    </h2>
 
-    <div class="video-card" tabindex="0">
-      <div class="card-icon">▶</div>
-      <h3>Start Watching</h3>
-      <p>Enter your video link</p>
+    <div class="video-cards">
+
+      <div
+        class="video-card"
+        tabindex="0"
+        onclick="goToPlayer()"
+        onkeydown="cardKey(event, 'play')">
+
+        <div class="card-icon">▶</div>
+
+        <h3 data-i18n="startWatching">
+          Start Watching
+        </h3>
+
+        <p data-i18n="startWatchingText">
+          Enter your video link
+        </p>
+
+      </div>
+
+
+      <div
+        class="video-card"
+        tabindex="0"
+        onclick="goToHistory()"
+        onkeydown="cardKey(event, 'history')">
+
+        <div class="card-icon">🕘</div>
+
+        <h3 data-i18n="historyCard">
+          History
+        </h3>
+
+        <p data-i18n="historyCardText">
+          Continue watching
+        </p>
+
+      </div>
+
+
+      <div
+        class="video-card"
+        tabindex="0"
+        onclick="goToSupport()"
+        onkeydown="cardKey(event, 'support')">
+
+        <div class="card-icon">⚙</div>
+
+        <h3 data-i18n="supportCard">
+          Support
+        </h3>
+
+        <p data-i18n="supportCardText">
+          Player options
+        </p>
+
+      </div>
+
     </div>
 
-    <div class="video-card" tabindex="0">
-      <div class="card-icon">🕘</div>
-      <h3>History</h3>
-      <p>Continue watching</p>
-    </div>
+  </section>
 
-    <div class="video-card" tabindex="0">
-      <div class="card-icon">⚙</div>
-      <h3>Settings</h3>
-      <p>Player options</p>
-    </div>
 
-  </div>
+  <!-- =========================
+       PLAYER HOME
+  ========================= -->
 
-</section>
   <section id="home">
 
     <div class="hero">
-      <h2 data-i18n="heroTitle">Play Your Stream</h2>
+
+      <h2 data-i18n="heroTitle">
+        Play Your Stream
+      </h2>
+
       <p data-i18n="heroText">
         Enter a video URL or YouTube link and start watching.
       </p>
+
     </div>
+
 
     <div class="player-card">
 
@@ -572,18 +688,17 @@ body.tv-mode a:focus {
           type="url"
           placeholder="Enter video URL or YouTube link..."
           data-placeholder="urlPlaceholder"
-          autocomplete="off"
-        >
+          autocomplete="off">
 
         <button
           class="play-btn"
           onclick="playVideo()"
-          data-i18n="play"
-        >
+          data-i18n="play">
           ▶ PLAY
         </button>
 
       </div>
+
 
       <div class="video-container">
 
@@ -600,6 +715,7 @@ body.tv-mode a:focus {
         </iframe>
 
       </div>
+
 
       <div class="controls">
 
@@ -635,6 +751,7 @@ body.tv-mode a:focus {
 
       </div>
 
+
       <div class="status" id="status">
         <span data-i18n="ready">Ready.</span>
       </div>
@@ -643,19 +760,36 @@ body.tv-mode a:focus {
 
   </section>
 
+
+  <!-- =========================
+       HISTORY
+  ========================= -->
+
   <section id="history" class="content-section">
 
-    <h2 class="section-title" data-i18n="historyTitle">
+    <h2
+      class="section-title"
+      data-i18n="historyTitle">
       History
     </h2>
 
-    <div id="historyList" class="history-list"></div>
+    <div
+      id="historyList"
+      class="history-list">
+    </div>
 
   </section>
 
+
+  <!-- =========================
+       SUPPORT
+  ========================= -->
+
   <section id="support" class="content-section">
 
-    <h2 class="section-title" data-i18n="supportTitle">
+    <h2
+      class="section-title"
+      data-i18n="supportTitle">
       Support
     </h2>
 
@@ -679,9 +813,11 @@ body.tv-mode a:focus {
 
 </main>
 
+
 <footer>
   © 2026 Mr V Player
 </footer>
+
 
 <script>
 
@@ -692,65 +828,153 @@ body.tv-mode a:focus {
   const translations = {
 
     en: {
+
       subtitle: "Universal Network Video Player",
+
       home: "Home",
       history: "History",
       support: "Support",
 
-      heroTitle: "Play Your Stream",
-      heroText: "Enter a video URL or YouTube link and start watching.",
+      startWatching: "Start Watching",
+      startWatchingText: "Enter your video link",
 
-      urlPlaceholder: "Enter video URL or YouTube link...",
+      historyCard: "History",
+      historyCardText: "Continue watching",
+
+      supportCard: "Support",
+      supportCardText: "Player options",
+
+      heroTitle: "Play Your Stream",
+
+      heroText:
+        "Enter a video URL or YouTube link and start watching.",
+
+      urlPlaceholder:
+        "Enter video URL or YouTube link...",
+
       play: "▶ PLAY",
 
       fullscreen: "⛶ Fullscreen",
+
       download: "⬇️ Download",
+
       clear: "✕ Clear",
+
       newUrl: "＋ New URL",
 
       ready: "Ready.",
+
       loading: "Loading...",
+
       playing: "Playing",
-      error: "Unable to play this video.",
-      youtube: "YouTube video loaded.",
-      downloadUnavailable: "Download is available only for direct video files.",
+
+      error:
+        "Unable to play this video.",
+
+      youtube:
+        "YouTube video loaded.",
+
+      downloadUnavailable:
+        "Download is available only for direct video files.",
 
       historyTitle: "History",
-      noHistory: "No videos in history yet.",
+
+      noHistory:
+        "No videos in history yet.",
 
       supportTitle: "Support",
-      supportText: "Need help with Mr V Player? Contact us on Telegram."
+
+      supportText:
+        "Need help with Mr V Player? Contact us on Telegram."
+
     },
 
+
     fa: {
-      subtitle: "پخش‌کننده ویدیوی شبکه‌ای",
+
+      subtitle:
+        "پخش‌کننده ویدیوی شبکه‌ای",
+
       home: "خانه",
-      history: "تاریخچه",
-      support: "پشتیبانی",
 
-      heroTitle: "ویدیای خود را پخش کنید",
-      heroText: "آدرس ویدیو یا لینک یوتیوب را وارد کنید و شروع به تماشا کنید.",
+      history:
+        "تاریخچه",
 
-      urlPlaceholder: "آدرس ویدیو یا لینک یوتیوب را وارد کنید...",
-      play: "▶ پخش",
+      support:
+        "پشتیبانی",
 
-      fullscreen: "⛶ تمام صفحه",
-      download: "⬇️ دانلود",
-      clear: "✕ پاک کردن",
-      newUrl: "＋ آدرس جدید",
+      startWatching:
+        "شروع تماشا",
 
-      ready: "آماده.",
-      loading: "در حال بارگذاری...",
-      playing: "در حال پخش",
-      error: "امکان پخش این ویدیو وجود ندارد.",
-      youtube: "ویدیوی یوتیوب بارگذاری شد.",
-      downloadUnavailable: "دانلود فقط برای فایل‌های مستقیم ویدیویی فعال است.",
+      startWatchingText:
+        "لینک ویدیو را وارد کنید",
 
-      historyTitle: "تاریخچه",
-      noHistory: "هنوز ویدیویی در تاریخچه وجود ندارد.",
+      historyCard:
+        "تاریخچه",
 
-      supportTitle: "پشتیبانی",
-      supportText: "برای دریافت کمک درباره Mr V Player از طریق تلگرام با ما در ارتباط باشید."
+      historyCardText:
+        "ادامه تماشا",
+
+      supportCard:
+        "پشتیبانی",
+
+      supportCardText:
+        "گزینه‌های پلیر",
+
+      heroTitle:
+        "ویدیوی خود را پخش کنید",
+
+      heroText:
+        "آدرس ویدیو یا لینک یوتیوب را وارد کنید و شروع به تماشا کنید.",
+
+      urlPlaceholder:
+        "آدرس ویدیو یا لینک یوتیوب را وارد کنید...",
+
+      play:
+        "▶ پخش",
+
+      fullscreen:
+        "⛶ تمام صفحه",
+
+      download:
+        "⬇️ دانلود",
+
+      clear:
+        "✕ پاک کردن",
+
+      newUrl:
+        "＋ آدرس جدید",
+
+      ready:
+        "آماده.",
+
+      loading:
+        "در حال بارگذاری...",
+
+      playing:
+        "در حال پخش",
+
+      error:
+        "امکان پخش این ویدیو وجود ندارد.",
+
+      youtube:
+        "ویدیوی یوتیوب بارگذاری شد.",
+
+      downloadUnavailable:
+        "دانلود فقط برای فایل‌های مستقیم ویدیویی فعال است.",
+
+      historyTitle:
+        "تاریخچه",
+
+      noHistory:
+        "هنوز ویدیویی در تاریخچه وجود ندارد.",
+
+      supportTitle:
+        "پشتیبانی",
+
+      supportText:
+        "برای دریافت کمک درباره Mr V Player از طریق تلگرام با ما در ارتباط باشید."
+
     }
 
   };
@@ -762,6 +986,7 @@ body.tv-mode a:focus {
 
   let currentLanguage =
     localStorage.getItem("mrVLanguage");
+
 
   if (!currentLanguage) {
 
@@ -776,6 +1001,7 @@ body.tv-mode a:focus {
         .startsWith("fa")
         ? "fa"
         : "en";
+
   }
 
 
@@ -788,19 +1014,27 @@ body.tv-mode a:focus {
       lang
     );
 
-    document.documentElement.lang = lang;
+    document.documentElement.lang =
+      lang;
+
 
     if (lang === "fa") {
 
-      document.documentElement.dir = "rtl";
+      document.documentElement.dir =
+        "rtl";
 
-      document.body.classList.add("rtl");
+      document.body.classList.add(
+        "rtl"
+      );
 
     } else {
 
-      document.documentElement.dir = "ltr";
+      document.documentElement.dir =
+        "ltr";
 
-      document.body.classList.remove("rtl");
+      document.body.classList.remove(
+        "rtl"
+      );
 
     }
 
@@ -810,9 +1044,13 @@ body.tv-mode a:focus {
       .forEach(element => {
 
         const key =
-          element.getAttribute("data-i18n");
+          element.getAttribute(
+            "data-i18n"
+          );
 
-        if (translations[lang][key]) {
+        if (
+          translations[lang][key]
+        ) {
 
           element.textContent =
             translations[lang][key];
@@ -827,9 +1065,13 @@ body.tv-mode a:focus {
       .forEach(element => {
 
         const key =
-          element.getAttribute("data-placeholder");
+          element.getAttribute(
+            "data-placeholder"
+          );
 
-        if (translations[lang][key]) {
+        if (
+          translations[lang][key]
+        ) {
 
           element.placeholder =
             translations[lang][key];
@@ -866,33 +1108,43 @@ body.tv-mode a:focus {
 
 
   /* =========================
-     PLAYER
+     PLAYER ELEMENTS
   ========================= */
 
   const video =
     document.getElementById("video");
 
   const youtubeFrame =
-    document.getElementById("youtubeFrame");
+    document.getElementById(
+      "youtubeFrame"
+    );
 
   const urlInput =
-    document.getElementById("urlInput");
+    document.getElementById(
+      "urlInput"
+    );
 
   const statusBox =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
 
   const downloadBtn =
-    document.getElementById("downloadBtn");
+    document.getElementById(
+      "downloadBtn"
+    );
 
 
   let hls = null;
+
   let currentDownloadUrl = "";
 
 
   function updateStatus(key) {
 
     statusBox.textContent =
-      translations[currentLanguage][key] || key;
+      translations[currentLanguage][key] ||
+      key;
 
   }
 
@@ -912,11 +1164,21 @@ body.tv-mode a:focus {
         parsed.hostname.toLowerCase();
 
       return (
+
         host === "youtube.com" ||
+
         host === "www.youtube.com" ||
+
         host === "m.youtube.com" ||
+
         host === "youtu.be" ||
+
+        host === "www.youtu.be" ||
+
+        host === "youtube-nocookie.com" ||
+
         host === "www.youtube-nocookie.com"
+
       );
 
     } catch {
@@ -945,7 +1207,7 @@ body.tv-mode a:focus {
       ) {
 
         return parsed.pathname
-          .replace("/", "")
+          .replace(/^\/+/, "")
           .split("/")[0];
 
       }
@@ -959,13 +1221,17 @@ body.tv-mode a:focus {
           parsed.pathname === "/watch"
         ) {
 
-          return parsed.searchParams.get("v");
+          return parsed.searchParams.get(
+            "v"
+          );
 
         }
 
 
         if (
-          parsed.pathname.startsWith("/shorts/")
+          parsed.pathname.startsWith(
+            "/shorts/"
+          )
         ) {
 
           return parsed.pathname
@@ -975,7 +1241,9 @@ body.tv-mode a:focus {
 
 
         if (
-          parsed.pathname.startsWith("/embed/")
+          parsed.pathname.startsWith(
+            "/embed/"
+          )
         ) {
 
           return parsed.pathname
@@ -985,7 +1253,9 @@ body.tv-mode a:focus {
 
 
         if (
-          parsed.pathname.startsWith("/live/")
+          parsed.pathname.startsWith(
+            "/live/"
+          )
         ) {
 
           return parsed.pathname
@@ -1020,10 +1290,15 @@ body.tv-mode a:focus {
 
 
     return (
+
       cleanUrl.endsWith(".mp4") ||
+
       cleanUrl.endsWith(".webm") ||
+
       cleanUrl.endsWith(".mov") ||
+
       cleanUrl.endsWith(".m4v")
+
     );
 
   }
@@ -1051,17 +1326,21 @@ body.tv-mode a:focus {
     if (hls) {
 
       hls.destroy();
+
       hls = null;
 
     }
 
 
     video.pause();
+
     video.removeAttribute("src");
+
     video.load();
 
 
-    video.style.display = "none";
+    video.style.display =
+      "none";
 
     youtubeFrame.style.display =
       "block";
@@ -1128,6 +1407,7 @@ body.tv-mode a:focus {
     /* Reset YouTube */
 
     youtubeFrame.src = "";
+
     youtubeFrame.style.display =
       "none";
 
@@ -1140,6 +1420,7 @@ body.tv-mode a:focus {
     if (hls) {
 
       hls.destroy();
+
       hls = null;
 
     }
@@ -1182,10 +1463,18 @@ body.tv-mode a:focus {
 
           video.play()
             .then(() => {
-              updateStatus("playing");
+
+              updateStatus(
+                "playing"
+              );
+
             })
             .catch(() => {
-              updateStatus("ready");
+
+              updateStatus(
+                "ready"
+              );
+
             });
 
         }
@@ -1194,11 +1483,16 @@ body.tv-mode a:focus {
 
       hls.on(
         Hls.Events.ERROR,
-        function (event, data) {
+        function (
+          event,
+          data
+        ) {
 
           if (data.fatal) {
 
-            updateStatus("error");
+            updateStatus(
+              "error"
+            );
 
           }
 
@@ -1206,6 +1500,7 @@ body.tv-mode a:focus {
       );
 
     }
+
 
     else {
 
@@ -1215,12 +1510,16 @@ body.tv-mode a:focus {
       video.play()
         .then(() => {
 
-          updateStatus("playing");
+          updateStatus(
+            "playing"
+          );
 
         })
         .catch(() => {
 
-          updateStatus("error");
+          updateStatus(
+            "error"
+          );
 
         });
 
@@ -1233,15 +1532,19 @@ body.tv-mode a:focus {
       isDirectDownloadFormat(url)
     ) {
 
-      currentDownloadUrl = url;
+      currentDownloadUrl =
+        url;
 
-      downloadBtn.disabled = false;
+      downloadBtn.disabled =
+        false;
 
     } else {
 
-      currentDownloadUrl = "";
+      currentDownloadUrl =
+        "";
 
-      downloadBtn.disabled = true;
+      downloadBtn.disabled =
+        true;
 
     }
 
@@ -1271,6 +1574,7 @@ body.tv-mode a:focus {
     const link =
       document.createElement("a");
 
+
     link.href =
       currentDownloadUrl;
 
@@ -1284,11 +1588,15 @@ body.tv-mode a:focus {
       "noopener";
 
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+      link
+    );
 
     link.click();
 
-    document.body.removeChild(link);
+    document.body.removeChild(
+      link
+    );
 
   }
 
@@ -1302,6 +1610,7 @@ body.tv-mode a:focus {
     if (hls) {
 
       hls.destroy();
+
       hls = null;
 
     }
@@ -1309,7 +1618,9 @@ body.tv-mode a:focus {
 
     video.pause();
 
-    video.removeAttribute("src");
+    video.removeAttribute(
+      "src"
+    );
 
     video.load();
 
@@ -1323,9 +1634,11 @@ body.tv-mode a:focus {
       "block";
 
 
-    currentDownloadUrl = "";
+    currentDownloadUrl =
+      "";
 
-    downloadBtn.disabled = true;
+    downloadBtn.disabled =
+      true;
 
 
     updateStatus("ready");
@@ -1355,12 +1668,15 @@ body.tv-mode a:focus {
   function fullscreenVideo() {
 
     const activePlayer =
-      youtubeFrame.style.display !== "none"
+      youtubeFrame.style.display !==
+      "none"
         ? youtubeFrame
         : video;
 
 
-    if (activePlayer.requestFullscreen) {
+    if (
+      activePlayer.requestFullscreen
+    ) {
 
       activePlayer.requestFullscreen();
 
@@ -1448,7 +1764,9 @@ body.tv-mode a:focus {
     if (!history.length) {
 
       const empty =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
 
       empty.className =
@@ -1461,7 +1779,9 @@ body.tv-mode a:focus {
         ].noHistory;
 
 
-      list.appendChild(empty);
+      list.appendChild(
+        empty
+      );
 
       return;
 
@@ -1471,12 +1791,15 @@ body.tv-mode a:focus {
     history.forEach(url => {
 
       const item =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
 
       item.className =
         "history-item";
 
+      item.tabIndex = 0;
 
       item.textContent =
         url;
@@ -1497,7 +1820,26 @@ body.tv-mode a:focus {
         };
 
 
-      list.appendChild(item);
+      item.onkeydown =
+        function (event) {
+
+          if (
+            event.key === "Enter" ||
+            event.key === " "
+          ) {
+
+            event.preventDefault();
+
+            item.click();
+
+          }
+
+        };
+
+
+      list.appendChild(
+        item
+      );
 
     });
 
@@ -1510,11 +1852,101 @@ body.tv-mode a:focus {
 
   function scrollToSection(id) {
 
-    document
-      .getElementById(id)
-      .scrollIntoView({
+    const section =
+      document.getElementById(
+        id
+      );
+
+
+    if (section) {
+
+      section.scrollIntoView({
         behavior: "smooth"
       });
+
+    }
+
+  }
+
+
+  function goToPlayer() {
+
+    scrollToSection(
+      "home"
+    );
+
+    setTimeout(
+      function () {
+
+        urlInput.focus();
+
+      },
+      400
+    );
+
+  }
+
+
+  function goToHistory() {
+
+    scrollToSection(
+      "history"
+    );
+
+  }
+
+
+  function goToSupport() {
+
+    scrollToSection(
+      "support"
+    );
+
+  }
+
+
+  /* =========================
+     HOME CARD KEYBOARD
+  ========================= */
+
+  function cardKey(
+    event,
+    action
+  ) {
+
+    if (
+      event.key === "Enter" ||
+      event.key === " "
+    ) {
+
+      event.preventDefault();
+
+
+      if (action === "play") {
+
+        goToPlayer();
+
+      }
+
+
+      if (
+        action === "history"
+      ) {
+
+        goToHistory();
+
+      }
+
+
+      if (
+        action === "support"
+      ) {
+
+        goToSupport();
+
+      }
+
+    }
 
   }
 
@@ -1527,7 +1959,9 @@ body.tv-mode a:focus {
     "keydown",
     function(event) {
 
-      if (event.key === "Enter") {
+      if (
+        event.key === "Enter"
+      ) {
 
         playVideo();
 
@@ -1538,166 +1972,260 @@ body.tv-mode a:focus {
 
 
   /* =========================
-     START
+     GAMEPAD SUPPORT
   ========================= */
 
-  setLanguage(
-    currentLanguage
-  );
-/* =========================
-   GAMEPAD SUPPORT
-========================= */
+  let focusedIndex = 0;
 
-let focusedIndex = 0;
-let gameElements = [];
-let gamepadActive = false;
+  let gameElements = [];
+
+  let gamepadActive = false;
+
+  let lastGamepadTime = 0;
 
 
-function updateGameElements() {
+  function updateGameElements() {
 
-  gameElements = Array.from(
-    document.querySelectorAll(
-      "button, input, a"
-    )
-  );
-
-}
-
-
-function focusGameElement() {
-
-  if (gameElements.length > 0) {
-
-    gameElements[focusedIndex].focus();
+    gameElements =
+      Array.from(
+        document.querySelectorAll(
+          "button, input, a, .video-card, .history-item"
+        )
+      );
 
   }
 
-}
 
+  function focusGameElement() {
 
-function startGamepad() {
-
-  if (gamepadActive) return;
-
-  gamepadActive = true;
-
-  updateGameElements();
-
-  gamepadLoop();
-
-}
-
-
-function gamepadLoop() {
-
-  const pads = navigator.getGamepads();
-
-  const pad = pads[0];
-
-
-  if (pad) {
-
-    // دکمه A در Xbox / ضربدر در PlayStation
-    if (pad.buttons[0].pressed) {
+    if (
+      gameElements.length > 0
+    ) {
 
       if (
-        document.activeElement &&
-        document.activeElement.click
-      ) {
-
-        document.activeElement.click();
-
-      }
-
-    }
-
-
-    // پایین
-    if (pad.buttons[13].pressed) {
-
-      focusedIndex++;
-
-      if (
-        focusedIndex >= gameElements.length
+        focusedIndex >=
+        gameElements.length
       ) {
 
         focusedIndex = 0;
 
       }
 
-      focusGameElement();
 
-    }
-
-
-    // بالا
-    if (pad.buttons[12].pressed) {
-
-      focusedIndex--;
-
-      if (focusedIndex < 0) {
+      if (
+        focusedIndex < 0
+      ) {
 
         focusedIndex =
           gameElements.length - 1;
 
       }
 
-      focusGameElement();
 
-    }
-
-
-    // دکمه B در Xbox / دایره در PlayStation
-    if (pad.buttons[1].pressed) {
-
-      clearVideo();
+      gameElements[
+        focusedIndex
+      ].focus();
 
     }
 
   }
 
 
-  requestAnimationFrame(
-    gamepadLoop
-  );
+  function startGamepad() {
 
-}
+    if (gamepadActive) return;
+
+    gamepadActive = true;
+
+    updateGameElements();
+
+    focusGameElement();
+
+    gamepadLoop();
+
+  }
 
 
-window.addEventListener(
-  "gamepadconnected",
-  function() {
+  function gamepadLoop() {
 
-    console.log(
-      "Gamepad connected"
+    const pads =
+      navigator.getGamepads();
+
+    const pad =
+      pads[0];
+
+
+    if (pad) {
+
+      const now =
+        Date.now();
+
+
+      /* A / X */
+
+      if (
+        pad.buttons[0] &&
+        pad.buttons[0].pressed
+      ) {
+
+        if (
+          now - lastGamepadTime > 350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+
+          if (
+            document.activeElement &&
+            document.activeElement.click
+          ) {
+
+            document.activeElement.click();
+
+          }
+
+        }
+
+      }
+
+
+      /* DOWN */
+
+      if (
+        pad.buttons[13] &&
+        pad.buttons[13].pressed
+      ) {
+
+        if (
+          now - lastGamepadTime > 350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+          focusedIndex++;
+
+          focusGameElement();
+
+        }
+
+      }
+
+
+      /* UP */
+
+      if (
+        pad.buttons[12] &&
+        pad.buttons[12].pressed
+      ) {
+
+        if (
+          now - lastGamepadTime > 350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+          focusedIndex--;
+
+          focusGameElement();
+
+        }
+
+      }
+
+
+      /* B / CIRCLE */
+
+      if (
+        pad.buttons[1] &&
+        pad.buttons[1].pressed
+      ) {
+
+        if (
+          now - lastGamepadTime > 350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+          clearVideo();
+
+        }
+
+      }
+
+    }
+
+
+    requestAnimationFrame(
+      gamepadLoop
     );
 
-    startGamepad();
-
   }
-);
-  /* =========================
-   AUTO TV MODE
-========================= */
 
-function enableTVMode(){
 
-  document.body.classList.add(
-    "tv-mode"
+  window.addEventListener(
+    "gamepadconnected",
+    function() {
+
+      console.log(
+        "Gamepad connected"
+      );
+
+      startGamepad();
+
+    }
   );
 
-}
+
+  /* =========================
+     AUTO TV MODE
+  ========================= */
+
+  function enableTVMode() {
+
+    document.body.classList.add(
+      "tv-mode"
+    );
+
+  }
 
 
-if (
-  navigator.userAgent.includes("Xbox") ||
-  navigator.userAgent.includes("PlayStation") ||
-  navigator.userAgent.includes("SmartTV")
-){
+  const userAgent =
+    navigator.userAgent.toLowerCase();
 
-  enableTVMode();
 
-}
+  if (
+
+    userAgent.includes("xbox") ||
+
+    userAgent.includes("playstation") ||
+
+    userAgent.includes("smarttv") ||
+
+    userAgent.includes("smart-tv") ||
+
+    userAgent.includes("tizen") ||
+
+    userAgent.includes("webos")
+
+  ) {
+
+    enableTVMode();
+
+  }
+
+
+  /* =========================
+     START
+  ========================= */
+
+  setLanguage(
+    currentLanguage
+  );
+
 </script>
 
 </body>
