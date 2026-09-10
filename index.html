@@ -1,616 +1,837 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0b0b">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
 
-  <title>Network Player</title>
+<title>Mr V Player</title>
 
-  <!-- HLS Player -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #080808;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #080808;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-    .app {
-      width: 100%;
-      max-width: 1200px;
-      margin: auto;
-      padding: 25px;
-    }
+body {
+  display: flex;
+  justify-content: center;
+}
 
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
+.app {
+  width: 100%;
+  max-width: 1250px;
+  padding: 20px;
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 34px;
-    }
+/* HEADER */
 
-    header p {
-      color: #999;
-      margin-top: 10px;
-    }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 5px 25px;
+  gap: 20px;
+}
 
-    .player-box {
-      background: #151515;
-      padding: 18px;
-      border-radius: 15px;
-    }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    video {
-      width: 100%;
-      max-height: 65vh;
-      display: block;
-      background: #000;
-      border-radius: 10px;
-    }
+.logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #e50914;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+}
 
-    .url-box {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-    }
+.brand h1 {
+  margin: 0;
+  font-size: 25px;
+}
 
-    #url {
-      flex: 1;
-      min-width: 0;
-      padding: 17px;
-      border-radius: 9px;
-      border: 1px solid #333;
-      background: #222;
-      color: white;
-      font-size: 17px;
-      direction: ltr;
-      outline: none;
-    }
+.brand span {
+  display: block;
+  color: #888;
+  font-size: 12px;
+  margin-top: 4px;
+}
 
-    #url:focus {
-      border-color: white;
-    }
+.nav {
+  display: flex;
+  gap: 8px;
+}
 
-    button {
-      border: 0;
-      border-radius: 9px;
-      padding: 0 28px;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      background: white;
-      color: black;
-      min-height: 55px;
-    }
+.nav button {
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #292929;
+  border-radius: 10px;
+  padding: 11px 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
 
-    button:hover {
-      background: #ddd;
-    }
+.nav button:hover,
+.nav button:focus {
+  color: #fff;
+  border-color: #e50914;
+}
 
-    .buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
+/* MAIN */
 
-    .secondary {
-      flex: 1;
-      background: #292929;
-      color: white;
-    }
+.hero {
+  padding: 30px 10px 25px;
+  text-align: center;
+}
 
-    .secondary:hover {
-      background: #383838;
-    }
+.hero h2 {
+  margin: 0;
+  font-size: clamp(30px, 6vw, 52px);
+  font-weight: 900;
+}
 
-    #status {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 8px;
-      background: #202020;
-      color: #ccc;
-      text-align: center;
-      min-height: 45px;
-    }
+.hero h2 span {
+  color: #e50914;
+}
 
-    .info {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 10px;
-      background: #111;
-      color: #888;
-      font-size: 14px;
-      line-height: 1.8;
-    }
+.hero p {
+  color: #888;
+  margin: 12px 0 25px;
+}
 
-    .history {
-      margin-top: 20px;
-    }
+/* URL */
 
-    .history h2 {
-      font-size: 20px;
-    }
+.url-area {
+  display: flex;
+  max-width: 900px;
+  margin: auto;
+  gap: 10px;
+}
 
-    .history-item {
-      width: 100%;
-      text-align: left;
-      direction: ltr;
-      margin-top: 8px;
-      padding: 12px;
-      min-height: auto;
-      background: #1b1b1b;
-      color: #ddd;
-      font-size: 13px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+.url-input {
+  flex: 1;
+  min-width: 0;
+  height: 58px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 1px solid #303030;
+  background: #171717;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  direction: ltr;
+}
 
-    .history-item:hover {
-      background: #292929;
-    }
+.url-input:focus {
+  border-color: #e50914;
+}
 
-    @media (max-width: 700px) {
+.play-btn {
+  height: 58px;
+  padding: 0 30px;
+  border: none;
+  border-radius: 12px;
+  background: #e50914;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-      .app {
-        padding: 12px;
-      }
+.play-btn:hover,
+.play-btn:focus {
+  background: #c70812;
+}
 
-      header h1 {
-        font-size: 27px;
-      }
+/* PLAYER */
 
-      .url-box {
-        flex-direction: column;
-      }
+.player-card {
+  margin-top: 25px;
+  background: #111;
+  border: 1px solid #242424;
+  border-radius: 18px;
+  padding: 12px;
+}
 
-      button {
-        width: 100%;
-        padding: 15px;
-      }
+video {
+  width: 100%;
+  max-height: 68vh;
+  min-height: 220px;
+  display: block;
+  background: #000;
+  border-radius: 12px;
+}
 
-      .buttons {
-        flex-direction: column;
-      }
+/* STATUS */
 
-      video {
-        max-height: 55vh;
-      }
-    }
-  </style>
+.status {
+  margin-top: 12px;
+  padding: 12px;
+  text-align: center;
+  border-radius: 10px;
+  background: #181818;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* QUICK BUTTONS */
+
+.quick {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.quick button {
+  min-height: 48px;
+  border: 1px solid #292929;
+  background: #191919;
+  color: #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.quick button:hover,
+.quick button:focus {
+  border-color: #e50914;
+  color: white;
+}
+
+/* SECTIONS */
+
+.section {
+  margin-top: 30px;
+  background: #101010;
+  border: 1px solid #222;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.section h3 {
+  margin-top: 0;
+}
+
+.history-item {
+  width: 100%;
+  text-align: left;
+  direction: ltr;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  background: #181818;
+  color: #bbb;
+  border: 1px solid #252525;
+  border-radius: 9px;
+
+  padding: 12px;
+  margin-top: 7px;
+
+  cursor: pointer;
+}
+
+.history-item:hover {
+  border-color: #e50914;
+  color: white;
+}
+
+/* SUPPORT */
+
+.support {
+  text-align: center;
+}
+
+.telegram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  margin-top: 10px;
+  padding: 14px 25px;
+
+  border-radius: 11px;
+  background: #229ed9;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.telegram:hover {
+  opacity: .88;
+}
+
+/* FOOTER */
+
+.footer {
+  text-align: center;
+  color: #555;
+  padding: 35px 10px 15px;
+  font-size: 13px;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .app {
+    padding: 12px;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .brand h1 {
+    font-size: 21px;
+  }
+
+  .hero {
+    padding-top: 20px;
+  }
+
+  .url-area {
+    flex-direction: column;
+  }
+
+  .play-btn {
+    width: 100%;
+  }
+
+  .quick {
+    grid-template-columns: 1fr;
+  }
+
+  video {
+    min-height: 190px;
+  }
+
+}
+
+/* CONTROLLER / KEYBOARD */
+
+button:focus,
+input:focus,
+a:focus {
+  outline: 2px solid #e50914;
+  outline-offset: 2px;
+}
+</style>
 </head>
 
 <body>
 
 <div class="app">
 
-  <header>
-    <h1>🎬 Network Player</h1>
-    <p>پخش ویدئو از طریق لینک مستقیم یا M3U8</p>
+  <!-- HEADER -->
+
+  <header class="header">
+
+    <div class="brand">
+
+      <div class="logo">V</div>
+
+      <div>
+        <h1>Mr V Player</h1>
+        <span>Universal Network Video Player</span>
+      </div>
+
+    </div>
+
+    <nav class="nav">
+      <button onclick="goHome()">Home</button>
+      <button onclick="goHistory()">History</button>
+      <button onclick="goSupport()">Support</button>
+    </nav>
+
   </header>
 
-  <div class="player-box">
 
-    <video id="video" controls playsinline></video>
+  <!-- HOME -->
 
-    <div class="url-box">
+  <section class="hero" id="home">
+
+    <h2>Play Your <span>Stream</span></h2>
+
+    <p>
+      Enter a video URL and start watching.
+    </p>
+
+    <div class="url-area">
 
       <input
         id="url"
+        class="url-input"
         type="text"
-        placeholder="Video URL / M3U8"
+        placeholder="Paste video URL or M3U8..."
         autocomplete="off"
         spellcheck="false"
       >
 
-      <button id="playButton">▶ پخش</button>
-
-    </div>
-
-    <div class="buttons">
-
-      <button class="secondary" id="fullscreenButton">
-        ⛶ تمام صفحه
-      </button>
-
-      <button class="secondary" id="clearButton">
-        🗑 پاک کردن
+      <button class="play-btn" onclick="playVideo()">
+        ▶ PLAY
       </button>
 
     </div>
 
-    <div id="status">
-      آماده دریافت لینک ویدئو
+  </section>
+
+
+  <!-- PLAYER -->
+
+  <section class="player-card" id="player">
+
+    <video
+      id="video"
+      controls
+      playsinline
+    ></video>
+
+    <div id="status" class="status">
+      Ready — enter a video URL.
     </div>
 
-  </div>
+    <div class="quick">
 
-  <div class="info">
-    <b>فرمت‌های قابل پشتیبانی:</b><br>
-    MP4، WebM و M3U8/HLS<br><br>
+      <button onclick="fullscreenVideo()">
+        ⛶ Fullscreen
+      </button>
 
-    توجه: پخش MKV در مرورگرها معمولاً پشتیبانی نمی‌شود.
-    همچنین بعضی سرورها اجازه پخش مستقیم در مرورگر را نمی‌دهند.
-  </div>
+      <button onclick="clearPlayer()">
+        ✕ Clear
+      </button>
 
-  <div class="history">
+      <button onclick="focusURL()">
+        🔗 New URL
+      </button>
 
-    <h2>آخرین لینک‌ها</h2>
+    </div>
+
+  </section>
+
+
+  <!-- HISTORY -->
+
+  <section class="section" id="history">
+
+    <h3>🕘 History</h3>
 
     <div id="historyList"></div>
 
-  </div>
+  </section>
+
+
+  <!-- SUPPORT -->
+
+  <section class="section support" id="support">
+
+    <h3>🛠 Support</h3>
+
+    <p>
+      Need help with Mr V Player?
+      Contact support directly on Telegram.
+    </p>
+
+    <a
+      class="telegram"
+      href="https://t.me/Adrian_Vahdani"
+      target="_blank"
+      rel="noopener"
+    >
+      ✈️ Contact Support on Telegram
+    </a>
+
+  </section>
+
+
+  <footer class="footer">
+    © 2026 Mr V Player — Universal Network Video Player
+  </footer>
 
 </div>
 
+
 <script>
 
-  const video = document.getElementById("video");
-  const urlInput = document.getElementById("url");
-  const playButton = document.getElementById("playButton");
-  const fullscreenButton = document.getElementById("fullscreenButton");
-  const clearButton = document.getElementById("clearButton");
-  const status = document.getElementById("status");
-  const historyList = document.getElementById("historyList");
+const video = document.getElementById("video");
+const urlInput = document.getElementById("url");
+const statusBox = document.getElementById("status");
+const historyList = document.getElementById("historyList");
 
-  let hls = null;
+let hls = null;
 
-  function setStatus(text) {
-    status.textContent = text;
+
+/* STATUS */
+
+function status(message) {
+  statusBox.textContent = message;
+}
+
+
+/* HLS CLEANUP */
+
+function destroyHLS() {
+
+  if (hls) {
+    hls.destroy();
+    hls = null;
   }
 
-  function destroyHLS() {
+}
 
-    if (hls) {
-      hls.destroy();
-      hls = null;
-    }
 
-  }
+/* HLS DETECTION */
 
-  function isHLS(url) {
+function isHLS(url) {
 
-    const lower = url.toLowerCase();
+  const u = url.toLowerCase();
 
-    return (
-      lower.includes(".m3u8") ||
-      lower.includes("application/vnd.apple.mpegurl") ||
-      lower.includes("application/x-mpegurl")
-    );
+  return (
+    u.includes(".m3u8") ||
+    u.includes("application/vnd.apple.mpegurl") ||
+    u.includes("application/x-mpegurl")
+  );
 
-  }
+}
 
-  function isMKV(url) {
 
-    return url.toLowerCase().split("?")[0].endsWith(".mkv");
+/* PLAY */
 
-  }
+function playVideo() {
 
-  function saveHistory(url) {
+  const url = urlInput.value.trim();
 
-    let history =
-      JSON.parse(localStorage.getItem("networkPlayerHistory") || "[]");
+  if (!url) {
 
-    history = history.filter(item => item !== url);
+    status("❌ Please enter a video URL.");
 
-    history.unshift(url);
-
-    history = history.slice(0, 5);
-
-    localStorage.setItem(
-      "networkPlayerHistory",
-      JSON.stringify(history)
-    );
-
-    showHistory();
+    return;
 
   }
 
-  function showHistory() {
+  localStorage.setItem("lastVideoUrl", url);
 
-    let history =
-      JSON.parse(localStorage.getItem("networkPlayerHistory") || "[]");
+  saveHistory(url);
 
-    historyList.innerHTML = "";
+  destroyHLS();
 
-    history.forEach(url => {
+  video.pause();
 
-      const button = document.createElement("button");
+  video.removeAttribute("src");
 
-      button.className = "history-item";
+  video.load();
 
-      button.textContent = url;
+  status("⏳ Connecting...");
 
-      button.onclick = function() {
 
-        urlInput.value = url;
+  /* HLS */
 
-        playVideo();
+  if (isHLS(url)) {
 
-      };
+    if (Hls.isSupported()) {
 
-      historyList.appendChild(button);
+      hls = new Hls();
 
-    });
+      hls.loadSource(url);
 
-  }
+      hls.attachMedia(video);
 
-  function playVideo() {
+      hls.on(
+        Hls.Events.MANIFEST_PARSED,
+        function() {
 
-    const url = urlInput.value.trim();
-
-    if (!url) {
-
-      setStatus("❌ لطفاً لینک ویدئو را وارد کنید.");
-
-      return;
-    }
-
-    destroyHLS();
-
-    video.pause();
-
-    video.removeAttribute("src");
-
-    video.load();
-
-    saveHistory(url);
-
-    setStatus("⏳ در حال اتصال به ویدئو...");
-
-    /*
-      MKV
-    */
-
-    if (isMKV(url)) {
-
-      setStatus(
-        "⚠️ این لینک MKV است. مرورگر ممکن است MKV را پخش نکند."
-      );
-
-      video.src = url;
-
-      return;
-    }
-
-    /*
-      HLS / M3U8
-    */
-
-    if (isHLS(url)) {
-
-      if (Hls.isSupported()) {
-
-        hls = new Hls({
-          enableWorker: true,
-          lowLatencyMode: false
-        });
-
-        hls.loadSource(url);
-
-        hls.attachMedia(video);
-
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-
-          setStatus("✅ استریم آماده پخش است.");
+          status("✅ Stream ready.");
 
           video.play().catch(function() {
 
-            setStatus(
-              "✅ ویدئو آماده است؛ دکمه Play را بزنید."
-            );
+            status("✅ Stream ready — press Play.");
 
           });
 
-        });
+        }
+      );
 
-        hls.on(Hls.Events.ERROR, function(event, data) {
-
-          console.log(data);
+      hls.on(
+        Hls.Events.ERROR,
+        function(event, data) {
 
           if (data.fatal) {
 
-            setStatus(
-              "❌ خطا در دریافت M3U8. ممکن است لینک، سرور یا CORS مشکل داشته باشد."
+            status(
+              "❌ HLS error. Check the URL or server access."
             );
 
-            hls.destroy();
-
-            hls = null;
           }
 
-        });
-
-      }
-
-      else if (
-        video.canPlayType(
-          "application/vnd.apple.mpegurl"
-        )
-      ) {
-
-        video.src = url;
-
-        video.addEventListener(
-          "loadedmetadata",
-          function() {
-
-            setStatus("✅ استریم آماده پخش است.");
-
-            video.play().catch(function() {
-
-              setStatus(
-                "✅ ویدئو آماده است؛ دکمه Play را بزنید."
-              );
-
-            });
-
-          },
-          { once: true }
-        );
-
-      }
-
-      else {
-
-        setStatus(
-          "❌ این مرورگر از پخش HLS پشتیبانی نمی‌کند."
-        );
-
-      }
-
-      return;
-    }
-
-    /*
-      MP4 / WebM / سایر فرمت‌های مرورگر
-    */
-
-    video.src = url;
-
-    video.load();
-
-    video.play().catch(function() {
-
-      setStatus(
-        "ℹ️ ویدئو آماده است؛ برای شروع Play را بزنید."
-      );
-
-    });
-
-    video.addEventListener(
-      "loadedmetadata",
-      function() {
-
-        setStatus("✅ ویدئو آماده پخش است.");
-
-      },
-      { once: true }
-    );
-
-    video.addEventListener(
-      "error",
-      function() {
-
-        setStatus(
-          "❌ مرورگر نتوانست این فایل را پخش کند."
-        );
-
-      },
-      { once: true }
-    );
-
-  }
-
-  /*
-    دکمه پخش
-  */
-
-  playButton.addEventListener(
-    "click",
-    playVideo
-  );
-
-  /*
-    Enter
-  */
-
-  urlInput.addEventListener(
-    "keydown",
-    function(event) {
-
-      if (event.key === "Enter") {
-
-        playVideo();
-
-      }
-
-    }
-  );
-
-  /*
-    تمام صفحه
-  */
-
-  fullscreenButton.addEventListener(
-    "click",
-    function() {
-
-      if (video.requestFullscreen) {
-
-        video.requestFullscreen();
-
-      }
-
-      else if (video.webkitRequestFullscreen) {
-
-        video.webkitRequestFullscreen();
-
-      }
-
-    }
-  );
-
-  /*
-    پاک کردن
-  */
-
-  clearButton.addEventListener(
-    "click",
-    function() {
-
-      destroyHLS();
-
-      video.pause();
-
-      video.removeAttribute("src");
-
-      video.load();
-
-      urlInput.value = "";
-
-      setStatus("آدرس پاک شد.");
-
-    }
-  );
-
-  /*
-    آخرین URL
-  */
-
-  const lastUrl =
-    localStorage.getItem("lastVideoUrl");
-
-  if (lastUrl) {
-
-    urlInput.value = lastUrl;
-
-  }
-
-  urlInput.addEventListener(
-    "change",
-    function() {
-
-      localStorage.setItem(
-        "lastVideoUrl",
-        urlInput.value.trim()
+        }
       );
 
     }
+
+    else if (
+      video.canPlayType(
+        "application/vnd.apple.mpegurl"
+      )
+    ) {
+
+      video.src = url;
+
+      video.addEventListener(
+        "loadedmetadata",
+        function() {
+
+          status("✅ Stream ready.");
+
+        },
+        { once: true }
+      );
+
+    }
+
+    else {
+
+      status(
+        "❌ This browser cannot play HLS."
+      );
+
+    }
+
+    return;
+  }
+
+
+  /* NORMAL VIDEO */
+
+  video.src = url;
+
+  video.load();
+
+  video.play().catch(function() {
+
+    status(
+      "ℹ️ Video loaded — press Play."
+    );
+
+  });
+
+  video.addEventListener(
+    "loadedmetadata",
+    function() {
+
+      status("✅ Video ready.");
+
+    },
+    { once: true }
+  );
+
+  video.addEventListener(
+    "error",
+    function() {
+
+      status(
+        "❌ This video cannot be played by the browser."
+      );
+
+    },
+    { once: true }
+  );
+
+}
+
+
+/* HISTORY */
+
+function saveHistory(url) {
+
+  let items =
+    JSON.parse(
+      localStorage.getItem("mrVHistory") || "[]"
+    );
+
+  items = items.filter(item => item !== url);
+
+  items.unshift(url);
+
+  items = items.slice(0, 8);
+
+  localStorage.setItem(
+    "mrVHistory",
+    JSON.stringify(items)
   );
 
   showHistory();
+
+}
+
+
+function showHistory() {
+
+  const items =
+    JSON.parse(
+      localStorage.getItem("mrVHistory") || "[]"
+    );
+
+  historyList.innerHTML = "";
+
+  if (items.length === 0) {
+
+    historyList.innerHTML =
+      "<p style='color:#666'>No history yet.</p>";
+
+    return;
+
+  }
+
+  items.forEach(function(url) {
+
+    const button =
+      document.createElement("button");
+
+    button.className = "history-item";
+
+    button.textContent = url;
+
+    button.onclick = function() {
+
+      urlInput.value = url;
+
+      playVideo();
+
+    };
+
+    historyList.appendChild(button);
+
+  });
+
+}
+
+
+/* FULLSCREEN */
+
+function fullscreenVideo() {
+
+  if (video.requestFullscreen) {
+
+    video.requestFullscreen();
+
+  }
+
+  else if (video.webkitRequestFullscreen) {
+
+    video.webkitRequestFullscreen();
+
+  }
+
+}
+
+
+/* CLEAR */
+
+function clearPlayer() {
+
+  destroyHLS();
+
+  video.pause();
+
+  video.removeAttribute("src");
+
+  video.load();
+
+  urlInput.value = "";
+
+  status("Player cleared.");
+
+}
+
+
+/* NAVIGATION */
+
+function goHome() {
+
+  document.getElementById("home")
+    .scrollIntoView({ behavior: "smooth" });
+
+}
+
+function goHistory() {
+
+  document.getElementById("history")
+    .scrollIntoView({ behavior: "smooth" });
+
+}
+
+function goSupport() {
+
+  document.getElementById("support")
+    .scrollIntoView({ behavior: "smooth" });
+
+}
+
+function focusURL() {
+
+  urlInput.focus();
+
+  urlInput.scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
+
+
+/* ENTER KEY */
+
+urlInput.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (event.key === "Enter") {
+
+      playVideo();
+
+    }
+
+  }
+);
+
+
+/* LAST URL */
+
+const lastURL =
+  localStorage.getItem("lastVideoUrl");
+
+if (lastURL) {
+
+  urlInput.value = lastURL;
+
+}
+
+
+/* START */
+
+showHistory();
 
 </script>
 
