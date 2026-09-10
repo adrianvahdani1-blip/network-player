@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Network Video Player</title>
+  <meta name="theme-color" content="#0b0b0b">
 
+  <title>Network Player</title>
+
+  <!-- HLS Player -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <style>
@@ -14,92 +17,175 @@
 
     body {
       margin: 0;
-      background: #101010;
+      min-height: 100vh;
+      background: #080808;
       color: white;
       font-family: Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
-    .container {
-      width: 95%;
-      max-width: 1100px;
+    .app {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 25px;
+    }
+
+    header {
       text-align: center;
-    }
-
-    h1 {
-      font-size: 32px;
       margin-bottom: 25px;
     }
 
-    .input-box {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+    header h1 {
+      margin: 0;
+      font-size: 34px;
     }
 
-    input {
-      flex: 1;
+    header p {
+      color: #999;
+      margin-top: 10px;
+    }
+
+    .player-box {
+      background: #151515;
       padding: 18px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-      background: #222;
-      color: white;
-    }
-
-    button {
-      padding: 18px 30px;
-      font-size: 18px;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #ffffff;
-      color: #000000;
-    }
-
-    button:hover {
-      background: #dddddd;
+      border-radius: 15px;
     }
 
     video {
       width: 100%;
-      max-height: 650px;
-      background: black;
-      border-radius: 10px;
+      max-height: 65vh;
       display: block;
+      background: #000;
+      border-radius: 10px;
+    }
+
+    .url-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    #url {
+      flex: 1;
+      min-width: 0;
+      padding: 17px;
+      border-radius: 9px;
+      border: 1px solid #333;
+      background: #222;
+      color: white;
+      font-size: 17px;
+      direction: ltr;
+      outline: none;
+    }
+
+    #url:focus {
+      border-color: white;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 0 28px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      background: white;
+      color: black;
+      min-height: 55px;
+    }
+
+    button:hover {
+      background: #ddd;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .secondary {
+      flex: 1;
+      background: #292929;
+      color: white;
+    }
+
+    .secondary:hover {
+      background: #383838;
     }
 
     #status {
       margin-top: 15px;
-      min-height: 25px;
-      font-size: 16px;
-      color: #cccccc;
+      padding: 12px;
+      border-radius: 8px;
+      background: #202020;
+      color: #ccc;
+      text-align: center;
+      min-height: 45px;
     }
 
-    .example {
+    .info {
       margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #111;
       color: #888;
       font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .history {
+      margin-top: 20px;
+    }
+
+    .history h2 {
+      font-size: 20px;
+    }
+
+    .history-item {
+      width: 100%;
+      text-align: left;
       direction: ltr;
-      word-break: break-all;
+      margin-top: 8px;
+      padding: 12px;
+      min-height: auto;
+      background: #1b1b1b;
+      color: #ddd;
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .history-item:hover {
+      background: #292929;
     }
 
     @media (max-width: 700px) {
-      .input-box {
+
+      .app {
+        padding: 12px;
+      }
+
+      header h1 {
+        font-size: 27px;
+      }
+
+      .url-box {
         flex-direction: column;
       }
 
       button {
         width: 100%;
+        padding: 15px;
       }
 
-      h1 {
-        font-size: 25px;
+      .buttons {
+        flex-direction: column;
+      }
+
+      video {
+        max-height: 55vh;
       }
     }
   </style>
@@ -107,157 +193,426 @@
 
 <body>
 
-  <div class="container">
+<div class="app">
 
-    <h1>🎬 Network Video Player</h1>
+  <header>
+    <h1>🎬 Network Player</h1>
+    <p>پخش ویدئو از طریق لینک مستقیم یا M3U8</p>
+  </header>
 
-    <div class="input-box">
-      <input
-        id="videoUrl"
-        type="text"
-        placeholder="آدرس ویدئو یا M3U8 را وارد کنید..."
-        autocomplete="off"
-      >
-
-      <button onclick="playVideo()">▶ پخش</button>
-    </div>
+  <div class="player-box">
 
     <video id="video" controls playsinline></video>
 
-    <div id="status">آدرس ویدئو را وارد کنید.</div>
+    <div class="url-box">
 
-    <div class="example">
-      Test HLS:
-      https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+      <input
+        id="url"
+        type="text"
+        placeholder="Video URL / M3U8"
+        autocomplete="off"
+        spellcheck="false"
+      >
+
+      <button id="playButton">▶ پخش</button>
+
+    </div>
+
+    <div class="buttons">
+
+      <button class="secondary" id="fullscreenButton">
+        ⛶ تمام صفحه
+      </button>
+
+      <button class="secondary" id="clearButton">
+        🗑 پاک کردن
+      </button>
+
+    </div>
+
+    <div id="status">
+      آماده دریافت لینک ویدئو
     </div>
 
   </div>
 
-  <script>
-    const video = document.getElementById("video");
-    const input = document.getElementById("videoUrl");
-    const status = document.getElementById("status");
+  <div class="info">
+    <b>فرمت‌های قابل پشتیبانی:</b><br>
+    MP4، WebM و M3U8/HLS<br><br>
 
-    let hls = null;
+    توجه: پخش MKV در مرورگرها معمولاً پشتیبانی نمی‌شود.
+    همچنین بعضی سرورها اجازه پخش مستقیم در مرورگر را نمی‌دهند.
+  </div>
 
-    function playVideo() {
+  <div class="history">
 
-      const url = input.value.trim();
+    <h2>آخرین لینک‌ها</h2>
 
-      if (!url) {
-        status.textContent = "❌ لطفاً آدرس ویدئو را وارد کنید.";
-        return;
-      }
+    <div id="historyList"></div>
 
-      // ذخیره آخرین آدرس
-      localStorage.setItem("lastVideoUrl", url);
+  </div>
 
-      // توقف پخش قبلی
-      if (hls) {
-        hls.destroy();
-        hls = null;
-      }
+</div>
 
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
+<script>
 
-      status.textContent = "⏳ در حال بارگذاری...";
+  const video = document.getElementById("video");
+  const urlInput = document.getElementById("url");
+  const playButton = document.getElementById("playButton");
+  const fullscreenButton = document.getElementById("fullscreenButton");
+  const clearButton = document.getElementById("clearButton");
+  const status = document.getElementById("status");
+  const historyList = document.getElementById("historyList");
 
-      // تشخیص HLS / M3U8
-      const isHls =
-        url.toLowerCase().includes(".m3u8") ||
-        url.toLowerCase().includes("application/vnd.apple.mpegurl");
+  let hls = null;
 
-      if (isHls) {
+  function setStatus(text) {
+    status.textContent = text;
+  }
 
-        // مرورگرهایی که HLS را مستقیماً پشتیبانی می‌کنند
-        if (video.canPlayType("application/vnd.apple.mpegurl")) {
+  function destroyHLS() {
 
-          video.src = url;
+    if (hls) {
+      hls.destroy();
+      hls = null;
+    }
 
-          video.play()
-            .then(() => {
-              status.textContent = "▶ در حال پخش";
-            })
-            .catch(() => {
-              status.textContent = "ℹ️ برای شروع، دکمه Play را بزنید.";
-            });
+  }
 
-        }
+  function isHLS(url) {
 
-        // استفاده از HLS.js
-        else if (Hls.isSupported()) {
+    const lower = url.toLowerCase();
 
-          hls = new Hls();
+    return (
+      lower.includes(".m3u8") ||
+      lower.includes("application/vnd.apple.mpegurl") ||
+      lower.includes("application/x-mpegurl")
+    );
 
-          hls.loadSource(url);
-          hls.attachMedia(video);
+  }
 
-          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+  function isMKV(url) {
 
-            status.textContent = "▶ آماده پخش";
+    return url.toLowerCase().split("?")[0].endsWith(".mkv");
 
-            video.play().catch(() => {
-              status.textContent = "ℹ️ برای شروع، دکمه Play را بزنید.";
-            });
+  }
+
+  function saveHistory(url) {
+
+    let history =
+      JSON.parse(localStorage.getItem("networkPlayerHistory") || "[]");
+
+    history = history.filter(item => item !== url);
+
+    history.unshift(url);
+
+    history = history.slice(0, 5);
+
+    localStorage.setItem(
+      "networkPlayerHistory",
+      JSON.stringify(history)
+    );
+
+    showHistory();
+
+  }
+
+  function showHistory() {
+
+    let history =
+      JSON.parse(localStorage.getItem("networkPlayerHistory") || "[]");
+
+    historyList.innerHTML = "";
+
+    history.forEach(url => {
+
+      const button = document.createElement("button");
+
+      button.className = "history-item";
+
+      button.textContent = url;
+
+      button.onclick = function() {
+
+        urlInput.value = url;
+
+        playVideo();
+
+      };
+
+      historyList.appendChild(button);
+
+    });
+
+  }
+
+  function playVideo() {
+
+    const url = urlInput.value.trim();
+
+    if (!url) {
+
+      setStatus("❌ لطفاً لینک ویدئو را وارد کنید.");
+
+      return;
+    }
+
+    destroyHLS();
+
+    video.pause();
+
+    video.removeAttribute("src");
+
+    video.load();
+
+    saveHistory(url);
+
+    setStatus("⏳ در حال اتصال به ویدئو...");
+
+    /*
+      MKV
+    */
+
+    if (isMKV(url)) {
+
+      setStatus(
+        "⚠️ این لینک MKV است. مرورگر ممکن است MKV را پخش نکند."
+      );
+
+      video.src = url;
+
+      return;
+    }
+
+    /*
+      HLS / M3U8
+    */
+
+    if (isHLS(url)) {
+
+      if (Hls.isSupported()) {
+
+        hls = new Hls({
+          enableWorker: true,
+          lowLatencyMode: false
+        });
+
+        hls.loadSource(url);
+
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+
+          setStatus("✅ استریم آماده پخش است.");
+
+          video.play().catch(function() {
+
+            setStatus(
+              "✅ ویدئو آماده است؛ دکمه Play را بزنید."
+            );
 
           });
 
-          hls.on(Hls.Events.ERROR, function (event, data) {
+        });
 
-            console.log("HLS Error:", data);
+        hls.on(Hls.Events.ERROR, function(event, data) {
 
-            if (data.fatal) {
-              status.textContent =
-                "❌ خطا در دریافت استریم. ممکن است سرور اجازه پخش در مرورگر را ندهد.";
-            }
-          });
+          console.log(data);
 
-        }
+          if (data.fatal) {
 
-        else {
-          status.textContent =
-            "❌ این مرورگر از HLS پشتیبانی نمی‌کند.";
-        }
+            setStatus(
+              "❌ خطا در دریافت M3U8. ممکن است لینک، سرور یا CORS مشکل داشته باشد."
+            );
+
+            hls.destroy();
+
+            hls = null;
+          }
+
+        });
 
       }
 
-      // ویدئوهای معمولی مثل MP4 و WebM
-      else {
+      else if (
+        video.canPlayType(
+          "application/vnd.apple.mpegurl"
+        )
+      ) {
 
         video.src = url;
 
-        video.play()
-          .then(() => {
-            status.textContent = "▶ در حال پخش";
-          })
-          .catch(() => {
-            status.textContent =
-              "❌ ویدئو قابل پخش نیست یا فرمت آن توسط مرورگر پشتیبانی نمی‌شود.";
-          });
+        video.addEventListener(
+          "loadedmetadata",
+          function() {
 
-        video.onerror = function () {
-          status.textContent =
-            "❌ خطا: این فایل/آدرس توسط مرورگر قابل پخش نیست.";
-        };
+            setStatus("✅ استریم آماده پخش است.");
+
+            video.play().catch(function() {
+
+              setStatus(
+                "✅ ویدئو آماده است؛ دکمه Play را بزنید."
+              );
+
+            });
+
+          },
+          { once: true }
+        );
+
       }
+
+      else {
+
+        setStatus(
+          "❌ این مرورگر از پخش HLS پشتیبانی نمی‌کند."
+        );
+
+      }
+
+      return;
     }
 
-    // با Enter هم پخش شود
-    input.addEventListener("keydown", function(event) {
-      if (event.key === "Enter") {
-        playVideo();
-      }
+    /*
+      MP4 / WebM / سایر فرمت‌های مرورگر
+    */
+
+    video.src = url;
+
+    video.load();
+
+    video.play().catch(function() {
+
+      setStatus(
+        "ℹ️ ویدئو آماده است؛ برای شروع Play را بزنید."
+      );
+
     });
 
-    // بازیابی آخرین URL
-    const lastUrl = localStorage.getItem("lastVideoUrl");
+    video.addEventListener(
+      "loadedmetadata",
+      function() {
 
-    if (lastUrl) {
-      input.value = lastUrl;
+        setStatus("✅ ویدئو آماده پخش است.");
+
+      },
+      { once: true }
+    );
+
+    video.addEventListener(
+      "error",
+      function() {
+
+        setStatus(
+          "❌ مرورگر نتوانست این فایل را پخش کند."
+        );
+
+      },
+      { once: true }
+    );
+
+  }
+
+  /*
+    دکمه پخش
+  */
+
+  playButton.addEventListener(
+    "click",
+    playVideo
+  );
+
+  /*
+    Enter
+  */
+
+  urlInput.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+
+        playVideo();
+
+      }
+
     }
-  </script>
+  );
+
+  /*
+    تمام صفحه
+  */
+
+  fullscreenButton.addEventListener(
+    "click",
+    function() {
+
+      if (video.requestFullscreen) {
+
+        video.requestFullscreen();
+
+      }
+
+      else if (video.webkitRequestFullscreen) {
+
+        video.webkitRequestFullscreen();
+
+      }
+
+    }
+  );
+
+  /*
+    پاک کردن
+  */
+
+  clearButton.addEventListener(
+    "click",
+    function() {
+
+      destroyHLS();
+
+      video.pause();
+
+      video.removeAttribute("src");
+
+      video.load();
+
+      urlInput.value = "";
+
+      setStatus("آدرس پاک شد.");
+
+    }
+  );
+
+  /*
+    آخرین URL
+  */
+
+  const lastUrl =
+    localStorage.getItem("lastVideoUrl");
+
+  if (lastUrl) {
+
+    urlInput.value = lastUrl;
+
+  }
+
+  urlInput.addEventListener(
+    "change",
+    function() {
+
+      localStorage.setItem(
+        "lastVideoUrl",
+        urlInput.value.trim()
+      );
+
+    }
+  );
+
+  showHistory();
+
+</script>
 
 </body>
 </html>
