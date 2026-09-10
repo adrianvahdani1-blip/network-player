@@ -1,166 +1,263 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network Player</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Video Player</title>
 
-<style>
-* {
-    box-sizing: border-box;
-}
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-body {
-    margin: 0;
-    background: #111;
-    color: white;
-    font-family: Arial, sans-serif;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.container {
-    max-width: 1000px;
-    margin: auto;
-    padding: 25px;
-}
+    body {
+      margin: 0;
+      background: #101010;
+      color: white;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-h1 {
-    font-size: 28px;
-    margin-bottom: 10px;
-}
+    .container {
+      width: 95%;
+      max-width: 1100px;
+      text-align: center;
+    }
 
-.description {
-    color: #aaa;
-    margin-bottom: 20px;
-}
+    h1 {
+      font-size: 32px;
+      margin-bottom: 25px;
+    }
 
-.input-box {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+    .input-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
 
-input {
-    flex: 1;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #444;
-    background: #222;
-    color: white;
-    font-size: 16px;
-    direction: ltr;
-}
+    input {
+      flex: 1;
+      padding: 18px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      background: #222;
+      color: white;
+    }
 
-button {
-    padding: 15px 25px;
-    border: none;
-    border-radius: 8px;
-    background: #ff8800;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
+    button {
+      padding: 18px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #ffffff;
+      color: #000000;
+    }
 
-button:hover {
-    opacity: 0.85;
-}
+    button:hover {
+      background: #dddddd;
+    }
 
-video {
-    width: 100%;
-    background: black;
-    border-radius: 10px;
-    margin-top: 10px;
-}
+    video {
+      width: 100%;
+      max-height: 650px;
+      background: black;
+      border-radius: 10px;
+      display: block;
+    }
 
-.status {
-    margin-top: 15px;
-    color: #aaa;
-}
-</style>
+    #status {
+      margin-top: 15px;
+      min-height: 25px;
+      font-size: 16px;
+      color: #cccccc;
+    }
+
+    .example {
+      margin-top: 20px;
+      color: #888;
+      font-size: 14px;
+      direction: ltr;
+      word-break: break-all;
+    }
+
+    @media (max-width: 700px) {
+      .input-box {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+  <div class="container">
 
-<h1>📺 Network Player</h1>
+    <h1>🎬 Network Video Player</h1>
 
-<div class="description">
-لینک مستقیم ویدئو یا استریم را وارد کنید
-</div>
+    <div class="input-box">
+      <input
+        id="videoUrl"
+        type="text"
+        placeholder="آدرس ویدئو یا M3U8 را وارد کنید..."
+        autocomplete="off"
+      >
 
-<div class="input-box">
+      <button onclick="playVideo()">▶ پخش</button>
+    </div>
 
-<input
-    id="videoURL"
-    type="url"
-    placeholder="https://example.com/video.mp4"
->
+    <video id="video" controls playsinline></video>
 
-<button onclick="playVideo()">
-    ▶ پخش
-</button>
+    <div id="status">آدرس ویدئو را وارد کنید.</div>
 
-</div>
+    <div class="example">
+      Test HLS:
+      https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+    </div>
 
-<video
-    id="player"
-    controls
-    playsinline
->
-</video>
+  </div>
 
-<div id="status" class="status">
-    آماده پخش
-</div>
+  <script>
+    const video = document.getElementById("video");
+    const input = document.getElementById("videoUrl");
+    const status = document.getElementById("status");
 
-</div>
+    let hls = null;
 
-<script>
+    function playVideo() {
 
-function playVideo() {
+      const url = input.value.trim();
 
-    const url = document
-        .getElementById("videoURL")
-        .value
-        .trim();
-
-    const video = document
-        .getElementById("player");
-
-    const status = document
-        .getElementById("status");
-
-    if (!url.startsWith("http://") &&
-        !url.startsWith("https://")) {
-
-        status.innerText =
-            "❌ لطفاً یک لینک HTTP یا HTTPS وارد کنید.";
-
+      if (!url) {
+        status.textContent = "❌ لطفاً آدرس ویدئو را وارد کنید.";
         return;
+      }
+
+      // ذخیره آخرین آدرس
+      localStorage.setItem("lastVideoUrl", url);
+
+      // توقف پخش قبلی
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
+
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+
+      status.textContent = "⏳ در حال بارگذاری...";
+
+      // تشخیص HLS / M3U8
+      const isHls =
+        url.toLowerCase().includes(".m3u8") ||
+        url.toLowerCase().includes("application/vnd.apple.mpegurl");
+
+      if (isHls) {
+
+        // مرورگرهایی که HLS را مستقیماً پشتیبانی می‌کنند
+        if (video.canPlayType("application/vnd.apple.mpegurl")) {
+
+          video.src = url;
+
+          video.play()
+            .then(() => {
+              status.textContent = "▶ در حال پخش";
+            })
+            .catch(() => {
+              status.textContent = "ℹ️ برای شروع، دکمه Play را بزنید.";
+            });
+
+        }
+
+        // استفاده از HLS.js
+        else if (Hls.isSupported()) {
+
+          hls = new Hls();
+
+          hls.loadSource(url);
+          hls.attachMedia(video);
+
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+
+            status.textContent = "▶ آماده پخش";
+
+            video.play().catch(() => {
+              status.textContent = "ℹ️ برای شروع، دکمه Play را بزنید.";
+            });
+
+          });
+
+          hls.on(Hls.Events.ERROR, function (event, data) {
+
+            console.log("HLS Error:", data);
+
+            if (data.fatal) {
+              status.textContent =
+                "❌ خطا در دریافت استریم. ممکن است سرور اجازه پخش در مرورگر را ندهد.";
+            }
+          });
+
+        }
+
+        else {
+          status.textContent =
+            "❌ این مرورگر از HLS پشتیبانی نمی‌کند.";
+        }
+
+      }
+
+      // ویدئوهای معمولی مثل MP4 و WebM
+      else {
+
+        video.src = url;
+
+        video.play()
+          .then(() => {
+            status.textContent = "▶ در حال پخش";
+          })
+          .catch(() => {
+            status.textContent =
+              "❌ ویدئو قابل پخش نیست یا فرمت آن توسط مرورگر پشتیبانی نمی‌شود.";
+          });
+
+        video.onerror = function () {
+          status.textContent =
+            "❌ خطا: این فایل/آدرس توسط مرورگر قابل پخش نیست.";
+        };
+      }
     }
 
-    status.innerText =
-        "⏳ در حال بارگذاری...";
-
-    video.src = url;
-
-    video.load();
-
-    video.play().then(() => {
-
-        status.innerText =
-            "▶ در حال پخش";
-
-    }).catch(() => {
-
-        status.innerText =
-            "⚠️ برای شروع پخش، دکمه Play را بزنید.";
-
+    // با Enter هم پخش شود
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        playVideo();
+      }
     });
-}
 
-</script>
+    // بازیابی آخرین URL
+    const lastUrl = localStorage.getItem("lastVideoUrl");
+
+    if (lastUrl) {
+      input.value = lastUrl;
+    }
+  </script>
 
 </body>
 </html>
