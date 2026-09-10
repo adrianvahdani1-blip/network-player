@@ -1402,7 +1402,138 @@
   setLanguage(
     currentLanguage
   );
+/* =========================
+   GAMEPAD SUPPORT
+========================= */
 
+let focusedIndex = 0;
+let gameElements = [];
+let gamepadActive = false;
+
+
+function updateGameElements() {
+
+  gameElements = Array.from(
+    document.querySelectorAll(
+      "button, input, a"
+    )
+  );
+
+}
+
+
+function focusGameElement() {
+
+  if (gameElements.length > 0) {
+
+    gameElements[focusedIndex].focus();
+
+  }
+
+}
+
+
+function startGamepad() {
+
+  if (gamepadActive) return;
+
+  gamepadActive = true;
+
+  updateGameElements();
+
+  gamepadLoop();
+
+}
+
+
+function gamepadLoop() {
+
+  const pads = navigator.getGamepads();
+
+  const pad = pads[0];
+
+
+  if (pad) {
+
+    // دکمه A در Xbox / ضربدر در PlayStation
+    if (pad.buttons[0].pressed) {
+
+      if (
+        document.activeElement &&
+        document.activeElement.click
+      ) {
+
+        document.activeElement.click();
+
+      }
+
+    }
+
+
+    // پایین
+    if (pad.buttons[13].pressed) {
+
+      focusedIndex++;
+
+      if (
+        focusedIndex >= gameElements.length
+      ) {
+
+        focusedIndex = 0;
+
+      }
+
+      focusGameElement();
+
+    }
+
+
+    // بالا
+    if (pad.buttons[12].pressed) {
+
+      focusedIndex--;
+
+      if (focusedIndex < 0) {
+
+        focusedIndex =
+          gameElements.length - 1;
+
+      }
+
+      focusGameElement();
+
+    }
+
+
+    // دکمه B در Xbox / دایره در PlayStation
+    if (pad.buttons[1].pressed) {
+
+      clearVideo();
+
+    }
+
+  }
+
+
+  requestAnimationFrame(
+    gamepadLoop
+  );
+
+}
+
+
+window.addEventListener(
+  "gamepadconnected",
+  function() {
+
+    console.log(
+      "Gamepad connected"
+    );
+
+    startGamepad();
+
+  }
+);
 </script>
 
 </body>
