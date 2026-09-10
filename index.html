@@ -1646,6 +1646,28 @@ window.addEventListener(
 
   }
 );
+  /* =========================
+   AUTO TV MODE
+========================= */
+
+function enableTVMode(){
+
+  document.body.classList.add(
+    "tv-mode"
+  );
+
+}
+
+
+if (
+  navigator.userAgent.includes("Xbox") ||
+  navigator.userAgent.includes("PlayStation") ||
+  navigator.userAgent.includes("SmartTV")
+){
+
+  enableTVMode();
+
+}
 </script>
 
 </body>
