@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Mr V Player</title>
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -24,47 +21,29 @@
       --red: #e50914;
       --red2: #ff1e2d;
       --text: #ffffff;
-      --muted: #999999;
+      --muted: #9a9a9a;
       --border: #292929;
-      --disabled: #303030;
-    }
-
-    html {
-      scroll-behavior: smooth;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: Arial, "Segoe UI", Tahoma, sans-serif;
+      font-family: Arial, "Segoe UI", sans-serif;
       min-height: 100vh;
     }
 
-    button,
-    input {
+    button, input {
       font: inherit;
     }
 
-    button,
-    a {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    /* =========================
-       HEADER
-    ========================= */
-
     header {
       width: 100%;
-      padding: 17px 6%;
+      padding: 18px 6%;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 15px;
-
-      background: rgba(8, 8, 8, .96);
       border-bottom: 1px solid var(--border);
-
+      background: rgba(8,8,8,.95);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -79,18 +58,14 @@
     .logo {
       width: 44px;
       height: 44px;
-
       border-radius: 12px;
       background: var(--red);
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       font-size: 25px;
       font-weight: bold;
-
-      box-shadow: 0 0 25px rgba(229, 9, 20, .25);
+      box-shadow: 0 0 25px rgba(229,9,20,.25);
     }
 
     .brand-text h1 {
@@ -110,22 +85,17 @@
 
     nav {
       display: flex;
-      gap: 5px;
+      gap: 6px;
     }
 
     nav button,
     .language-btn {
       background: transparent;
       border: 1px solid transparent;
-
       color: #ccc;
-
       padding: 9px 13px;
-
       border-radius: 9px;
-
       cursor: pointer;
-
       transition: .2s;
     }
 
@@ -141,15 +111,10 @@
       font-weight: bold;
     }
 
-    /* =========================
-       MAIN
-    ========================= */
-
     main {
       width: min(1050px, 92%);
       margin: auto;
-
-      padding: 45px 0 65px;
+      padding: 45px 0 60px;
     }
 
     section {
@@ -171,19 +136,11 @@
       font-size: 16px;
     }
 
-    /* =========================
-       PLAYER CARD
-    ========================= */
-
     .player-card {
       background: var(--card);
-
       border: 1px solid var(--border);
-
       border-radius: 20px;
-
       padding: 20px;
-
       margin-top: 25px;
     }
 
@@ -195,46 +152,29 @@
     .url-input {
       flex: 1;
       min-width: 0;
-
       height: 54px;
-
       background: #080808;
-
       border: 1px solid var(--border);
-
       color: white;
-
       border-radius: 12px;
-
       padding: 0 16px;
-
       outline: none;
     }
 
     .url-input:focus {
       border-color: var(--red);
-
-      box-shadow:
-        0 0 0 3px rgba(229, 9, 20, .12);
+      box-shadow: 0 0 0 3px rgba(229,9,20,.12);
     }
 
     .play-btn {
       height: 54px;
-
       padding: 0 28px;
-
       border: none;
-
       border-radius: 12px;
-
       background: var(--red);
-
       color: white;
-
       font-weight: bold;
-
       cursor: pointer;
-
       transition: .2s;
     }
 
@@ -243,98 +183,65 @@
       transform: translateY(-1px);
     }
 
-    /* =========================
-       VIDEO
-    ========================= */
-
     .video-container {
       background: #000;
-
       margin-top: 18px;
-
       border-radius: 15px;
-
       overflow: hidden;
-
       border: 1px solid #222;
+      position: relative;
     }
 
     video {
       display: block;
-
       width: 100%;
-
       max-height: 620px;
-
       background: #000;
     }
 
-    /* =========================
-       CONTROLS
-    ========================= */
+    #youtubeFrame {
+      display: none;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      background: #000;
+    }
 
     .controls {
       display: flex;
-
       gap: 9px;
-
       flex-wrap: wrap;
-
       margin-top: 14px;
     }
 
     .control-btn {
       background: var(--card2);
-
       color: white;
-
       border: 1px solid var(--border);
-
       padding: 11px 16px;
-
       border-radius: 10px;
-
       cursor: pointer;
-
-      transition: .2s;
     }
 
-    .control-btn:hover:not(:disabled) {
+    .control-btn:hover {
       border-color: #555;
       background: #202020;
     }
 
     .control-btn:disabled {
-      color: #666;
-      background: var(--disabled);
-      border-color: #252525;
+      opacity: .45;
       cursor: not-allowed;
-      opacity: .6;
     }
-
-    /* =========================
-       STATUS
-    ========================= */
 
     .status {
       margin-top: 14px;
-
       padding: 13px 15px;
-
       border-radius: 10px;
-
       background: #0b0b0b;
-
       border: 1px solid var(--border);
-
       color: var(--muted);
-
       font-size: 14px;
     }
-
-    /* =========================
-       SECTIONS
-    ========================= */
 
     .content-section {
       margin-top: 70px;
@@ -345,10 +252,6 @@
       margin-bottom: 18px;
     }
 
-    /* =========================
-       HISTORY
-    ========================= */
-
     .history-list {
       display: grid;
       gap: 10px;
@@ -356,20 +259,12 @@
 
     .history-item {
       background: var(--card);
-
       border: 1px solid var(--border);
-
       padding: 14px;
-
       border-radius: 11px;
-
       cursor: pointer;
-
       color: #ddd;
-
       word-break: break-all;
-
-      transition: .2s;
     }
 
     .history-item:hover {
@@ -381,69 +276,39 @@
       padding: 20px 0;
     }
 
-    /* =========================
-       SUPPORT
-    ========================= */
-
     .support-card {
       background: var(--card);
-
       border: 1px solid var(--border);
-
       border-radius: 18px;
-
       padding: 28px;
-
       text-align: center;
     }
 
     .support-card p {
       color: var(--muted);
-
       margin: 10px 0 22px;
-
       line-height: 1.7;
     }
 
     .telegram-btn {
       display: inline-flex;
-
       align-items: center;
-
       justify-content: center;
-
       text-decoration: none;
-
       background: #229ed9;
-
       color: white;
-
       padding: 13px 22px;
-
       border-radius: 11px;
-
       font-weight: bold;
     }
 
-    /* =========================
-       FOOTER
-    ========================= */
-
     footer {
       border-top: 1px solid var(--border);
-
       text-align: center;
-
       color: #666;
-
       padding: 25px;
-
       font-size: 13px;
     }
-
-    /* =========================
-       RTL
-    ========================= */
 
     body.rtl .url-input {
       direction: rtl;
@@ -455,23 +320,7 @@
       text-align: left;
     }
 
-    /* =========================
-       FOCUS - TV / CONSOLE
-    ========================= */
-
-    button:focus,
-    input:focus,
-    a:focus {
-      outline: 2px solid var(--red);
-      outline-offset: 2px;
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
     @media (max-width: 700px) {
-
       header {
         padding: 13px 4%;
       }
@@ -513,7 +362,6 @@
 
       .controls {
         display: grid;
-
         grid-template-columns: 1fr 1fr;
       }
 
@@ -527,1123 +375,1035 @@
       }
     }
 
+    button:focus,
+    input:focus,
+    a:focus {
+      outline: 2px solid var(--red);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 
-
 <body>
 
-  <!-- =========================
-       HEADER
-  ========================= -->
+<header>
+  <div class="brand">
+    <div class="logo">V</div>
 
-  <header>
+    <div class="brand-text">
+      <h1>Mr V Player</h1>
+      <span data-i18n="subtitle">Universal Network Video Player</span>
+    </div>
+  </div>
 
-    <div class="brand">
+  <div class="header-right">
+    <nav>
+      <button onclick="scrollToSection('home')" data-i18n="home">Home</button>
+      <button onclick="scrollToSection('history')" data-i18n="history">History</button>
+      <button onclick="scrollToSection('support')" data-i18n="support">Support</button>
+    </nav>
 
-      <div class="logo">
-        V
+    <button class="language-btn" onclick="toggleLanguage()" id="languageBtn">
+      🇮🇷 فارسی
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <section id="home">
+
+    <div class="hero">
+      <h2 data-i18n="heroTitle">Play Your Stream</h2>
+      <p data-i18n="heroText">
+        Enter a video URL or YouTube link and start watching.
+      </p>
+    </div>
+
+    <div class="player-card">
+
+      <div class="url-row">
+
+        <input
+          id="urlInput"
+          class="url-input"
+          type="url"
+          placeholder="Enter video URL or YouTube link..."
+          data-placeholder="urlPlaceholder"
+          autocomplete="off"
+        >
+
+        <button
+          class="play-btn"
+          onclick="playVideo()"
+          data-i18n="play"
+        >
+          ▶ PLAY
+        </button>
+
       </div>
 
-      <div class="brand-text">
+      <div class="video-container">
 
-        <h1>
-          Mr V Player
-        </h1>
+        <video
+          id="video"
+          controls
+          playsinline>
+        </video>
 
-        <span data-i18n="subtitle">
-          Universal Network Video Player
-        </span>
+        <iframe
+          id="youtubeFrame"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
 
+      </div>
+
+      <div class="controls">
+
+        <button
+          class="control-btn"
+          onclick="fullscreenVideo()"
+          data-i18n="fullscreen">
+          ⛶ Fullscreen
+        </button>
+
+        <button
+          class="control-btn"
+          onclick="downloadVideo()"
+          id="downloadBtn"
+          disabled
+          data-i18n="download">
+          ⬇️ Download
+        </button>
+
+        <button
+          class="control-btn"
+          onclick="clearVideo()"
+          data-i18n="clear">
+          ✕ Clear
+        </button>
+
+        <button
+          class="control-btn"
+          onclick="newUrl()"
+          data-i18n="newUrl">
+          ＋ New URL
+        </button>
+
+      </div>
+
+      <div class="status" id="status">
+        <span data-i18n="ready">Ready.</span>
       </div>
 
     </div>
 
+  </section>
 
-    <div class="header-right">
+  <section id="history" class="content-section">
 
-      <nav>
+    <h2 class="section-title" data-i18n="historyTitle">
+      History
+    </h2>
 
-        <button
-          onclick="scrollToSection('home')"
-          data-i18n="home">
-          Home
-        </button>
+    <div id="historyList" class="history-list"></div>
 
-        <button
-          onclick="scrollToSection('history')"
-          data-i18n="history">
-          History
-        </button>
+  </section>
 
-        <button
-          onclick="scrollToSection('support')"
-          data-i18n="support">
-          Support
-        </button>
+  <section id="support" class="content-section">
 
-      </nav>
+    <h2 class="section-title" data-i18n="supportTitle">
+      Support
+    </h2>
 
+    <div class="support-card">
 
-      <button
-        class="language-btn"
-        onclick="toggleLanguage()"
-        id="languageBtn">
+      <p data-i18n="supportText">
+        Need help with Mr V Player? Contact us on Telegram.
+      </p>
 
-        🇮🇷 فارسی
-
-      </button>
+      <a
+        class="telegram-btn"
+        href="https://t.me/Adrian_Vahdani"
+        target="_blank"
+        rel="noopener">
+        ✈ Telegram
+      </a>
 
     </div>
 
-  </header>
+  </section>
 
+</main>
 
-  <!-- =========================
-       MAIN
-  ========================= -->
+<footer>
+  © 2026 Mr V Player
+</footer>
 
-  <main>
+<script>
 
+  /* =========================
+     TRANSLATIONS
+  ========================= */
 
-    <!-- HOME -->
+  const translations = {
 
-    <section id="home">
+    en: {
+      subtitle: "Universal Network Video Player",
+      home: "Home",
+      history: "History",
+      support: "Support",
 
-      <div class="hero">
+      heroTitle: "Play Your Stream",
+      heroText: "Enter a video URL or YouTube link and start watching.",
 
-        <h2 data-i18n="heroTitle">
-          Play Your Stream
-        </h2>
+      urlPlaceholder: "Enter video URL or YouTube link...",
+      play: "▶ PLAY",
 
-        <p data-i18n="heroText">
-          Enter a direct video URL and start watching.
-        </p>
+      fullscreen: "⛶ Fullscreen",
+      download: "⬇️ Download",
+      clear: "✕ Clear",
+      newUrl: "＋ New URL",
 
-      </div>
+      ready: "Ready.",
+      loading: "Loading...",
+      playing: "Playing",
+      error: "Unable to play this video.",
+      youtube: "YouTube video loaded.",
+      downloadUnavailable: "Download is available only for direct video files.",
 
+      historyTitle: "History",
+      noHistory: "No videos in history yet.",
 
-      <div class="player-card">
+      supportTitle: "Support",
+      supportText: "Need help with Mr V Player? Contact us on Telegram."
+    },
 
+    fa: {
+      subtitle: "پخش‌کننده ویدیوی شبکه‌ای",
+      home: "خانه",
+      history: "تاریخچه",
+      support: "پشتیبانی",
 
-        <!-- URL -->
+      heroTitle: "ویدیای خود را پخش کنید",
+      heroText: "آدرس ویدیو یا لینک یوتیوب را وارد کنید و شروع به تماشا کنید.",
 
-        <div class="url-row">
+      urlPlaceholder: "آدرس ویدیو یا لینک یوتیوب را وارد کنید...",
+      play: "▶ پخش",
 
-          <input
-            id="urlInput"
-            class="url-input"
-            type="url"
-            placeholder="Enter video URL..."
-            data-placeholder="urlPlaceholder"
-          >
+      fullscreen: "⛶ تمام صفحه",
+      download: "⬇️ دانلود",
+      clear: "✕ پاک کردن",
+      newUrl: "＋ آدرس جدید",
 
+      ready: "آماده.",
+      loading: "در حال بارگذاری...",
+      playing: "در حال پخش",
+      error: "امکان پخش این ویدیو وجود ندارد.",
+      youtube: "ویدیوی یوتیوب بارگذاری شد.",
+      downloadUnavailable: "دانلود فقط برای فایل‌های مستقیم ویدیویی فعال است.",
 
-          <button
-            class="play-btn"
-            onclick="playVideo()"
-            data-i18n="play">
+      historyTitle: "تاریخچه",
+      noHistory: "هنوز ویدیویی در تاریخچه وجود ندارد.",
 
-            ▶ PLAY
+      supportTitle: "پشتیبانی",
+      supportText: "برای دریافت کمک درباره Mr V Player از طریق تلگرام با ما در ارتباط باشید."
+    }
 
-          </button>
+  };
 
-        </div>
 
+  /* =========================
+     LANGUAGE
+  ========================= */
 
-        <!-- VIDEO -->
+  let currentLanguage =
+    localStorage.getItem("mrVLanguage");
 
-        <div class="video-container">
+  if (!currentLanguage) {
 
-          <video
-            id="video"
-            controls
-            playsinline>
-          </video>
+    const browserLanguage =
+      navigator.language ||
+      navigator.userLanguage ||
+      "";
 
-        </div>
+    currentLanguage =
+      browserLanguage
+        .toLowerCase()
+        .startsWith("fa")
+        ? "fa"
+        : "en";
+  }
 
 
-        <!-- CONTROLS -->
+  function setLanguage(lang) {
 
-        <div class="controls">
+    currentLanguage = lang;
 
+    localStorage.setItem(
+      "mrVLanguage",
+      lang
+    );
 
-          <button
-            class="control-btn"
-            onclick="fullscreenVideo()"
-            data-i18n="fullscreen">
+    document.documentElement.lang = lang;
 
-            ⛶ Fullscreen
+    if (lang === "fa") {
 
-          </button>
+      document.documentElement.dir = "rtl";
 
+      document.body.classList.add("rtl");
 
-          <button
-            class="control-btn"
-            onclick="downloadVideo()"
-            id="downloadBtn"
-            disabled
-            data-i18n="download">
+    } else {
 
-            ⬇️ Download
+      document.documentElement.dir = "ltr";
 
-          </button>
-
-
-          <button
-            class="control-btn"
-            onclick="clearVideo()"
-            data-i18n="clear">
-
-            ✕ Clear
-
-          </button>
-
-
-          <button
-            class="control-btn"
-            onclick="newUrl()"
-            data-i18n="newUrl">
-
-            ＋ New URL
-
-          </button>
-
-
-        </div>
-
-
-        <!-- STATUS -->
-
-        <div
-          class="status"
-          id="status">
-
-          Ready.
-
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-    <!-- HISTORY -->
-
-    <section
-      id="history"
-      class="content-section">
-
-      <h2
-        class="section-title"
-        data-i18n="historyTitle">
-
-        History
-
-      </h2>
-
-
-      <div
-        id="historyList"
-        class="history-list">
-      </div>
-
-    </section>
-
-
-    <!-- SUPPORT -->
-
-    <section
-      id="support"
-      class="content-section">
-
-      <h2
-        class="section-title"
-        data-i18n="supportTitle">
-
-        Support
-
-      </h2>
-
-
-      <div class="support-card">
-
-        <p data-i18n="supportText">
-
-          Need help with Mr V Player?
-          Contact us on Telegram.
-
-        </p>
-
-
-        <a
-          class="telegram-btn"
-          href="https://t.me/Adrian_Vahdani"
-          target="_blank"
-          rel="noopener">
-
-          ✈ Telegram
-
-        </a>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- FOOTER -->
-
-  <footer>
-
-    © 2026 Mr V Player
-
-  </footer>
-
-
-  <script>
-
-    /* =========================
-       TRANSLATIONS
-    ========================= */
-
-    const translations = {
-
-      en: {
-
-        subtitle:
-          "Universal Network Video Player",
-
-        home:
-          "Home",
-
-        history:
-          "History",
-
-        support:
-          "Support",
-
-        heroTitle:
-          "Play Your Stream",
-
-        heroText:
-          "Enter a direct video URL and start watching.",
-
-        urlPlaceholder:
-          "Enter video URL...",
-
-        play:
-          "▶ PLAY",
-
-        fullscreen:
-          "⛶ Fullscreen",
-
-        download:
-          "⬇️ Download",
-
-        clear:
-          "✕ Clear",
-
-        newUrl:
-          "＋ New URL",
-
-        ready:
-          "Ready.",
-
-        loading:
-          "Loading...",
-
-        playing:
-          "Playing",
-
-        error:
-          "Unable to play this video.",
-
-        downloadReady:
-          "Download is available.",
-
-        downloadUnavailable:
-          "Download is not available for this video.",
-
-        noUrl:
-          "Please enter a video URL.",
-
-        historyTitle:
-          "History",
-
-        noHistory:
-          "No videos in history yet.",
-
-        supportTitle:
-          "Support",
-
-        supportText:
-          "Need help with Mr V Player? Contact us on Telegram."
-
-      },
-
-
-      fa: {
-
-        subtitle:
-          "پخش‌کننده ویدیوی شبکه‌ای",
-
-        home:
-          "خانه",
-
-        history:
-          "تاریخچه",
-
-        support:
-          "پشتیبانی",
-
-        heroTitle:
-          "ویدیوی خود را پخش کنید",
-
-        heroText:
-          "آدرس مستقیم ویدیو را وارد کنید و شروع به تماشا کنید.",
-
-        urlPlaceholder:
-          "آدرس ویدیو را وارد کنید...",
-
-        play:
-          "▶ پخش",
-
-        fullscreen:
-          "⛶ تمام صفحه",
-
-        download:
-          "⬇️ دانلود",
-
-        clear:
-          "✕ پاک کردن",
-
-        newUrl:
-          "＋ آدرس جدید",
-
-        ready:
-          "آماده.",
-
-        loading:
-          "در حال بارگذاری...",
-
-        playing:
-          "در حال پخش",
-
-        error:
-          "امکان پخش این ویدیو وجود ندارد.",
-
-        downloadReady:
-          "دانلود این ویدیو امکان‌پذیر است.",
-
-        downloadUnavailable:
-          "دانلود این ویدیو در دسترس نیست.",
-
-        noUrl:
-          "لطفاً آدرس ویدیو را وارد کنید.",
-
-        historyTitle:
-          "تاریخچه",
-
-        noHistory:
-          "هنوز ویدیویی در تاریخچه وجود ندارد.",
-
-        supportTitle:
-          "پشتیبانی",
-
-        supportText:
-          "برای دریافت کمک درباره Mr V Player از طریق تلگرام با ما در ارتباط باشید."
-
-      }
-
-    };
-
-
-    /* =========================
-       LANGUAGE
-    ========================= */
-
-    let currentLanguage =
-      localStorage.getItem("mrVLanguage");
-
-
-    if (!currentLanguage) {
-
-      const browserLanguage =
-        navigator.language ||
-        navigator.userLanguage ||
-        "";
-
-      currentLanguage =
-        browserLanguage
-          .toLowerCase()
-          .startsWith("fa")
-          ? "fa"
-          : "en";
+      document.body.classList.remove("rtl");
 
     }
 
 
-    function setLanguage(lang) {
+    document
+      .querySelectorAll("[data-i18n]")
+      .forEach(element => {
 
-      currentLanguage = lang;
+        const key =
+          element.getAttribute("data-i18n");
 
-      localStorage.setItem(
-        "mrVLanguage",
-        lang
-      );
+        if (translations[lang][key]) {
 
+          element.textContent =
+            translations[lang][key];
 
-      document.documentElement.lang =
-        lang;
+        }
 
-
-      if (lang === "fa") {
-
-        document.documentElement.dir =
-          "rtl";
-
-        document.body.classList.add(
-          "rtl"
-        );
-
-      } else {
-
-        document.documentElement.dir =
-          "ltr";
-
-        document.body.classList.remove(
-          "rtl"
-        );
-
-      }
+      });
 
 
-      document
-        .querySelectorAll("[data-i18n]")
-        .forEach(element => {
+    document
+      .querySelectorAll("[data-placeholder]")
+      .forEach(element => {
 
-          const key =
-            element.getAttribute(
-              "data-i18n"
-            );
+        const key =
+          element.getAttribute("data-placeholder");
 
-          if (
-            translations[lang][key]
-          ) {
+        if (translations[lang][key]) {
 
-            element.textContent =
-              translations[lang][key];
+          element.placeholder =
+            translations[lang][key];
 
-          }
+        }
 
-        });
+      });
 
 
-      document
-        .querySelectorAll("[data-placeholder]")
-        .forEach(element => {
-
-          const key =
-            element.getAttribute(
-              "data-placeholder"
-            );
-
-          if (
-            translations[lang][key]
-          ) {
-
-            element.placeholder =
-              translations[lang][key];
-
-          }
-
-        });
+    document.getElementById(
+      "languageBtn"
+    ).textContent =
+      lang === "fa"
+        ? "🇬🇧 English"
+        : "🇮🇷 فارسی";
 
 
-      document.getElementById(
-        "languageBtn"
-      ).textContent =
-        lang === "fa"
-          ? "🇬🇧 English"
-          : "🇮🇷 فارسی";
+    updateStatus("ready");
+
+    renderHistory();
+
+  }
 
 
-      renderHistory();
+  function toggleLanguage() {
 
-    }
+    setLanguage(
+      currentLanguage === "fa"
+        ? "en"
+        : "fa"
+    );
 
-
-    function toggleLanguage() {
-
-      if (
-        currentLanguage === "fa"
-      ) {
-
-        setLanguage("en");
-
-      } else {
-
-        setLanguage("fa");
-
-      }
-
-    }
+  }
 
 
-    /* =========================
-       PLAYER
-    ========================= */
+  /* =========================
+     PLAYER
+  ========================= */
 
-    const video =
-      document.getElementById("video");
+  const video =
+    document.getElementById("video");
 
-    const urlInput =
-      document.getElementById("urlInput");
+  const youtubeFrame =
+    document.getElementById("youtubeFrame");
 
-    const statusBox =
-      document.getElementById("status");
+  const urlInput =
+    document.getElementById("urlInput");
 
-    const downloadBtn =
-      document.getElementById("downloadBtn");
+  const statusBox =
+    document.getElementById("status");
 
-
-    let hls = null;
-
-    let currentDownloadUrl = "";
+  const downloadBtn =
+    document.getElementById("downloadBtn");
 
 
-    function updateStatus(messageKey) {
-
-      if (
-        translations[currentLanguage][
-          messageKey
-        ]
-      ) {
-
-        statusBox.textContent =
-          translations[currentLanguage][
-            messageKey
-          ];
-
-      } else {
-
-        statusBox.textContent =
-          messageKey;
-
-      }
-
-    }
+  let hls = null;
+  let currentDownloadUrl = "";
 
 
-    /* =========================
-       DOWNLOAD FORMAT CHECK
-    ========================= */
+  function updateStatus(key) {
 
-    function isDirectDownloadFormat(url) {
+    statusBox.textContent =
+      translations[currentLanguage][key] || key;
 
-      const cleanUrl =
-        url
-          .split("?")[0]
-          .split("#")[0]
-          .toLowerCase();
+  }
 
+
+  /* =========================
+     YOUTUBE DETECTION
+  ========================= */
+
+  function isYouTube(url) {
+
+    try {
+
+      const parsed =
+        new URL(url);
+
+      const host =
+        parsed.hostname.toLowerCase();
 
       return (
-
-        cleanUrl.endsWith(".mp4") ||
-
-        cleanUrl.endsWith(".webm") ||
-
-        cleanUrl.endsWith(".mov") ||
-
-        cleanUrl.endsWith(".m4v")
-
+        host === "youtube.com" ||
+        host === "www.youtube.com" ||
+        host === "m.youtube.com" ||
+        host === "youtu.be" ||
+        host === "www.youtube-nocookie.com"
       );
 
-    }
+    } catch {
 
-
-    function updateDownloadButton(url) {
-
-      if (
-        isDirectDownloadFormat(url)
-      ) {
-
-        downloadBtn.disabled =
-          false;
-
-        currentDownloadUrl =
-          url;
-
-      } else {
-
-        downloadBtn.disabled =
-          true;
-
-        currentDownloadUrl =
-          "";
-
-      }
+      return false;
 
     }
 
-
-    /* =========================
-       PLAY VIDEO
-    ========================= */
-
-    function playVideo() {
-
-      const url =
-        urlInput.value.trim();
+  }
 
 
-      if (!url) {
+  function getYouTubeId(url) {
 
-        updateStatus("noUrl");
+    try {
 
-        updateDownloadButton("");
+      const parsed =
+        new URL(url);
 
-        return;
+      const host =
+        parsed.hostname.toLowerCase();
 
-      }
-
-
-      updateStatus("loading");
-
-
-      updateDownloadButton(url);
-
-
-      if (hls) {
-
-        hls.destroy();
-
-        hls = null;
-
-      }
-
-
-      video.pause();
-
-      video.removeAttribute("src");
-
-      video.load();
-
-
-      const isHLS =
-        url
-          .toLowerCase()
-          .split("?")[0]
-          .endsWith(".m3u8");
-
-
-      /* =========================
-         HLS
-      ========================= */
 
       if (
-        isHLS &&
-        window.Hls &&
-        Hls.isSupported()
+        host === "youtu.be" ||
+        host === "www.youtu.be"
       ) {
 
-        hls =
-          new Hls();
+        return parsed.pathname
+          .replace("/", "")
+          .split("/")[0];
+
+      }
 
 
-        hls.loadSource(url);
+      if (
+        host.includes("youtube.com")
+      ) {
 
-        hls.attachMedia(video);
+        if (
+          parsed.pathname === "/watch"
+        ) {
+
+          return parsed.searchParams.get("v");
+
+        }
 
 
-        hls.on(
-          Hls.Events.MANIFEST_PARSED,
-          function () {
+        if (
+          parsed.pathname.startsWith("/shorts/")
+        ) {
 
-            video
-              .play()
-              .then(() => {
+          return parsed.pathname
+            .split("/")[2];
 
-                updateStatus(
-                  "playing"
-                );
+        }
 
-              })
-              .catch(() => {
 
-                updateStatus(
-                  "ready"
-                );
+        if (
+          parsed.pathname.startsWith("/embed/")
+        ) {
 
-              });
+          return parsed.pathname
+            .split("/")[2];
+
+        }
+
+
+        if (
+          parsed.pathname.startsWith("/live/")
+        ) {
+
+          return parsed.pathname
+            .split("/")[2];
+
+        }
+
+      }
+
+    } catch {
+
+      return null;
+
+    }
+
+    return null;
+
+  }
+
+
+  /* =========================
+     DIRECT DOWNLOAD
+  ========================= */
+
+  function isDirectDownloadFormat(url) {
+
+    const cleanUrl =
+      url
+        .split("?")[0]
+        .split("#")[0]
+        .toLowerCase();
+
+
+    return (
+      cleanUrl.endsWith(".mp4") ||
+      cleanUrl.endsWith(".webm") ||
+      cleanUrl.endsWith(".mov") ||
+      cleanUrl.endsWith(".m4v")
+    );
+
+  }
+
+
+  /* =========================
+     YOUTUBE PLAYER
+  ========================= */
+
+  function playYouTube(url) {
+
+    const videoId =
+      getYouTubeId(url);
+
+
+    if (!videoId) {
+
+      updateStatus("error");
+
+      return false;
+
+    }
+
+
+    if (hls) {
+
+      hls.destroy();
+      hls = null;
+
+    }
+
+
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+
+
+    video.style.display = "none";
+
+    youtubeFrame.style.display =
+      "block";
+
+
+    youtubeFrame.src =
+      "https://www.youtube.com/embed/" +
+      encodeURIComponent(videoId) +
+      "?autoplay=1&rel=0";
+
+
+    currentDownloadUrl = "";
+
+    downloadBtn.disabled = true;
+
+
+    updateStatus("youtube");
+
+    return true;
+
+  }
+
+
+  /* =========================
+     PLAY VIDEO
+  ========================= */
+
+  function playVideo() {
+
+    const url =
+      urlInput.value.trim();
+
+
+    if (!url) {
+
+      statusBox.textContent =
+        currentLanguage === "fa"
+          ? "لطفاً آدرس ویدیو را وارد کنید."
+          : "Please enter a video URL.";
+
+      return;
+
+    }
+
+
+    updateStatus("loading");
+
+
+    /* YouTube */
+
+    if (isYouTube(url)) {
+
+      if (playYouTube(url)) {
+
+        saveHistory(url);
+
+      }
+
+      return;
+
+    }
+
+
+    /* Reset YouTube */
+
+    youtubeFrame.src = "";
+    youtubeFrame.style.display =
+      "none";
+
+    video.style.display =
+      "block";
+
+
+    /* Destroy previous HLS */
+
+    if (hls) {
+
+      hls.destroy();
+      hls = null;
+
+    }
+
+
+    video.pause();
+
+    video.removeAttribute("src");
+
+    video.load();
+
+
+    currentDownloadUrl = "";
+
+
+    /* HLS */
+
+    const isHLS =
+      url
+        .toLowerCase()
+        .includes(".m3u8");
+
+
+    if (
+      isHLS &&
+      window.Hls &&
+      Hls.isSupported()
+    ) {
+
+      hls = new Hls();
+
+      hls.loadSource(url);
+
+      hls.attachMedia(video);
+
+
+      hls.on(
+        Hls.Events.MANIFEST_PARSED,
+        function () {
+
+          video.play()
+            .then(() => {
+              updateStatus("playing");
+            })
+            .catch(() => {
+              updateStatus("ready");
+            });
+
+        }
+      );
+
+
+      hls.on(
+        Hls.Events.ERROR,
+        function (event, data) {
+
+          if (data.fatal) {
+
+            updateStatus("error");
 
           }
-        );
-
-
-        hls.on(
-          Hls.Events.ERROR,
-          function (
-            event,
-            data
-          ) {
-
-            if (data.fatal) {
-
-              updateStatus(
-                "error"
-              );
-
-              updateDownloadButton(
-                ""
-              );
-
-            }
-
-          }
-        );
-
-      }
-
-
-      /* =========================
-         NATIVE VIDEO / MP4
-      ========================= */
-
-      else {
-
-        video.src =
-          url;
-
-
-        video
-          .play()
-          .then(() => {
-
-            updateStatus(
-              "playing"
-            );
-
-          })
-          .catch(() => {
-
-            updateStatus(
-              "error"
-            );
-
-          });
-
-      }
-
-
-      saveHistory(url);
-
-
-      if (
-        isDirectDownloadFormat(url)
-      ) {
-
-        updateStatus(
-          "downloadReady"
-        );
-
-      }
-
-    }
-
-
-    /* =========================
-       DOWNLOAD
-    ========================= */
-
-    function downloadVideo() {
-
-      if (!currentDownloadUrl) {
-
-        updateStatus(
-          "downloadUnavailable"
-        );
-
-        return;
-
-      }
-
-
-      const link =
-        document.createElement("a");
-
-
-      link.href =
-        currentDownloadUrl;
-
-
-      link.download =
-        "Mr-V-Player-Video";
-
-
-      link.target =
-        "_blank";
-
-
-      link.rel =
-        "noopener";
-
-
-      document.body.appendChild(
-        link
-      );
-
-
-      link.click();
-
-
-      document.body.removeChild(
-        link
-      );
-
-    }
-
-
-    /* =========================
-       CLEAR
-    ========================= */
-
-    function clearVideo() {
-
-      if (hls) {
-
-        hls.destroy();
-
-        hls = null;
-
-      }
-
-
-      video.pause();
-
-      video.removeAttribute("src");
-
-      video.load();
-
-
-      updateDownloadButton("");
-
-      updateStatus("ready");
-
-    }
-
-
-    /* =========================
-       NEW URL
-    ========================= */
-
-    function newUrl() {
-
-      clearVideo();
-
-      urlInput.value = "";
-
-      urlInput.focus();
-
-    }
-
-
-    /* =========================
-       FULLSCREEN
-    ========================= */
-
-    function fullscreenVideo() {
-
-      if (
-        video.requestFullscreen
-      ) {
-
-        video.requestFullscreen();
-
-      }
-
-      else if (
-        video.webkitEnterFullscreen
-      ) {
-
-        video.webkitEnterFullscreen();
-
-      }
-
-    }
-
-
-    /* =========================
-       HISTORY
-    ========================= */
-
-    function getHistory() {
-
-      try {
-
-        return JSON.parse(
-          localStorage.getItem(
-            "mrVHistory"
-          ) || "[]"
-        );
-
-      } catch {
-
-        return [];
-
-      }
-
-    }
-
-
-    function saveHistory(url) {
-
-      let history =
-        getHistory();
-
-
-      history =
-        history.filter(
-          item =>
-            item !== url
-        );
-
-
-      history.unshift(url);
-
-
-      history =
-        history.slice(0, 8);
-
-
-      localStorage.setItem(
-        "mrVHistory",
-        JSON.stringify(history)
-      );
-
-
-      renderHistory();
-
-    }
-
-
-    function renderHistory() {
-
-      const list =
-        document.getElementById(
-          "historyList"
-        );
-
-
-      const history =
-        getHistory();
-
-
-      list.innerHTML = "";
-
-
-      if (!history.length) {
-
-        const empty =
-          document.createElement(
-            "div"
-          );
-
-
-        empty.className =
-          "empty";
-
-
-        empty.textContent =
-          translations[
-            currentLanguage
-          ].noHistory;
-
-
-        list.appendChild(
-          empty
-        );
-
-
-        return;
-
-      }
-
-
-      history.forEach(
-        url => {
-
-          const item =
-            document.createElement(
-              "div"
-            );
-
-
-          item.className =
-            "history-item";
-
-
-          item.textContent =
-            url;
-
-
-          item.onclick =
-            function () {
-
-              urlInput.value =
-                url;
-
-
-              scrollToSection(
-                "home"
-              );
-
-
-              playVideo();
-
-            };
-
-
-          list.appendChild(
-            item
-          );
 
         }
       );
 
     }
 
+    else {
 
-    /* =========================
-       NAVIGATION
-    ========================= */
+      video.src = url;
 
-    function scrollToSection(id) {
 
-      document
-        .getElementById(id)
-        .scrollIntoView({
-          behavior: "smooth"
+      video.play()
+        .then(() => {
+
+          updateStatus("playing");
+
+        })
+        .catch(() => {
+
+          updateStatus("error");
+
         });
 
     }
 
 
-    /* =========================
-       START
-    ========================= */
+    /* Download */
 
-    setLanguage(
-      currentLanguage
+    if (
+      isDirectDownloadFormat(url)
+    ) {
+
+      currentDownloadUrl = url;
+
+      downloadBtn.disabled = false;
+
+    } else {
+
+      currentDownloadUrl = "";
+
+      downloadBtn.disabled = true;
+
+    }
+
+
+    saveHistory(url);
+
+  }
+
+
+  /* =========================
+     DOWNLOAD
+  ========================= */
+
+  function downloadVideo() {
+
+    if (!currentDownloadUrl) {
+
+      updateStatus(
+        "downloadUnavailable"
+      );
+
+      return;
+
+    }
+
+
+    const link =
+      document.createElement("a");
+
+    link.href =
+      currentDownloadUrl;
+
+    link.download =
+      "Mr-V-Player-Video";
+
+    link.target =
+      "_blank";
+
+    link.rel =
+      "noopener";
+
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+  }
+
+
+  /* =========================
+     CLEAR
+  ========================= */
+
+  function clearVideo() {
+
+    if (hls) {
+
+      hls.destroy();
+      hls = null;
+
+    }
+
+
+    video.pause();
+
+    video.removeAttribute("src");
+
+    video.load();
+
+
+    youtubeFrame.src = "";
+
+    youtubeFrame.style.display =
+      "none";
+
+    video.style.display =
+      "block";
+
+
+    currentDownloadUrl = "";
+
+    downloadBtn.disabled = true;
+
+
+    updateStatus("ready");
+
+  }
+
+
+  /* =========================
+     NEW URL
+  ========================= */
+
+  function newUrl() {
+
+    clearVideo();
+
+    urlInput.value = "";
+
+    urlInput.focus();
+
+  }
+
+
+  /* =========================
+     FULLSCREEN
+  ========================= */
+
+  function fullscreenVideo() {
+
+    const activePlayer =
+      youtubeFrame.style.display !== "none"
+        ? youtubeFrame
+        : video;
+
+
+    if (activePlayer.requestFullscreen) {
+
+      activePlayer.requestFullscreen();
+
+    }
+
+    else if (
+      activePlayer.webkitEnterFullscreen
+    ) {
+
+      activePlayer.webkitEnterFullscreen();
+
+    }
+
+  }
+
+
+  /* =========================
+     HISTORY
+  ========================= */
+
+  function getHistory() {
+
+    try {
+
+      return JSON.parse(
+        localStorage.getItem(
+          "mrVHistory"
+        ) || "[]"
+      );
+
+    } catch {
+
+      return [];
+
+    }
+
+  }
+
+
+  function saveHistory(url) {
+
+    let history =
+      getHistory();
+
+
+    history =
+      history.filter(
+        item => item !== url
+      );
+
+
+    history.unshift(url);
+
+
+    history =
+      history.slice(0, 8);
+
+
+    localStorage.setItem(
+      "mrVHistory",
+      JSON.stringify(history)
     );
 
-  </script>
+
+    renderHistory();
+
+  }
+
+
+  function renderHistory() {
+
+    const list =
+      document.getElementById(
+        "historyList"
+      );
+
+
+    const history =
+      getHistory();
+
+
+    list.innerHTML = "";
+
+
+    if (!history.length) {
+
+      const empty =
+        document.createElement("div");
+
+
+      empty.className =
+        "empty";
+
+
+      empty.textContent =
+        translations[
+          currentLanguage
+        ].noHistory;
+
+
+      list.appendChild(empty);
+
+      return;
+
+    }
+
+
+    history.forEach(url => {
+
+      const item =
+        document.createElement("div");
+
+
+      item.className =
+        "history-item";
+
+
+      item.textContent =
+        url;
+
+
+      item.onclick =
+        function () {
+
+          urlInput.value =
+            url;
+
+          scrollToSection(
+            "home"
+          );
+
+          playVideo();
+
+        };
+
+
+      list.appendChild(item);
+
+    });
+
+  }
+
+
+  /* =========================
+     NAVIGATION
+  ========================= */
+
+  function scrollToSection(id) {
+
+    document
+      .getElementById(id)
+      .scrollIntoView({
+        behavior: "smooth"
+      });
+
+  }
+
+
+  /* =========================
+     ENTER KEY
+  ========================= */
+
+  urlInput.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+
+        playVideo();
+
+      }
+
+    }
+  );
+
+
+  /* =========================
+     START
+  ========================= */
+
+  setLanguage(
+    currentLanguage
+  );
+
+</script>
 
 </body>
-
 </html>
