@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Player</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 25px;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.description {
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+.input-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input {
+    flex: 1;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    font-size: 16px;
+    direction: ltr;
+}
+
+button {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 8px;
+    background: #ff8800;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+video {
+    width: 100%;
+    background: black;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.status {
+    margin-top: 15px;
+    color: #aaa;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📺 Network Player</h1>
+
+<div class="description">
+لینک مستقیم ویدئو یا استریم را وارد کنید
+</div>
+
+<div class="input-box">
+
+<input
+    id="videoURL"
+    type="url"
+    placeholder="https://example.com/video.mp4"
+>
+
+<button onclick="playVideo()">
+    ▶ پخش
+</button>
+
+</div>
+
+<video
+    id="player"
+    controls
+    playsinline
+>
+</video>
+
+<div id="status" class="status">
+    آماده پخش
+</div>
+
+</div>
+
+<script>
+
+function playVideo() {
+
+    const url = document
+        .getElementById("videoURL")
+        .value
+        .trim();
+
+    const video = document
+        .getElementById("player");
+
+    const status = document
+        .getElementById("status");
+
+    if (!url.startsWith("http://") &&
+        !url.startsWith("https://")) {
+
+        status.innerText =
+            "❌ لطفاً یک لینک HTTP یا HTTPS وارد کنید.";
+
+        return;
+    }
+
+    status.innerText =
+        "⏳ در حال بارگذاری...";
+
+    video.src = url;
+
+    video.load();
+
+    video.play().then(() => {
+
+        status.innerText =
+            "▶ در حال پخش";
+
+    }).catch(() => {
+
+        status.innerText =
+            "⚠️ برای شروع پخش، دکمه Play را بزنید.";
+
+    });
+}
+
+</script>
+
+</body>
+</html>
