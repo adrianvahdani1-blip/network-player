@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Mr V Player</title>
 
-  <!-- HLS.js -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-  <!-- MOVI Player -->
-  <script
-    type="module"
-    src="https://cdn.jsdelivr.net/npm/movi-player/dist/element.js">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/movi-player/dist/element.js"></script>
+  <!-- FFmpeg.wasm loader: single-threaded core, chosen for GitHub Pages compatibility -->
+  <script>
+    window.MRV_FFMPEG = {
+      mainURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.js",
+      workerURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/814.ffmpeg.js",
+      coreBaseURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd"
+    };
   </script>
 
   <style>
@@ -33,10 +34,6 @@
       --border: #292929;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -45,18 +42,9 @@
     }
 
     button,
-    input,
-    select {
+    input {
       font: inherit;
     }
-
-    button {
-      user-select: none;
-    }
-
-    /* =========================
-       HEADER
-    ========================= */
 
     header {
       width: 100%;
@@ -64,52 +52,34 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
-
       border-bottom: 1px solid var(--border);
       background: rgba(8, 8, 8, .95);
-
       position: sticky;
       top: 0;
       z-index: 100;
-
-      backdrop-filter: blur(10px);
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      min-width: 0;
     }
 
     .logo {
       width: 44px;
       height: 44px;
-
-      flex-shrink: 0;
-
       border-radius: 12px;
       background: var(--red);
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       font-size: 25px;
       font-weight: bold;
-
-      box-shadow:
-        0 0 25px rgba(229, 9, 20, .25);
-    }
-
-    .brand-text {
-      min-width: 0;
+      box-shadow: 0 0 25px rgba(229, 9, 20, .25);
     }
 
     .brand-text h1 {
       font-size: 21px;
-      white-space: nowrap;
     }
 
     .brand-text span {
@@ -133,10 +103,8 @@
       background: transparent;
       border: 1px solid transparent;
       color: #ccc;
-
       padding: 9px 13px;
       border-radius: 9px;
-
       cursor: pointer;
       transition: .2s;
     }
@@ -153,10 +121,6 @@
       font-weight: bold;
     }
 
-    /* =========================
-       MAIN
-    ========================= */
-
     main {
       width: min(1050px, 92%);
       margin: auto;
@@ -166,10 +130,6 @@
     section {
       scroll-margin-top: 100px;
     }
-
-    /* =========================
-       HERO
-    ========================= */
 
     .hero {
       text-align: center;
@@ -187,7 +147,7 @@
     }
 
     /* =========================
-       SOURCE CARDS
+       CONSOLE HOME
     ========================= */
 
     .console-home {
@@ -200,469 +160,545 @@
 
     .video-cards {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
 
     .video-card {
       min-height: 180px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #151515,
-          #0d0d0d
-        );
-
+      background: linear-gradient(145deg, #151515, #0d0d0d);
       border: 2px solid var(--border);
       border-radius: 22px;
-
       padding: 25px;
-
       cursor: pointer;
       transition: .2s;
-
       user-select: none;
     }
 
     .video-card:hover,
     .video-card:focus {
       border-color: var(--red);
-
-      transform: scale(1.025);
-
-      box-shadow:
-        0 0 30px rgba(229, 9, 20, .25);
-
+      transform: scale(1.04);
+      box-shadow: 0 0 30px rgba(229, 9, 20, .25);
       outline: none;
     }
 
-    .video-card:focus-visible {
-      outline: 2px solid var(--red);
-      outline-offset: 3px;
-    }
-
     .card-icon {
-      font-size: 42px;
-      margin-bottom: 15px;
+      font-size: 45px;
     }
 
     .video-card h3 {
-      font-size: 18px;
-      margin-bottom: 7px;
+      margin-top: 18px;
+      font-size: 24px;
     }
 
     .video-card p {
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .section-title {
-      font-size: 23px;
-      font-weight: bold;
-    }
-
-    /* =========================
-       URL INPUT
-    ========================= */
-
-    .url-box {
-      display: flex;
-      gap: 10px;
-      margin-top: 22px;
-    }
-
-    .url-box input {
-      flex: 1;
-      min-width: 0;
-
-      background: #0d0d0d;
-      color: white;
-
-      border: 1px solid var(--border);
-      border-radius: 10px;
-
-      padding: 12px 14px;
-
-      outline: none;
-    }
-
-    .url-box input:focus {
-      border-color: var(--red);
-    }
-
-    /* =========================
-       BUTTONS
-    ========================= */
-
-    .btn {
-      border: 1px solid var(--border);
-
-      background: var(--card);
-      color: white;
-
-      border-radius: 9px;
-      padding: 9px 13px;
-
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .btn:hover {
-      border-color: #555;
-      background: #1a1a1a;
-    }
-
-    .btn.primary {
-      background: var(--red);
-      border-color: var(--red);
-    }
-
-    .btn.primary:hover {
-      background: var(--red2);
-    }
-
-    .btn:disabled {
-      opacity: .45;
-      cursor: not-allowed;
+      margin-top: 8px;
     }
 
     /* =========================
        PLAYER
     ========================= */
 
-    .player-section {
-      display: none;
-      margin-top: 35px;
-    }
-
-    .player-section.active {
-      display: block;
-    }
-
-    .player-wrap {
-      width: 100%;
-
-      background: #000;
-
-      border-radius: 18px;
-      overflow: hidden;
-
+    .player-card {
+      background: var(--card);
       border: 1px solid var(--border);
-
-      box-shadow:
-        0 20px 60px rgba(0, 0, 0, .4);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 25px;
     }
 
-    .player-wrap video,
-    .player-wrap iframe,
-    .player-wrap movi-player {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-
-      display: block;
-
-      background: #000;
-
-      border: 0;
-    }
-
-    .player-info {
+    .url-row {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      gap: 15px;
-
-      padding: 14px 0;
-
-      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .player-title {
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .player-type {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .player-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    /* =========================
-       STATUS
-    ========================= */
-
-    .status-box {
-      margin-top: 12px;
-
-      padding: 10px 13px;
-
-      background: #0e0e0e;
-
+    .url-input {
+      flex: 1;
+      min-width: 0;
+      height: 54px;
+      background: #080808;
       border: 1px solid var(--border);
-      border-radius: 10px;
-
-      color: var(--muted);
-
-      font-size: 12px;
-    }
-
-    /* =========================
-       MKV TRACK PANEL
-    ========================= */
-
-    .mkv-tracks {
-      display: none;
-
-      margin-top: 16px;
-      padding: 16px;
-
-      border: 1px solid var(--border);
-      border-radius: 14px;
-
-      background: #0e0e0e;
-    }
-
-    .mkv-tracks.active {
-      display: block;
-    }
-
-    .mkv-tracks-title {
-      font-weight: 700;
-      margin-bottom: 14px;
-      font-size: 15px;
-    }
-
-    .track-grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-      gap: 12px;
-    }
-
-    .track-box {
-      background: var(--card2);
-
-      border: 1px solid var(--border);
+      color: white;
       border-radius: 12px;
-
-      padding: 12px;
-    }
-
-    .track-box label {
-      display: block;
-
-      color: var(--muted);
-
-      font-size: 12px;
-
-      margin-bottom: 7px;
-    }
-
-    .track-box select {
-      width: 100%;
-
-      background: #0a0a0a;
-      color: #fff;
-
-      border: 1px solid var(--border);
-      border-radius: 9px;
-
-      padding: 10px;
-
+      padding: 0 16px;
       outline: none;
     }
 
-    .track-box select:focus {
+    .url-input:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(229, 9, 20, .12);
+    }
+
+    .play-btn {
+      height: 54px;
+      padding: 0 28px;
+      border: none;
+      border-radius: 12px;
+      background: var(--red);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .play-btn:hover {
+      background: var(--red2);
+      transform: translateY(-1px);
+    }
+
+    .mkv-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .mkv-file-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card2);
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .mkv-file-btn:hover {
       border-color: var(--red);
     }
 
-    .track-meta {
-      margin-top: 14px;
-
-      display: grid;
-
-      gap: 8px;
-
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .track-meta-row {
-      padding: 9px 10px;
-
-      background: #111;
-
-      border-radius: 8px;
-
-      line-height: 1.7;
-    }
-
-    .track-meta-row strong {
-      color: #fff;
-    }
-
-    .track-empty {
+    .mkv-hint {
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .mkv-progress {
+      display: none;
+      margin-top: 12px;
+      height: 8px;
+      border-radius: 999px;
+      background: #202020;
+      overflow: hidden;
+    }
+
+    .mkv-progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--red);
+      transition: width .15s linear;
+    }
+
+    .mkv-progress-text {
+      display: none;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    body.tv-mode .mkv-file-btn {
+      min-height: 65px;
+      padding: 0 25px;
+      font-size: 20px;
+    }
+
+    body.tv-mode .mkv-hint {
+      font-size: 16px;
+    }
+
+    .video-container {
+      background: #000;
+      margin-top: 18px;
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid #222;
+      position: relative;
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      max-height: 620px;
+      background: #000;
+    }
+
+    #youtubeFrame {
+      display: none;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      background: #000;
+    }
+
+    .controls {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .control-btn {
+      background: var(--card2);
+      color: white;
+      border: 1px solid var(--border);
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .control-btn:hover {
+      border-color: #555;
+      background: #202020;
+    }
+
+    .control-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 13px 15px;
+      border-radius: 10px;
+      background: #0b0b0b;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
     }
 
     /* =========================
-       HISTORY
+       HISTORY / SUPPORT
     ========================= */
 
-    .history-section {
-      margin-top: 45px;
+    .content-section {
+      margin-top: 70px;
+    }
+
+    .section-title {
+      font-size: 28px;
+      margin-bottom: 18px;
     }
 
     .history-list {
-      margin-top: 18px;
-
       display: grid;
       gap: 10px;
     }
 
     .history-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      gap: 15px;
-
       background: var(--card);
-
       border: 1px solid var(--border);
-      border-radius: 12px;
-
-      padding: 13px 15px;
-
+      padding: 14px;
+      border-radius: 11px;
       cursor: pointer;
+      color: #ddd;
+      word-break: break-all;
       transition: .2s;
     }
 
     .history-item:hover,
     .history-item:focus {
       border-color: var(--red);
-      background: #151515;
       outline: none;
-    }
-
-    .history-main {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .history-name {
-      font-weight: bold;
-
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .history-url {
-      color: var(--muted);
-
-      font-size: 11px;
-
-      margin-top: 4px;
-
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .history-actions {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
     }
 
     .empty {
       color: var(--muted);
-
       padding: 20px 0;
+    }
 
+    .support-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
       text-align: center;
     }
 
-    /* =========================
-       TV MODE
-    ========================= */
-
-    body.tv-mode .video-card {
-      min-height: 210px;
-      padding: 30px;
+    .support-card p {
+      color: var(--muted);
+      margin: 10px 0 22px;
+      line-height: 1.7;
     }
 
-    body.tv-mode .video-card:focus {
-      transform: scale(1.05);
+    .telegram-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      background: #229ed9;
+      color: white;
+      padding: 13px 22px;
+      border-radius: 11px;
+      font-weight: bold;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: #666;
+      padding: 25px;
+      font-size: 13px;
+    }
+
+    body.rtl .url-input {
+      direction: rtl;
+      text-align: right;
+    }
+
+    body.rtl .history-item {
+      direction: ltr;
+      text-align: left;
+    }
+
+    /* =========================
+       NORMAL FOCUS
+    ========================= */
+
+    button:focus,
+    input:focus,
+    a:focus {
+      outline: 2px solid var(--red);
+      outline-offset: 2px;
+    }
+
+    /* =========================
+       TV MODE - CONSOLE STYLE
+    ========================= */
+
+    body.tv-mode {
+      overflow-x: hidden;
+    }
+
+    body.tv-mode header {
+      padding: 25px 6%;
+    }
+
+    body.tv-mode .logo {
+      width: 60px;
+      height: 60px;
+      font-size: 32px;
+    }
+
+    body.tv-mode .brand-text h1 {
+      font-size: 32px;
+    }
+
+    body.tv-mode .brand-text span {
+      font-size: 16px;
+    }
+
+    body.tv-mode main {
+      width: 90%;
+      max-width: 1400px;
+    }
+
+    body.tv-mode .hero h2 {
+      font-size: 70px;
+    }
+
+    body.tv-mode .hero p {
+      font-size: 24px;
+    }
+
+    body.tv-mode .player-card {
+      padding: 35px;
+      border-radius: 30px;
+    }
+
+    body.tv-mode .url-input {
+      height: 75px;
+      font-size: 28px;
+    }
+
+    body.tv-mode .play-btn {
+      height: 75px;
+      font-size: 28px;
+      padding: 0 45px;
+    }
+
+    body.tv-mode video {
+      max-height: 750px;
+    }
+
+    body.tv-mode .control-btn {
+      font-size: 24px;
+      padding: 18px 30px;
+    }
+
+    body.tv-mode .video-card {
+      min-height: 240px;
+      padding: 35px;
+    }
+
+    body.tv-mode .video-card h3 {
+      font-size: 34px;
+    }
+
+    body.tv-mode .video-card p {
+      font-size: 20px;
+    }
+
+    body.tv-mode .card-icon {
+      font-size: 60px;
     }
 
     body.tv-mode button:focus,
     body.tv-mode input:focus,
-    body.tv-mode select:focus {
-      outline: 2px solid var(--red);
-      outline-offset: 3px;
+    body.tv-mode a:focus,
+    body.tv-mode .video-card:focus {
+      outline: 5px solid var(--red);
+      outline-offset: 5px;
+      transform: scale(1.08);
+    }
+
+
+    /* =========================
+       MKV DIAGNOSTICS
+    ========================= */
+    .mkv-diagnostics {
+      margin-top: 16px;
+      background: #0a0a0a;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .mkv-diagnostics-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .mkv-diagnostics-title { font-weight:700; }
+    .diag-run {
+      background: var(--card2);
+      color:#fff;
+      border:1px solid var(--border);
+      border-radius:9px;
+      padding:8px 12px;
+      cursor:pointer;
+    }
+    .diag-grid { display:grid; gap:7px; }
+    .diag-row {
+      display:grid;
+      grid-template-columns:150px 1fr;
+      gap:10px;
+      padding:9px 10px;
+      border-radius:9px;
+      background:#111;
+      border:1px solid #202020;
+      font-size:13px;
+    }
+    .diag-label { color:#aaa; }
+    .diag-value.ok { color:#62e88b; }
+    .diag-value.warn { color:#ffd166; }
+    .diag-value.bad { color:#ff6b6b; }
+    .diag-value.info { color:#7db7ff; }
+    .diag-final {
+      margin-top:10px;
+      padding:11px 12px;
+      border-radius:9px;
+      background:#151515;
+      font-weight:700;
+    }
+    #mkvPlayer {
+      display:none;
+      width:100%;
+      max-height:620px;
+      background:#000;
+      aspect-ratio:16/9;
+    }
+    body.tv-mode #mkvPlayer { max-height:750px; }
+    @media (max-width:700px) {
+      .diag-row { grid-template-columns:1fr; }
     }
 
     /* =========================
-       RESPONSIVE
+       MOBILE
     ========================= */
 
-    @media (max-width: 800px) {
-
+    @media (max-width: 900px) {
       .video-cards {
         grid-template-columns: 1fr;
       }
+    }
 
+    @media (max-width: 700px) {
       header {
-        padding: 14px 4%;
+        padding: 13px 4%;
+      }
+
+      .brand-text span {
+        display: none;
+      }
+
+      .brand-text h1 {
+        font-size: 18px;
+      }
+
+      .logo {
+        width: 38px;
+        height: 38px;
+        font-size: 21px;
       }
 
       nav {
         display: none;
       }
-    }
 
-    @media (max-width: 700px) {
-
-      .track-grid {
-        grid-template-columns: 1fr;
+      main {
+        width: 94%;
+        padding-top: 25px;
       }
-    }
 
-    @media (max-width: 600px) {
+      .hero {
+        padding-top: 20px;
+      }
 
-      .url-box {
+      .url-row {
         flex-direction: column;
       }
 
-      .player-info {
-        align-items: flex-start;
-      }
-
-      .player-actions {
+      .play-btn {
         width: 100%;
       }
 
-      .player-actions .btn {
-        flex: 1;
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
       }
 
-      .history-item {
-        align-items: flex-start;
+      .control-btn {
+        width: 100%;
+      }
+
+      .player-card {
+        padding: 12px;
+        border-radius: 15px;
+      }
+
+      .mkv-row {
+        align-items: stretch;
+      }
+
+      .mkv-file-btn {
+        width: 100%;
+      }
+
+      .mkv-hint {
+        width: 100%;
+      }
+
+      .video-card {
+        min-height: 155px;
       }
     }
   </style>
@@ -670,2590 +706,1617 @@
 
 <body>
 
+<header>
+  <div class="brand">
+    <div class="logo">V</div>
+
+    <div class="brand-text">
+      <h1>Mr V Player</h1>
+      <span data-i18n="subtitle">Universal Network Video Player</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <nav>
+      <button onclick="scrollToSection('home')" data-i18n="home">Home</button>
+      <button onclick="scrollToSection('history')" data-i18n="history">History</button>
+      <button onclick="scrollToSection('support')" data-i18n="support">Support</button>
+    </nav>
+
+    <button
+      class="language-btn"
+      onclick="toggleLanguage()"
+      id="languageBtn">
+      🇮🇷 فارسی
+    </button>
+  </div>
+</header>
+
+<main>
+
   <!-- =========================
-       HEADER
+       CONSOLE HOME SCREEN
   ========================= -->
 
-  <header>
+  <section id="consoleHome" class="console-home">
 
-    <div class="brand">
+    <h2 class="section-title">
+      Mr V Player
+    </h2>
 
-      <div class="logo">V</div>
+    <div class="video-cards">
 
-      <div class="brand-text">
-        <h1>Mr V Player</h1>
-        <span id="brandSubtitle">
-          Network Video Player
-        </span>
-      </div>
+      <div
+        class="video-card"
+        tabindex="0"
+        onclick="goToPlayer()"
+        onkeydown="cardKey(event, 'play')">
 
-    </div>
+        <div class="card-icon">▶</div>
 
-    <div class="header-right">
+        <h3 data-i18n="startWatching">
+          Start Watching
+        </h3>
 
-      <nav>
-
-        <button
-          type="button"
-          onclick="showHome()"
-          id="navHome">
-          Home
-        </button>
-
-        <button
-          type="button"
-          onclick="scrollToHistory()"
-          id="navHistory">
-          History
-        </button>
-
-      </nav>
-
-      <button
-        type="button"
-        class="language-btn"
-        onclick="toggleLanguage()"
-        id="languageBtn">
-        فارسی
-      </button>
-
-    </div>
-
-  </header>
-
-
-  <main>
-
-    <!-- =========================
-         HOME
-    ========================= -->
-
-    <section
-      class="console-home"
-      id="homeSection">
-
-      <div class="hero">
-
-        <h2 id="heroTitle">
-          Mr V Player
-        </h2>
-
-        <p id="heroDescription">
-          Play your network videos directly in your browser
+        <p data-i18n="startWatchingText">
+          Enter your video link
         </p>
 
       </div>
 
 
       <div
-        class="section-title"
-        id="chooseTitle">
+        class="video-card"
+        tabindex="0"
+        onclick="goToHistory()"
+        onkeydown="cardKey(event, 'history')">
 
-        Choose a video source
+        <div class="card-icon">🕘</div>
 
-      </div>
+        <h3 data-i18n="historyCard">
+          History
+        </h3>
 
-
-      <div class="video-cards">
-
-        <!-- VIDEO -->
-
-        <div
-          class="video-card"
-          tabindex="0"
-          onclick="openUrlInput('video')"
-          onkeydown="cardKey(event, 'video')">
-
-          <div class="card-icon">
-            🎬
-          </div>
-
-          <h3 id="videoCardTitle">
-            Video
-          </h3>
-
-          <p id="videoCardDescription">
-            Play MP4, WebM, MOV, M4V and other browser-compatible videos.
-          </p>
-
-        </div>
-
-
-        <!-- MKV -->
-
-        <div
-          class="video-card"
-          tabindex="0"
-          onclick="openUrlInput('mkv')"
-          onkeydown="cardKey(event, 'mkv')">
-
-          <div class="card-icon">
-            🎞️
-          </div>
-
-          <h3 id="mkvCardTitle">
-            MKV
-          </h3>
-
-          <p id="mkvCardDescription">
-            Stream MKV files with multiple audio and subtitle tracks.
-          </p>
-
-        </div>
-
-
-        <!-- HLS -->
-
-        <div
-          class="video-card"
-          tabindex="0"
-          onclick="openUrlInput('hls')"
-          onkeydown="cardKey(event, 'hls')">
-
-          <div class="card-icon">
-            📡
-          </div>
-
-          <h3 id="hlsCardTitle">
-            HLS
-          </h3>
-
-          <p id="hlsCardDescription">
-            Play HTTP Live Streaming URLs.
-          </p>
-
-        </div>
-
-
-        <!-- YOUTUBE -->
-
-        <div
-          class="video-card"
-          tabindex="0"
-          onclick="openUrlInput('youtube')"
-          onkeydown="cardKey(event, 'youtube')">
-
-          <div class="card-icon">
-            ▶️
-          </div>
-
-          <h3 id="youtubeCardTitle">
-            YouTube
-          </h3>
-
-          <p id="youtubeCardDescription">
-            Play YouTube videos using the official embedded player.
-          </p>
-
-        </div>
+        <p data-i18n="historyCardText">
+          Continue watching
+        </p>
 
       </div>
 
 
-      <!-- URL -->
+      <div
+        class="video-card"
+        tabindex="0"
+        onclick="goToSupport()"
+        onkeydown="cardKey(event, 'support')">
 
-      <div class="url-box">
+        <div class="card-icon">⚙</div>
+
+        <h3 data-i18n="supportCard">
+          Support
+        </h3>
+
+        <p data-i18n="supportCardText">
+          Player options
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       PLAYER HOME
+  ========================= -->
+
+  <section id="home">
+
+    <div class="hero">
+
+      <h2 data-i18n="heroTitle">
+        Play Your Stream
+      </h2>
+
+      <p data-i18n="heroText">
+        Enter a video URL or YouTube link and start watching.
+      </p>
+
+    </div>
+
+
+    <div class="player-card">
+
+      <div class="url-row">
 
         <input
-          id="videoUrl"
+          id="urlInput"
+          class="url-input"
           type="url"
-          autocomplete="off"
-          spellcheck="false"
-          placeholder="Enter video URL..."
-          onkeydown="urlInputKey(event)"
-        >
+          placeholder="Enter video URL or YouTube link..."
+          data-placeholder="urlPlaceholder"
+          autocomplete="off">
 
         <button
-          type="button"
-          class="btn primary"
-          onclick="playFromInput()"
-          id="playButton">
-
-          Play
-
+          class="play-btn"
+          onclick="playVideo()"
+          data-i18n="play">
+          ▶ PLAY
         </button>
 
       </div>
 
-    </section>
+      <div class="mkv-row">
+
+        <label class="mkv-file-btn" for="mkvFileInput">
+          <span data-i18n="openMkv">📁 Open MKV File</span>
+        </label>
+
+        <input
+          id="mkvFileInput"
+          type="file"
+          accept=".mkv,video/x-matroska,video/*"
+          hidden>
+
+        <span class="mkv-hint" data-i18n="mkvHint">
+          MKV links are processed in your browser. Large files need extra memory.
+        </span>
+
+      </div>
 
 
-    <!-- =========================
-         PLAYER
-    ========================= -->
+      <div class="mkv-progress" id="mkvProgress">
+        <div class="mkv-progress-bar" id="mkvProgressBar"></div>
+      </div>
 
-    <section
-      class="player-section"
-      id="playerSection">
+      <div class="mkv-progress-text" id="mkvProgressText"></div>
 
-      <div
-        class="player-wrap"
-        id="playerWrap">
-
-        <!-- Native Video -->
+      <div class="video-container">
 
         <video
-          id="videoPlayer"
+          id="video"
           controls
-          playsinline
-          preload="metadata">
+          playsinline>
         </video>
-
-
-        <!-- YouTube -->
-
-        <iframe
-          id="youtubePlayer"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          allowfullscreen
-          style="display:none">
-        </iframe>
-
-
-        <!-- MKV -->
 
         <movi-player
           id="mkvPlayer"
           controls
-          playsinline
-          theme="dark"
-          style="display:none">
+          playsinline>
         </movi-player>
 
-      </div>
-
-
-      <!-- STATUS -->
-
-      <div
-        class="status-box"
-        id="statusBox">
-
-        Ready
+        <iframe
+          id="youtubeFrame"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
 
       </div>
 
 
-      <!-- =========================
-           MKV TRACKS
-      ========================= -->
+      <div class="controls">
 
-      <div
-        class="mkv-tracks"
-        id="mkvTracks">
+        <button
+          class="control-btn"
+          onclick="fullscreenVideo()"
+          data-i18n="fullscreen">
+          ⛶ Fullscreen
+        </button>
 
-        <div
-          class="mkv-tracks-title"
-          id="mkvTracksTitle">
+        <button
+          class="control-btn"
+          onclick="downloadVideo()"
+          id="downloadBtn"
+          disabled
+          data-i18n="download">
+          ⬇️ Download
+        </button>
 
-          MKV Tracks
+        <button
+          class="control-btn"
+          onclick="clearVideo()"
+          data-i18n="clear">
+          ✕ Clear
+        </button>
 
+        <button
+          class="control-btn"
+          onclick="newUrl()"
+          data-i18n="newUrl">
+          ＋ New URL
+        </button>
+
+      </div>
+
+
+      <div class="status" id="status">
+        <span data-i18n="ready">Ready.</span>
+      </div>
+
+
+      <div class="mkv-diagnostics" id="mkvDiagnostics">
+        <div class="mkv-diagnostics-head">
+          <div class="mkv-diagnostics-title" data-i18n="mkvDiagnosticsTitle">MKV Diagnostics</div>
+          <button class="diag-run" id="diagRunBtn" onclick="runMkvDiagnostics()" data-i18n="runDiagnostics">🔎 Check MKV</button>
         </div>
-
-
-        <div class="track-grid">
-
-          <!-- AUDIO -->
-
-          <div class="track-box">
-
-            <label
-              for="audioTrackSelect"
-              id="audioTrackLabel">
-
-              Audio Track
-
-            </label>
-
-            <select
-              id="audioTrackSelect">
-
-            </select>
-
-          </div>
-
-
-          <!-- SUBTITLE -->
-
-          <div class="track-box">
-
-            <label
-              for="subtitleTrackSelect"
-              id="subtitleTrackLabel">
-
-              Subtitle
-
-            </label>
-
-            <select
-              id="subtitleTrackSelect">
-
-            </select>
-
-          </div>
-
+        <div class="diag-grid">
+          <div class="diag-row"><div class="diag-label" data-i18n="diagUrl">URL</div><div id="diagUrl" class="diag-value info">—</div></div>
+          <div class="diag-row"><div class="diag-label" data-i18n="diagProtocol">Protocol / Mixed Content</div><div id="diagProtocol" class="diag-value info">—</div></div>
+          <div class="diag-row"><div class="diag-label" data-i18n="diagCors">CORS</div><div id="diagCors" class="diag-value info">—</div></div>
+          <div class="diag-row"><div class="diag-label" data-i18n="diagHttp">HTTP Status</div><div id="diagHttp" class="diag-value info">—</div></div>
+          <div class="diag-row"><div class="diag-label" data-i18n="diagRange">Range / 206</div><div id="diagRange" class="diag-value info">—</div></div>
+          <div class="diag-row"><div class="diag-label" data-i18n="diagType">Content-Type</div><div id="diagType" class="diag-value info">—</div></div>
+          <div class="diag-row"><div class="diag-label" data-i18n="diagMovi">MOVI / Decode</div><div id="diagMovi" class="diag-value info">—</div></div>
+          <div class="diag-row"><div class="diag-label" data-i18n="diagTracks">Tracks</div><div id="diagTracks" class="diag-value info">—</div></div>
         </div>
-
-
-        <!-- TRACK METADATA -->
-
-        <div
-          class="track-meta"
-          id="trackMeta">
-
-          <div
-            class="track-empty"
-            id="trackMetadataWaiting">
-
-            Waiting for MKV metadata...
-
-          </div>
-
-        </div>
-
+        <div id="diagFinal" class="diag-final">—</div>
       </div>
 
+    </div>
 
-      <!-- =========================
-           PLAYER INFO
-      ========================= -->
-
-      <div class="player-info">
-
-        <div>
-
-          <div
-            class="player-title"
-            id="playerTitle">
-
-            No video selected
-
-          </div>
-
-          <div
-            class="player-type"
-            id="playerType">
-
-            -
-
-          </div>
-
-        </div>
-
-
-        <div class="player-actions">
-
-          <button
-            type="button"
-            class="btn"
-            onclick="goBackHome()"
-            id="backButton">
-
-            Home
-
-          </button>
-
-          <button
-            type="button"
-            class="btn"
-            onclick="downloadCurrent()"
-            id="downloadButton"
-            disabled>
-
-            Download
-
-          </button>
-
-          <button
-            type="button"
-            class="btn"
-            onclick="fullscreenVideo()"
-            id="fullscreenButton">
-
-            Fullscreen
-
-          </button>
-
-          <button
-            type="button"
-            class="btn"
-            onclick="clearVideo()"
-            id="clearButton">
-
-            Clear
-
-          </button>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         HISTORY
-    ========================= -->
-
-    <section
-      class="history-section"
-      id="historySection">
-
-      <div
-        class="section-title"
-        id="historyTitle">
-
-        History
-
-      </div>
-
-      <div
-        class="history-list"
-        id="historyList">
-
-      </div>
-
-    </section>
-
-  </main>
+  </section>
 
 
   <!-- =========================
-       JAVASCRIPT
+       HISTORY
   ========================= -->
 
-  <script>
+  <section id="history" class="content-section">
 
-    "use strict";
+    <h2
+      class="section-title"
+      data-i18n="historyTitle">
+      History
+    </h2>
 
+    <div
+      id="historyList"
+      class="history-list">
+    </div>
 
-    /* =========================================================
-       DOM
-    ========================================================= */
+  </section>
 
-    const video =
-      document.getElementById("videoPlayer");
 
-    const youtubeFrame =
-      document.getElementById("youtubePlayer");
+  <!-- =========================
+       SUPPORT
+  ========================= -->
 
-    const mkvPlayer =
-      document.getElementById("mkvPlayer");
+  <section id="support" class="content-section">
 
-    const urlInput =
-      document.getElementById("videoUrl");
+    <h2
+      class="section-title"
+      data-i18n="supportTitle">
+      Support
+    </h2>        href="https://t.me/Adrian_Vahdani"
+        target="_blank"
+        rel="noopener">
+        ✈ Telegram
+      </a>
+    </div>
+  </section>
 
-    const statusBox =
-      document.getElementById("statusBox");
+</main>
 
-    const downloadBtn =
-      document.getElementById("downloadButton");
 
-    const mkvTracks =
-      document.getElementById("mkvTracks");
+<footer>
+  © 2026 Mr V Player
+</footer>
 
-    const audioTrackSelect =
-      document.getElementById("audioTrackSelect");
 
-    const subtitleTrackSelect =
-      document.getElementById("subtitleTrackSelect");
+<script>
 
-    const trackMeta =
-      document.getElementById("trackMeta");
+  /* =========================
+     TRANSLATIONS
+  ========================= */
 
-    const playerSection =
-      document.getElementById("playerSection");
+  const translations = {
 
-    const playerTitle =
-      document.getElementById("playerTitle");
+    en: {
 
-    const playerType =
-      document.getElementById("playerType");
+      subtitle: "Universal Network Video Player",
+      home: "Home",
+      history: "History",
+      support: "Support",
 
+      startWatching: "Start Watching",
+      startWatchingText: "Enter your video link",
 
-    /* =========================================================
-       STATE
-    ========================================================= */
+      historyCard: "History",
+      historyCardText: "Continue watching",
 
-    let currentMode = "video";
+      supportCard: "Support",
+      supportCardText: "Player options",
 
-    let currentSource = "";
+      heroTitle: "Play Your Stream",
 
-    let currentTitle = "";
+      heroText:
+        "Enter a video URL or YouTube link and start watching.",
 
-    let currentDownloadUrl = "";
+      urlPlaceholder:
+        "Enter video URL or YouTube link...",
 
-    let currentLanguage = "en";
+      play: "▶ PLAY",
 
-    let hlsInstance = null;
+      fullscreen: "⛶ Fullscreen",
 
-    let mkvJobId = 0;
+      download: "⬇️ Download",
 
-    let mkvAudioTracks = [];
+      clear: "✕ Clear",
 
-    let mkvSubtitleTracks = [];
+      newUrl: "＋ New URL",
 
-    let selectedMkvAudioId = null;
+      openMkv: "📁 Open MKV File",
 
-    let selectedMkvSubtitleId = null;
+      mkvHint:
+        "MKV links are processed in your browser. Large files need extra memory.",
 
+      mkvLoading:
+        "Preparing MKV engine...",
 
-    /* =========================================================
-       TRANSLATIONS
-    ========================================================= */
+      mkvDownloading:
+        "Downloading MKV...",
 
-    const translations = {
+      mkvProcessing:
+        "Processing MKV...",
 
-      en: {
+      mkvRemuxing:
+        "Converting MKV container without re-encoding...",
 
-        brandSubtitle:
-          "Network Video Player",
+      mkvTranscoding:
+        "MKV codec is not browser-friendly; transcoding...",
 
-        navHome:
-          "Home",
+      mkvReady:
+        "MKV is ready.",
 
-        navHistory:
-          "History",
+      mkvError:
+        "Could not process this MKV.",
 
-        languageBtn:
-          "فارسی",
+      mkvDiagnosticsTitle:
+        "MKV Diagnostics",
 
-        heroTitle:
-          "Mr V Player",
+      runDiagnostics:
+        "🔎 Check MKV",
 
-        heroDescription:
-          "Play your network videos directly in your browser",
+      diagUrl:
+        "URL",
 
-        chooseTitle:
-          "Choose a video source",
+      diagProtocol:
+        "Protocol / Mixed Content",
 
-        videoCardTitle:
-          "Video",
+      diagCors:
+        "CORS",
 
-        videoCardDescription:
-          "Play MP4, WebM, MOV, M4V and other browser-compatible videos.",
+      diagHttp:
+        "HTTP Status",
 
-        mkvCardTitle:
-          "MKV",
+      diagRange:
+        "Range / 206",
 
-        mkvCardDescription:
-          "Stream MKV files with multiple audio and subtitle tracks.",
+      diagType:
+        "Content-Type",
 
-        hlsCardTitle:
-          "HLS",
+      diagMovi:
+        "MOVI / Decode",
 
-        hlsCardDescription:
-          "Play HTTP Live Streaming URLs.",
+      diagTracks:
+        "Tracks",
 
-        youtubeCardTitle:
-          "YouTube",
+      diagFinalReady:
+        "✓ Stream appears ready for online MKV playback.",
 
-        youtubeCardDescription:
-          "Play YouTube videos using the official embedded player.",
+      diagFinalMixed:
+        "✗ Mixed Content: this HTTP URL is blocked from an HTTPS page.",
 
-        playButton:
-          "Play",
+      diagFinalCors:
+        "✗ CORS blocked: the server did not permit this page to read the MKV.",
 
-        backButton:
-          "Home",
+      diagFinalRange:
+        "⚠ Range/206 is not available; streaming and seeking may fail.",
 
-        downloadButton:
-          "Download",
+      diagFinalCodec:
+        "⚠ The file reached the player, but decoding/codec support failed.",
 
-        fullscreenButton:
-          "Fullscreen",
+      diagFinalNetwork:
+        "✗ The MKV could not be inspected from the browser. Check server/network access.",
 
-        clearButton:
-          "Clear",
+      ready: "Ready.",
 
-        historyTitle:
-          "History",
+      loading: "Loading...",
 
-        noHistory:
-          "No history yet.",
+      playing: "Playing",
 
-        enterUrl:
-          "Enter video URL...",
+      error:
+        "Unable to play this video.",
 
-        invalidUrl:
-          "Please enter a valid URL.",
+      youtube:
+        "YouTube video loaded.",
 
-        unsupported:
-          "Unsupported video format.",
+      downloadUnavailable:
+        "Download is available only for direct video files.",
 
-        loading:
-          "Loading...",
+      historyTitle:
+        "History",
 
-        ready:
-          "Ready",
+      noHistory:
+        "No videos in history yet.",
 
-        playing:
-          "Playing",
+      supportTitle:
+        "Support",
 
-        paused:
-          "Paused",
+      supportText:
+        "Need help with Mr V Player? Contact us on Telegram."
 
-        error:
-          "Playback error.",
+    },
 
-        youtube:
-          "YouTube",
 
-        mkv:
-          "MKV",
+    fa: {
 
-        mkvReady:
-          "MKV ready",
+      subtitle:
+        "پخش‌کننده ویدیوی شبکه‌ای",
 
-        mkvPlaying:
-          "MKV playing",
+      home: "خانه",
 
-        mkvPaused:
-          "MKV paused",
+      history:
+        "تاریخچه",
 
-        mkvError:
-          "MKV playback error.",
+      support:
+        "پشتیبانی",
 
-        downloadUnavailable:
-          "Download is unavailable for this source.",
+      startWatching:
+        "شروع تماشا",
 
-        mkvTracksTitle:
-          "MKV Tracks",
+      startWatchingText:
+        "لینک ویدیو را وارد کنید",
 
-        audioTrack:
-          "Audio Track",
+      historyCard:
+        "تاریخچه",
 
-        subtitleTrack:
-          "Subtitle",
+      historyCardText:
+        "ادامه تماشا",
 
-        noAudioTracks:
-          "No audio tracks found",
+      supportCard:
+        "پشتیبانی",
 
-        subtitlesOff:
-          "Subtitles Off",
+      supportCardText:
+        "گزینه‌های پلیر",
 
-        trackMetadataWaiting:
-          "Waiting for MKV metadata...",
+      heroTitle:
+        "ویدیوی خود را پخش کنید",
 
-        trackMetadata:
-          "Track Metadata",
+      heroText:
+        "آدرس ویدیو یا لینک یوتیوب را وارد کنید و شروع به تماشا کنید.",
 
-        trackName:
-          "Track",
+      urlPlaceholder:
+        "آدرس ویدیو یا لینک یوتیوب را وارد کنید...",
 
-        trackLanguage:
-          "Language",
+      play:
+        "▶ پخش",
 
-        trackCodec:
-          "Codec",
+      fullscreen:
+        "⛶ تمام صفحه",
 
-        trackChannels:
-          "Channels",
+      download:
+        "⬇️ دانلود",
 
-        trackDefault:
-          "Default",
+      clear:
+        "✕ پاک کردن",
 
-        trackForced:
-          "Forced",
+      newUrl:
+        "＋ آدرس جدید",
 
-        yes:
-          "Yes",
+      openMkv:
+        "📁 باز کردن فایل MKV",
 
-        no:
-          "No",
+      mkvHint:
+        "لینک MKV داخل مرورگر پردازش می‌شود. فایل‌های بزرگ به حافظه بیشتری نیاز دارند.",
 
-        unknown:
-          "Unknown"
+      mkvLoading:
+        "در حال آماده‌سازی موتور MKV...",
 
-      },
+      mkvDownloading:
+        "در حال دریافت MKV...",
 
+      mkvProcessing:
+        "در حال پردازش MKV...",
 
-      fa: {
+      mkvRemuxing:
+        "در حال تبدیل کانتینر MKV بدون انکود مجدد...",
 
-        brandSubtitle:
-          "پخش‌کننده ویدئوی شبکه",
+      mkvTranscoding:
+        "کدک MKV برای مرورگر مناسب نیست؛ در حال تبدیل...",
 
-        navHome:
-          "خانه",
+      mkvReady:
+        "MKV آماده پخش است.",
 
-        navHistory:
-          "تاریخچه",
+      mkvError:
+        "پردازش MKV انجام نشد.",
 
-        languageBtn:
-          "English",
+      mkvDiagnosticsTitle:
+        "تشخیص مشکل MKV",
 
-        heroTitle:
-          "Mr V Player",
+      runDiagnostics:
+        "🔎 بررسی MKV",
 
-        heroDescription:
-          "ویدئوهای شبکه را مستقیماً در مرورگر پخش کنید",
+      diagUrl:
+        "آدرس",
 
-        chooseTitle:
-          "منبع ویدئو را انتخاب کنید",
+      diagProtocol:
+        "پروتکل / Mixed Content",
 
-        videoCardTitle:
-          "ویدئو",
+      diagCors:
+        "CORS",
 
-        videoCardDescription:
-          "پخش MP4، WebM، MOV، M4V و فرمت‌های سازگار با مرورگر.",
+      diagHttp:
+        "وضعیت HTTP",
 
-        mkvCardTitle:
-          "MKV",
+      diagRange:
+        "Range / 206",
 
-        mkvCardDescription:
-          "پخش آنلاین MKV با چند ترک صوتی و زیرنویس.",
+      diagType:
+        "Content-Type",
 
-        hlsCardTitle:
-          "HLS",
+      diagMovi:
+        "MOVI / Decode",
 
-        hlsCardDescription:
-          "پخش لینک‌های HTTP Live Streaming.",
+      diagTracks:
+        "ترک‌ها",
 
-        youtubeCardTitle:
-          "YouTube",
+      diagFinalReady:
+        "✓ منبع برای استریم آنلاین MKV مناسب به نظر می‌رسد.",
 
-        youtubeCardDescription:
-          "پخش ویدئوهای YouTube با پلیر رسمی.",
+      diagFinalMixed:
+        "✗ Mixed Content: این لینک HTTP از صفحه HTTPS توسط Chrome مسدود می‌شود.",
 
-        playButton:
-          "پخش",
+      diagFinalCors:
+        "✗ CORS: سرور اجازه خواندن MKV از این صفحه را نمی‌دهد.",
 
-        backButton:
-          "خانه",
+      diagFinalRange:
+        "⚠ Range/206 در دسترس نیست؛ استریم یا Seek ممکن است مشکل داشته باشد.",
 
-        downloadButton:
-          "دانلود",
+      diagFinalCodec:
+        "⚠ فایل به پلیر رسید، اما Decode/Codec با مشکل مواجه شد.",
 
-        fullscreenButton:
-          "تمام صفحه",
+      diagFinalNetwork:
+        "✗ مرورگر نتوانست MKV را بررسی کند؛ دسترسی سرور/شبکه را بررسی کنید.",
 
-        clearButton:
-          "پاک کردن",
+      ready:
+        "آماده.",
 
-        historyTitle:
-          "تاریخچه",
+      loading:
+        "در حال بارگذاری...",
 
-        noHistory:
-          "هنوز تاریخچه‌ای وجود ندارد.",
+      playing:
+        "در حال پخش",
 
-        enterUrl:
-          "لینک ویدئو را وارد کنید...",
+      error:
+        "امکان پخش این ویدیو وجود ندارد.",
 
-        invalidUrl:
-          "لطفاً یک لینک معتبر وارد کنید.",
+      youtube:
+        "ویدیوی یوتیوب بارگذاری شد.",
 
-        unsupported:
-          "فرمت ویدئو پشتیبانی نمی‌شود.",
+      downloadUnavailable:
+        "دانلود فقط برای فایل‌های مستقیم ویدیویی فعال است.",
 
-        loading:
-          "در حال بارگذاری...",
+      historyTitle:
+        "تاریخچه",
 
-        ready:
-          "آماده",
+      noHistory:
+        "هنوز ویدیویی در تاریخچه وجود ندارد.",
 
-        playing:
-          "در حال پخش",
+      supportTitle:
+        "پشتیبانی",
 
-        paused:
-          "متوقف",
+      supportText:
+        "برای دریافت کمک درباره Mr V Player از طریق تلگرام با ما در ارتباط باشید."
 
-        error:
-          "خطا در پخش ویدئو.",
+    }
 
-        youtube:
-          "YouTube",
+  };
 
-        mkv:
-          "MKV",
 
-        mkvReady:
-          "فایل MKV آماده است",
+  /* =========================
+     LANGUAGE
+  ========================= */
 
-        mkvPlaying:
-          "MKV در حال پخش است",
+  let currentLanguage =
+    localStorage.getItem("mrVLanguage");
 
-        mkvPaused:
-          "MKV متوقف شد",
 
-        mkvError:
-          "خطا در پخش MKV.",
+  if (!currentLanguage) {
 
-        downloadUnavailable:
-          "دانلود این منبع در دسترس نیست.",
+    const browserLanguage =
+      navigator.language ||
+      navigator.userLanguage ||
+      "";
 
-        mkvTracksTitle:
-          "ترک‌های MKV",
+    currentLanguage =
+      browserLanguage
+        .toLowerCase()
+        .startsWith("fa")
+        ? "fa"
+        : "en";
+  }
 
-        audioTrack:
-          "ترک صوتی",
 
-        subtitleTrack:
-          "زیرنویس",
+  function setLanguage(lang) {
 
-        noAudioTracks:
-          "ترک صوتی پیدا نشد",
+    currentLanguage = lang;
 
-        subtitlesOff:
-          "بدون زیرنویس",
+    localStorage.setItem(
+      "mrVLanguage",
+      lang
+    );
 
-        trackMetadataWaiting:
-          "در انتظار Metadata فایل MKV...",
+    document.documentElement.lang =
+      lang;
 
-        trackMetadata:
-          "اطلاعات ترک",
 
-        trackName:
-          "ترک",
+    if (lang === "fa") {
 
-        trackLanguage:
-          "زبان",
+      document.documentElement.dir =
+        "rtl";
 
-        trackCodec:
-          "کدک",
+      document.body.classList.add(
+        "rtl"
+      );
 
-        trackChannels:
-          "کانال",
+    } else {
 
-        trackDefault:
-          "پیش‌فرض",
+      document.documentElement.dir =
+        "ltr";
 
-        trackForced:
-          "اجباری",
-
-        yes:
-          "بله",
-
-        no:
-          "خیر",
-
-        unknown:
-          "نامشخص"
-
-      }
-
-    };
-
-
-    /* =========================================================
-       TRANSLATION HELPERS
-    ========================================================= */
-
-    function t(key) {
-
-      return (
-        translations[currentLanguage]?.[key] ||
-        translations.en[key] ||
-        key
+      document.body.classList.remove(
+        "rtl"
       );
 
     }
 
 
-    function applyTranslations() {
+    document
+      .querySelectorAll("[data-i18n]")
+      .forEach(element => {
 
-      const ids = [
+        const key =
+          element.getAttribute(
+            "data-i18n"
+          );
 
-        "brandSubtitle",
-        "navHome",
-        "navHistory",
-        "languageBtn",
-        "heroTitle",
-        "heroDescription",
-        "chooseTitle",
+        if (
+          translations[lang][key]
+        ) {
 
-        "videoCardTitle",
-        "videoCardDescription",
+          element.textContent =
+            translations[lang][key];
 
-        "mkvCardTitle",
-        "mkvCardDescription",
-
-        "hlsCardTitle",
-        "hlsCardDescription",
-
-        "youtubeCardTitle",
-        "youtubeCardDescription",
-
-        "playButton",
-
-        "backButton",
-        "downloadButton",
-        "fullscreenButton",
-        "clearButton",
-
-        "historyTitle",
-
-        "mkvTracksTitle",
-        "audioTrackLabel",
-        "subtitleTrackLabel"
-
-      ];
-
-
-      ids.forEach(id => {
-
-        const element =
-          document.getElementById(id);
-
-        if (!element) return;
-
-        const keyMap = {
-          brandSubtitle: "brandSubtitle",
-          navHome: "navHome",
-          navHistory: "navHistory",
-          languageBtn: "languageBtn",
-          heroTitle: "heroTitle",
-          heroDescription: "heroDescription",
-          chooseTitle: "chooseTitle",
-
-          videoCardTitle: "videoCardTitle",
-          videoCardDescription: "videoCardDescription",
-
-          mkvCardTitle: "mkvCardTitle",
-          mkvCardDescription: "mkvCardDescription",
-
-          hlsCardTitle: "hlsCardTitle",
-          hlsCardDescription: "hlsCardDescription",
-
-          youtubeCardTitle: "youtubeCardTitle",
-          youtubeCardDescription: "youtubeCardDescription",
-
-          playButton: "playButton",
-
-          backButton: "backButton",
-          downloadButton: "downloadButton",
-          fullscreenButton: "fullscreenButton",
-          clearButton: "clearButton",
-
-          historyTitle: "historyTitle",
-
-          mkvTracksTitle: "mkvTracksTitle",
-          audioTrackLabel: "audioTrack",
-          subtitleTrackLabel: "subtitleTrack"
-
-        };
-
-        element.textContent =
-          t(keyMap[id]);
+        }
 
       });
 
 
-      urlInput.placeholder =
-        t("enterUrl");
-
-
-      document.documentElement.lang =
-        currentLanguage === "fa"
-          ? "fa"
-          : "en";
-
-
-      document.documentElement.dir =
-        currentLanguage === "fa"
-          ? "rtl"
-          : "ltr";
-
-
-      renderMkvTracks();
-
-      renderHistory();
-
-    }
-
-
-    function toggleLanguage() {
-
-      currentLanguage =
-        currentLanguage === "en"
-          ? "fa"
-          : "en";
-
-
-      localStorage.setItem(
-        "mrvplayer-language",
-        currentLanguage
-      );
-
-
-      applyTranslations();
-
-    }
-
-
-    function loadLanguage() {
-
-      const saved =
-        localStorage.getItem(
-          "mrvplayer-language"
-        );
-
-
-      if (
-        saved === "fa" ||
-        saved === "en"
-      ) {
-
-        currentLanguage =
-          saved;
-
-      }
-
-
-      applyTranslations();
-
-    }
-
-
-    /* =========================================================
-       URL HELPERS
-    ========================================================= */
-
-    function isValidUrl(value) {
-
-      try {
-
-        const url =
-          new URL(value);
-
-        return (
-          url.protocol === "http:" ||
-          url.protocol === "https:"
-        );
-
-      } catch {
-
-        return false;
-
-      }
-
-    }
-
-
-    function isMkv(url) {
-
-      try {
-
-        const parsed =
-          new URL(url);
-
-        const path =
-          parsed.pathname.toLowerCase();
-
-
-        return (
-          path.endsWith(".mkv") ||
-          parsed.searchParams
-            .get("format")
-            ?.toLowerCase() === "mkv" ||
-          parsed.searchParams
-            .get("type")
-            ?.toLowerCase() === "mkv"
-        );
-
-      } catch {
-
-        return /\.mkv(?:[?#].*)?$/i.test(url);
-
-      }
-
-    }
-
-
-    function isHls(url) {
-
-      return (
-        /\.m3u8(?:$|[?#])/i.test(url) ||
-        /application\/vnd\.apple\.mpegurl/i.test(url)
-      );
-
-    }
-
-
-    function isYouTube(url) {
-
-      try {
-
-        const parsed =
-          new URL(url);
-
-        const host =
-          parsed.hostname.toLowerCase();
-
-
-        return (
-
-          host === "youtube.com" ||
-
-          host === "www.youtube.com" ||
-
-          host === "m.youtube.com" ||
-
-          host === "youtu.be" ||
-
-          host === "www.youtu.be" ||
-
-          host === "youtube-nocookie.com" ||
-
-          host === "www.youtube-nocookie.com"
-
-        );
-
-      } catch {
-
-        return false;
-
-      }
-
-    }
-
-
-    function isDirectDownloadFormat(url) {
-
-      const clean =
-        url
-          .split("?")[0]
-          .split("#")[0]
-          .toLowerCase();
-
-
-      return (
-
-        clean.endsWith(".mp4") ||
-        clean.endsWith(".webm") ||
-        clean.endsWith(".mov") ||
-        clean.endsWith(".m4v")
-
-      );
-
-    }
-
-
-    /* =========================================================
-       YOUTUBE
-    ========================================================= */
-
-    function getYouTubeId(url) {
-
-      try {
-
-        const parsed =
-          new URL(url);
-
-        const host =
-          parsed.hostname.toLowerCase();
-
+    document
+      .querySelectorAll("[data-placeholder]")
+      .forEach(element => {
+
+        const key =
+          element.getAttribute(
+            "data-placeholder"
+          );
 
         if (
-          host === "youtu.be" ||
-          host === "www.youtu.be"
+          translations[lang][key]
         ) {
 
-          return parsed.pathname
-            .replace(/^\/+/, "")
-            .split("/")[0] || null;
+          element.placeholder =
+            translations[lang][key];
+
+        }
+
+      });
+
+
+    document.getElementById(
+      "languageBtn"
+    ).textContent =
+      lang === "fa"
+        ? "🇬🇧 English"
+        : "🇮🇷 فارسی";
+
+
+    updateStatus("ready");
+
+    renderHistory();
+
+  }
+
+
+  function toggleLanguage() {
+
+    setLanguage(
+      currentLanguage === "fa"
+        ? "en"
+        : "fa"
+    );
+
+  }
+
+
+  /* =========================
+     PLAYER ELEMENTS
+  ========================= */
+
+  const video =
+    document.getElementById("video");
+
+
+  const youtubeFrame =
+    document.getElementById(
+      "youtubeFrame"
+    );
+
+
+  const urlInput =
+    document.getElementById(
+      "urlInput"
+    );
+
+
+  const statusBox =
+    document.getElementById(
+      "status"
+    );
+
+
+  const downloadBtn =
+    document.getElementById(
+      "downloadBtn"
+    );
+
+
+  let hls = null;
+
+
+  let currentDownloadUrl = "";
+
+
+  let mkvFFmpeg = null;
+
+  let mkvFFmpegLoading = null;
+
+  let mkvObjectUrl = "";
+
+  let mkvJobId = 0;
+
+  let activeMkvUrl = "";
+
+  let selectedInputType = "video";
+
+
+  const mkvPlayer =
+    document.getElementById("mkvPlayer");
+
+
+  const mkvProgress =
+    document.getElementById("mkvProgress");
+
+
+  const mkvProgressBar =
+    document.getElementById("mkvProgressBar");
+
+
+  const mkvProgressText =
+    document.getElementById("mkvProgressText");
+
+
+  const mkvFileInput =
+    document.getElementById("mkvFileInput");
+
+
+  function setMkvProgress(
+    percent,
+    textKey
+  ) {
+
+    mkvProgress.style.display =
+      "block";
+
+    mkvProgressBar.style.width =
+      Math.max(
+        0,
+        Math.min(100, percent)
+      ) + "%";
+
+    mkvProgressText.style.display =
+      "block";
+
+    mkvProgressText.textContent =
+      translations[currentLanguage][textKey] ||
+      textKey;
+
+  }
+
+
+  function hideMkvProgress() {
+
+    mkvProgress.style.display =
+      "none";
+
+    mkvProgressText.style.display =
+      "none";
+
+    mkvProgressBar.style.width =
+      "0%";
+
+  }
+
+
+  function cleanupMkvOutput() {
+
+    if (mkvObjectUrl) {
+
+      URL.revokeObjectURL(
+        mkvObjectUrl
+      );
+
+      mkvObjectUrl = "";
+
+    }
+
+  }
+
+
+  function isMkv(url) {
+
+    return /\.mkv(?:[?#].*)?$/i.test(url) ||
+      selectedInputType === "mkv";
+
+  }
+
+
+  function isMkvFile(file) {
+
+    return !!file &&
+      (/\.mkv$/i.test(file.name) ||
+       file.type === "video/x-matroska");
+
+  }
+
+
+  async function toBlobURLLocal(
+    url,
+    mimeType
+  ) {
+
+    const response =
+      await fetch(url);
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Failed to download FFmpeg asset: " +
+        response.status
+      );
+
+    }
+
+    const data =
+      await response.arrayBuffer();
+
+    return URL.createObjectURL(
+      new Blob(
+        [data],
+        {
+          type: mimeType
+        }
+      )
+    );
+
+  }
+
+
+  async function loadMkvFFmpeg() {
+
+    if (
+      mkvFFmpeg &&
+      mkvFFmpeg.loaded
+    ) {
+
+      return mkvFFmpeg;
+
+    }
+
+
+    if (mkvFFmpegLoading) {
+
+      return mkvFFmpegLoading;
+
+    }
+
+
+    mkvFFmpegLoading =
+      (async function() {
+
+        setMkvProgress(
+          2,
+          "mkvLoading"
+        );
+
+
+        const config =
+          window.MRV_FFMPEG;
+
+
+        if (!config) {
+
+          throw new Error(
+            "FFmpeg configuration missing"
+          );
 
         }
 
 
+        // @ffmpeg/ffmpeg 0.12.x normally creates a worker from a
+        // relative chunk. We blob-load both the driver and its worker
+        // chunk so GitHub Pages does not have to host a Node/bundler build.
+
+        const mainResponse =
+          await fetch(
+            config.mainURL
+          );
+
+
+        const workerResponse =
+          await fetch(
+            config.workerURL
+          );
+
+
         if (
-          host.includes("youtube.com")
+          !mainResponse.ok ||
+          !workerResponse.ok
         ) {
 
-          if (
-            parsed.pathname === "/watch"
-          ) {
-
-            return parsed.searchParams
-              .get("v");
-
-          }
-
-
-          const patterns = [
-            "/shorts/",
-            "/embed/",
-            "/live/"
-          ];
-
-
-          for (const prefix of patterns) {
-
-            if (
-              parsed.pathname
-                .startsWith(prefix)
-            ) {
-
-              return parsed.pathname
-                .slice(prefix.length)
-                .split("/")[0] || null;
-
-            }
-
-          }
+          throw new Error(
+            "Unable to download FFmpeg loader"
+          );
 
         }
 
-      } catch (_) {
 
-        return null;
-
-      }
+        let mainSource =
+          await mainResponse.text();
 
 
-      return null;
+        const workerSource =
+          await workerResponse.text();
+
+
+        const workerBlobURL =
+          URL.createObjectURL(
+            new Blob(
+              [workerSource],
+              {
+                type:
+                  "text/javascript"
+              }
+            )
+          );
+
+
+        // Patch the UMD bundle's split-chunk URL so its root worker can
+        // load the worker chunk from our same-origin blob URL.
+
+        const patched =
+          mainSource.replace(
+            /new URL\(e\.p\+e\.u\(814\),e\.b\)/,
+            "r.workerLoadURL"
+          );
+
+
+        if (
+          patched === mainSource
+        ) {
+
+          URL.revokeObjectURL(
+            workerBlobURL
+          );
+
+          throw new Error(
+            "FFmpeg loader format changed; patch not found"
+          );
+
+        }
+
+
+        const mainBlobURL =
+          URL.createObjectURL(
+            new Blob(
+              [patched],
+              {
+                type:
+                  "text/javascript"
+              }
+            )
+          );
+
+
+        await new Promise(
+          (resolve, reject) => {
+
+            const script =
+              document.createElement(
+                "script"
+              );
+
+            script.src =
+              mainBlobURL;
+
+            script.onload =
+              resolve;
+
+            script.onerror =
+              () =>
+                reject(
+                  new Error(
+                    "Unable to initialize FFmpeg driver"
+                  )
+                );
+
+            document.head.appendChild(
+              script
+            );
+
+          }
+        );
+
+
+        if (
+          !window.FFmpegWASM ||
+          !window.FFmpegWASM.FFmpeg
+        ) {
+
+          throw new Error(
+            "FFmpegWASM is unavailable"
+          );
+
+        }
+
+
+        mkvFFmpeg =
+          new window.FFmpegWASM.FFmpeg();
+
+
+        mkvFFmpeg.on(
+          "progress",
+          ({ progress }) => {
+
+            setMkvProgress(
+              10 +
+                (
+                  Math.max(
+                    0,
+                    Math.min(
+                      1,
+                      progress
+                    )
+                  ) * 85
+                ),
+              "mkvProcessing"
+            );
+
+          }
+        );
+
+
+        const coreBase =
+          config.coreBaseURL;
+
+
+        const coreURL =
+          await toBlobURLLocal(
+            `${coreBase}/ffmpeg-core.js`,
+            "text/javascript"
+          );
+
+
+        const wasmURL =
+          await toBlobURLLocal(
+            `${coreBase}/ffmpeg-core.wasm`,
+            "application/wasm"
+          );
+
+
+        await mkvFFmpeg.load({
+          coreURL,
+          wasmURL,
+          workerLoadURL:
+            workerBlobURL
+        });
+
+
+        setMkvProgress(
+          8,
+          "mkvReady"
+        );
+
+
+        return mkvFFmpeg;
+
+      })();
+
+
+    try {
+
+      return await mkvFFmpegLoading;
+
+    } finally {
+
+      mkvFFmpegLoading = null;
+
+    }
+
+  }
+
+
+  async function fetchMkvSource(
+    source
+  ) {
+
+    if (
+      source instanceof File
+    ) {
+
+      return new Uint8Array(
+        await source.arrayBuffer()
+      );
 
     }
 
 
-    function playYouTube(url) {
-
-      const videoId =
-        getYouTubeId(url);
+    const response =
+      await fetch(source);
 
 
-      if (!videoId) {
+    if (!response.ok) {
 
-        updateStatus("error");
+      throw new Error(
+        "MKV request failed: " +
+        response.status
+      );
 
-        return false;
+    }
+
+
+    const contentLength =
+      Number(
+        response.headers.get(
+          "content-length"
+        ) || 0
+      );
+
+
+    if (!response.body) {
+
+      return new Uint8Array(
+        await response.arrayBuffer()
+      );
+
+    }
+
+
+    const reader =
+      response.body.getReader();
+
+
+    const chunks = [];
+
+    let received = 0;
+
+
+    while (true) {
+
+      const {
+        value,
+        done
+      } =
+        await reader.read();
+
+
+      if (done) break;
+
+
+      if (value) {
+
+        chunks.push(value);
+
+        received +=
+          value.byteLength;
+
+
+        if (contentLength) {
+
+          setMkvProgress(
+            5 +
+              (
+                received /
+                contentLength
+              ) * 25,
+            "mkvDownloading"
+          );
+
+        }
 
       }
 
-
-      destroyHls();
-
-      stopMkv();
+    }
 
 
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
-
-      video.style.display =
-        "none";
+    const data =
+      new Uint8Array(
+        received
+      );
 
 
-      youtubeFrame.style.display =
+    let offset = 0;
+
+
+    for (
+      const chunk of chunks
+    ) {
+
+      data.set(
+        chunk,
+        offset
+      );
+
+      offset +=
+        chunk.byteLength;
+
+    }
+
+
+    return data;
+
+  }
+
+
+  async function playMkvSource(
+    source,
+    displayName
+  ) {
+
+    const jobId =
+      ++mkvJobId;
+
+
+    activeMkvUrl =
+      typeof source === "string"
+        ? source
+        : "";
+
+
+    updateStatus("loading");
+
+    hideMkvProgress();
+
+
+    resetDiagnostics(
+      activeMkvUrl ||
+      displayName ||
+      ""
+    );
+
+
+    youtubeFrame.src = "";
+
+    youtubeFrame.style.display =
+      "none";
+
+
+    video.style.display =
+      "none";
+
+
+    if (mkvPlayer)
+      mkvPlayer.style.display =
         "block";
 
 
-      youtubeFrame.src =
-        "https://www.youtube.com/embed/" +
-        encodeURIComponent(videoId) +
-        "?autoplay=1&rel=0";
-
-
-      mkvTracks.classList.remove(
-        "active"
-      );
-
-
-      currentDownloadUrl =
-        "";
-
-      downloadBtn.disabled =
-        true;
-
-
-      currentMode =
-        "youtube";
-
-      currentSource =
-        url;
-
-
-      currentTitle =
-        "YouTube";
-
-
-      playerTitle.textContent =
-        currentTitle;
-
-
-      playerType.textContent =
-        "YouTube";
-
-
-      playerSection.classList.add(
-        "active"
-      );
-
-
-      updateStatus("youtube");
-
-
-      return true;
-
+    if (hls) {
+      hls.destroy();
+      hls = null;
     }
 
 
-    /* =========================================================
-       HLS
-    ========================================================= */
+    video.pause();
 
-    function destroyHls() {
 
-      if (hlsInstance) {
+    video.removeAttribute(
+      "src"
+    );
+
+
+    video.load();
+
+
+    cleanupMkvOutput();
+
+
+    currentDownloadUrl =
+      "";
+
+
+    downloadBtn.disabled =
+      true;
+
+
+    if (
+      typeof source !== "string"
+    ) {
+
+      // Local MKV files still use the existing FFmpeg/WASM path.
+
+      video.style.display =
+        "block";
+
+
+      if (mkvPlayer)
+        mkvPlayer.style.display =
+          "none";
+
+
+      try {
+
+        const ffmpeg =
+          await loadMkvFFmpeg();
+
+
+        if (
+          jobId !== mkvJobId
+        ) return false;
+
+
+        setMkvProgress(
+          5,
+          "mkvDownloading"
+        );
+
+
+        const inputData =
+          await fetchMkvSource(
+            source
+          );
+
+
+        const inputName =
+          "input_" +
+          jobId +
+          ".mkv";
+
+
+        const outputName =
+          "output_" +
+          jobId +
+          ".mp4";
+
+
+        await ffmpeg.writeFile(
+          inputName,
+          inputData
+        );
+
+
+        setMkvProgress(
+          35,
+          "mkvRemuxing"
+        );
+
+
+        let remuxOK =
+          true;
+
 
         try {
-          hlsInstance.destroy();
-        } catch (_) {}
 
-        hlsInstance =
-          null;
+          await ffmpeg.exec([
+            "-i",
+            inputName,
+            "-map",
+            "0:v:0",
+            "-map",
+            "0:a:0?",
+            "-c",
+            "copy",
+            "-movflags",
+            "+faststart",
+            outputName
+          ]);
 
-      }
+        } catch (_) {
 
-    }
+          remuxOK =
+            false;
 
-
-    function playHls(url) {
-
-      destroyHls();
-
-      stopMkv();
-
-      youtubeFrame.src =
-        "";
-
-      youtubeFrame.style.display =
-        "none";
-
-
-      video.style.display =
-        "block";
+        }
 
 
-      video.pause();
+        if (!remuxOK) {
 
-      video.removeAttribute(
-        "src"
-      );
-
-      video.load();
-
-
-      currentMode =
-        "hls";
-
-      currentSource =
-        url;
-
-      currentTitle =
-        getFileName(url) ||
-        "HLS";
+          setMkvProgress(
+            35,
+            "mkvTranscoding"
+          );
 
 
-      playerTitle.textContent =
-        currentTitle;
+          await ffmpeg.exec([
+            "-i",
+            inputName,
+            "-map",
+            "0:v:0",
+            "-map",
+            "0:a:0?",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "ultrafast",
+            "-crf",
+            "23",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "160k",
+            "-movflags",
+            "+faststart",
+            outputName
+          ]);
 
-      playerType.textContent =
-        "HLS";
-
-
-      playerSection.classList.add(
-        "active"
-      );
-
-
-      if (
-        window.Hls &&
-        Hls.isSupported()
-      ) {
-
-        hlsInstance =
-          new Hls();
-
-
-        hlsInstance.loadSource(
-          url
-        );
-
-
-        hlsInstance.attachMedia(
-          video
-        );
+        }
 
 
-        hlsInstance.on(
-          Hls.Events.MANIFEST_PARSED,
-          () => {
-
-            video.play()
-              .then(() => {
-                updateStatus("playing");
-              })
-              .catch(() => {
-                updateStatus("ready");
-              });
-
-          }
-        );
+        if (
+          jobId !== mkvJobId
+        ) return false;
 
 
-        hlsInstance.on(
-          Hls.Events.ERROR,
-          (event, data) => {
+        const outputData =
+          await ffmpeg.readFile(
+            outputName
+          );
 
-            if (data?.fatal) {
 
-              updateStatus("error");
+        const bytes =
+          outputData instanceof Uint8Array
+            ? outputData
+            : new Uint8Array(
+                outputData
+              );
 
-              try {
-                hlsInstance.destroy();
-              } catch (_) {}
 
-              hlsInstance =
-                null;
+        mkvObjectUrl =
+          URL.createObjectURL(
+            new Blob(
+              [bytes.buffer],
+              {
+                type:
+                  "video/mp4"
+              }
+            )
+          );
 
-            }
-
-          }
-        );
-
-      }
-
-      else if (
-        video.canPlayType(
-          "application/vnd.apple.mpegurl"
-        )
-      ) {
 
         video.src =
-          url;
+          mkvObjectUrl;
 
 
-        video.play()
-          .then(() => {
-            updateStatus("playing");
-          })
-          .catch(() => {
-            updateStatus("ready");
-          });
-
-      }
-
-      else {
-
-        updateStatus("unsupported");
-
-        return false;
-
-      }
+        currentDownloadUrl =
+          mkvObjectUrl;
 
 
-      currentDownloadUrl =
-        "";
-
-      downloadBtn.disabled =
-        true;
+        downloadBtn.disabled =
+          false;
 
 
-      saveHistory(url);
+        video.onloadedmetadata =
+          () => {
+
+            updateStatus(
+              "mkvReady"
+            );
+
+            hideMkvProgress();
+
+          };
 
 
-      return true;
+        video.onerror =
+          () => {
 
-    }
+            updateStatus(
+              "error"
+            );
 
+            hideMkvProgress();
 
-    /* =========================================================
-       MOVI / MKV
-    ========================================================= */
-
-    function getMoviApi() {
-
-      if (!mkvPlayer) {
-        return null;
-      }
+          };
 
 
-      return (
-        mkvPlayer.player ||
-        mkvPlayer
-      );
-
-    }
+        await video.play()
+          .catch(() => {});
 
 
-    function stopMkv() {
+        try {
 
-      mkvJobId++;
+          await ffmpeg.deleteFile(
+            inputName
+          );
 
+          await ffmpeg.deleteFile(
+            outputName
+          );
 
-      try {
-
-        if (
-          typeof mkvPlayer.pause ===
-          "function"
-        ) {
-
-          mkvPlayer.pause();
-
-        }
-
-      } catch (_) {}
+        } catch (_) {}
 
 
-      try {
-
-        mkvPlayer.removeAttribute(
-          "src"
+        saveHistory(
+          displayName ||
+          "MKV file"
         );
 
-      } catch (_) {}
-
-
-      mkvPlayer.style.display =
-        "none";
-
-
-      mkvTracks.classList.remove(
-        "active"
-      );
-
-    }
-
-
-    function boolTrackFlag(
-      track,
-      flag
-    ) {
-
-      if (!track) {
-        return false;
-      }
-
-
-      if (
-        track[flag] === true
-      ) {
 
         return true;
 
-      }
+      } catch (error) {
 
-
-      const disposition =
-        track.disposition;
-
-
-      if (
-        disposition &&
-        typeof disposition === "object" &&
-        disposition[flag] === true
-      ) {
-
-        return true;
-
-      }
-
-
-      if (
-        Array.isArray(disposition)
-      ) {
-
-        return disposition.some(
-          item =>
-            String(item)
-              .toLowerCase() ===
-            flag.toLowerCase()
+        console.error(
+          "Local MKV playback error:",
+          error
         );
 
-      }
+
+        updateStatus(
+          "mkvError"
+        );
 
 
-      if (
-        typeof disposition === "string"
-      ) {
-
-        return disposition
-          .toLowerCase()
-          .split(/[,\s]+/)
-          .includes(
-            flag.toLowerCase()
-          );
-
-      }
+        hideMkvProgress();
 
 
-      return false;
-
-    }
-
-
-    function getTrackLanguage(
-      track
-    ) {
-
-      if (!track) {
-        return "";
-      }
-
-
-      return (
-
-        track.language ||
-        track.lang ||
-        track.languageCode ||
-        track.language_code ||
-        track.locale ||
-        ""
-
-      );
-
-    }
-
-
-    function getTrackTitle(
-      track
-    ) {
-
-      if (!track) {
-        return "";
-      }
-
-
-      return (
-
-        track.title ||
-        track.name ||
-        track.label ||
-        track.trackName ||
-        ""
-
-      );
-
-    }
-
-
-    function normalizeTrack(
-      track,
-      index,
-      type
-    ) {
-
-      const id =
-        track?.id ??
-        track?.trackId ??
-        track?.index ??
-        index;
-
-
-      return {
-
-        ...track,
-
-        id,
-
-        _index:
-          index,
-
-        _type:
-          type,
-
-        title:
-          getTrackTitle(track),
-
-        language:
-          getTrackLanguage(track),
-
-        codec:
-          track?.codec ||
-          track?.codecName ||
-          track?.codec_name ||
-          "",
-
-        channels:
-          track?.channels ??
-          track?.channelCount ??
-          track?.channel_count ??
-          "",
-
-        default:
-          boolTrackFlag(
-            track,
-            "default"
-          ) ||
-          boolTrackFlag(
-            track,
-            "defaultTrack"
-          ) ||
-          boolTrackFlag(
-            track,
-            "primary"
-          ),
-
-        forced:
-          boolTrackFlag(
-            track,
-            "forced"
-          ) ||
-          boolTrackFlag(
-            track,
-            "forcedTrack"
-          )
-
-      };
-
-    }
-
-
-    async function readMkvTracks() {
-
-      const api =
-        getMoviApi();
-
-
-      if (!api) {
         return false;
-      }
-
-
-      let audio = [];
-
-      let subtitles = [];
-
-
-      try {
-
-        if (
-          typeof api.getAudioTracks ===
-          "function"
-        ) {
-
-          audio =
-            await api.getAudioTracks();
-
-        }
-
-      } catch (error) {
-
-        console.warn(
-          "Unable to read audio tracks:",
-          error
-        );
 
       }
-
-
-      try {
-
-        if (
-          typeof api.getSubtitleTracks ===
-          "function"
-        ) {
-
-          subtitles =
-            await api.getSubtitleTracks();
-
-        }
-
-      } catch (error) {
-
-        console.warn(
-          "Unable to read subtitle tracks:",
-          error
-        );
-
-      }
-
-
-      if (!Array.isArray(audio)) {
-        audio = [];
-      }
-
-
-      if (!Array.isArray(subtitles)) {
-        subtitles = [];
-      }
-
-
-      mkvAudioTracks =
-        audio.map(
-          (track, index) =>
-            normalizeTrack(
-              track,
-              index,
-              "audio"
-            )
-        );
-
-
-      mkvSubtitleTracks =
-        subtitles.map(
-          (track, index) =>
-            normalizeTrack(
-              track,
-              index,
-              "subtitle"
-            )
-        );
-
-
-      renderMkvTracks();
-
-
-      return true;
 
     }
 
 
-    function trackOptionText(
-      track,
-      index
-    ) {
-
-      const parts = [];
+    await runMkvDiagnostics(
+      activeMkvUrl
+    );
 
 
-      const title =
-        track.title || "";
+    if (
+      jobId !== mkvJobId ||
+      !mkvPlayer
+    ) return false;
 
 
-      const language =
-        track.language || "";
+    try {
 
-
-      const codec =
-        track.codec || "";
-
-
-      const channels =
-        track.channels || "";
-
-
-      if (title) {
-
-        parts.push(title);
-
-      } else {
-
-        parts.push(
-          `${t("trackName")} ${index + 1}`
-        );
-
-      }
-
-
-      if (language) {
-
-        parts.push(
-          `[${language}]`
-        );
-
-      }
-
-
-      if (codec) {
-
-        parts.push(
-          codec
-        );
-
-      }
-
-
-      if (channels) {
-
-        parts.push(
-          `${channels}ch`
-        );
-
-      }
-
-
-      if (track.default) {
-
-        parts.push(
-          t("trackDefault")
-        );
-
-      }
-
-
-      if (track.forced) {
-
-        parts.push(
-          t("trackForced")
-        );
-
-      }
-
-
-      return parts.join(" • ");
-
-    }
-
-
-    function renderMkvTracks() {
-
-      if (
-        !audioTrackSelect ||
-        !subtitleTrackSelect
-      ) {
-
-        return;
-
-      }
-
-
-      /* AUDIO */
-
-      audioTrackSelect.innerHTML =
-        "";
+      await customElements.whenDefined(
+        "movi-player"
+      );
 
 
       if (
-        !mkvAudioTracks.length
-      ) {
+        jobId !== mkvJobId
+      ) return false;
 
-        const option =
-          document.createElement(
-            "option"
-          );
 
-
-        option.value =
-          "";
-
-
-        option.textContent =
-          t("noAudioTracks");
-
-
-        audioTrackSelect.appendChild(
-          option
-        );
-
-      }
-
-      else {
-
-        mkvAudioTracks.forEach(
-          (track, index) => {
-
-            const option =
-              document.createElement(
-                "option"
-              );
-
-
-            option.value =
-              String(track.id);
-
-
-            option.textContent =
-              trackOptionText(
-                track,
-                index
-              );
-
-
-            audioTrackSelect.appendChild(
-              option
-            );
-
-          }
-        );
-
-
-        let selected =
-          null;
-
-
-        if (
-          selectedMkvAudioId !== null
-        ) {
-
-          selected =
-            mkvAudioTracks.find(
-              track =>
-                String(track.id) ===
-                String(selectedMkvAudioId)
-            );
-
-        }
-
-
-        if (!selected) {
-
-          selected =
-            mkvAudioTracks.find(
-              track =>
-                track.default
-            );
-
-        }
-
-
-        if (selected) {
-
-          selectedMkvAudioId =
-            selected.id;
-
-          audioTrackSelect.value =
-            String(selected.id);
-
-        }
-
-      }
-
-
-      /* SUBTITLES */
-
-      subtitleTrackSelect.innerHTML =
-        "";
-
-
-      const off =
-        document.createElement(
-          "option"
-        );
-
-
-      off.value =
-        "";
-
-
-      off.textContent =
-        t("subtitlesOff");
-
-
-      subtitleTrackSelect.appendChild(
-        off
-      );
-
-
-      mkvSubtitleTracks.forEach(
-        (track, index) => {
-
-          const option =
-            document.createElement(
-              "option"
-            );
-
-
-          option.value =
-            String(track.id);
-
-
-          option.textContent =
-            trackOptionText(
-              track,
-              index
-            );
-
-
-          subtitleTrackSelect.appendChild(
-            option
-          );
-
-        }
-      );
-
-
-      let selectedSubtitle =
-        null;
-
-
-      if (
-        selectedMkvSubtitleId !== null
-      ) {
-
-        selectedSubtitle =
-          mkvSubtitleTracks.find(
-            track =>
-              String(track.id) ===
-              String(selectedMkvSubtitleId)
-          );
-
-      }
-
-
-      if (!selectedSubtitle) {
-
-        selectedSubtitle =
-          mkvSubtitleTracks.find(
-            track =>
-              track.forced
-          );
-
-      }
-
-
-      if (!selectedSubtitle) {
-
-        selectedSubtitle =
-          mkvSubtitleTracks.find(
-            track =>
-              track.default
-          );
-
-      }
-
-
-      if (selectedSubtitle) {
-
-        selectedMkvSubtitleId =
-          selectedSubtitle.id;
-
-        subtitleTrackSelect.value =
-          String(selectedSubtitle.id);
-
-      }
-
-      else {
-
-        selectedMkvSubtitleId =
-          null;
-
-        subtitleTrackSelect.value =
-          "";
-
-      }
-
-
-      if (
-        mkvAudioTracks.length ||
-        mkvSubtitleTracks.length
-      ) {
-
-        mkvTracks.classList.add(
-          "active"
-        );
-
-      }
-
-      else {
-
-        mkvTracks.classList.remove(
-          "active"
-        );
-
-      }
-
-
-      renderTrackMetadata();
-
-    }
-
-
-    function renderTrackMetadata() {
-
-      trackMeta.innerHTML =
-        "";
-
-
-      const all = [
-
-        ...mkvAudioTracks.map(
-          track => ({
-            ...track,
-            kind: t("audioTrack")
-          })
-        ),
-
-        ...mkvSubtitleTracks.map(
-          track => ({
-            ...track,
-            kind: t("subtitleTrack")
-          })
-        )
-
-      ];
-
-
-      if (!all.length) {
-
-        const empty =
-          document.createElement(
-            "div"
-          );
-
-
-        empty.className =
-          "track-empty";
-
-
-        empty.textContent =
-          t("trackMetadataWaiting");
-
-
-        trackMeta.appendChild(
-          empty
-        );
-
-
-        return;
-
-      }
-
-
-      all.forEach(
-        (track, index) => {
-
-          const row =
-            document.createElement(
-              "div"
-            );
-
-
-          row.className =
-            "track-meta-row";
-
-
-          const name =
-            track.title ||
-            `${t("trackName")} ${index + 1}`;
-
-
-          const language =
-            track.language ||
-            t("unknown");
-
-
-          const codec =
-            track.codec ||
-            t("unknown");
-
-
-          const channels =
-            track.channels ||
-            t("unknown");
-
-
-          row.innerHTML =
-
-            `<strong>${escapeHtml(track.kind)}:</strong> ` +
-
-            `${escapeHtml(name)} · ` +
-
-            `${escapeHtml(t("trackLanguage"))}: ` +
-            `${escapeHtml(language)} · ` +
-
-            `${escapeHtml(t("trackCodec"))}: ` +
-            `${escapeHtml(codec)} · ` +
-
-            `${escapeHtml(t("trackChannels"))}: ` +
-            `${escapeHtml(String(channels))} · ` +
-
-            `${escapeHtml(t("trackDefault"))}: ` +
-            `${escapeHtml(track.default ? t("yes") : t("no"))} · ` +
-
-            `${escapeHtml(t("trackForced"))}: ` +
-            `${escapeHtml(track.forced ? t("yes") : t("no")}`;
-
-
-          trackMeta.appendChild(
-            row
-          );
-
-        }
-      );
-
-    }
-
-
-    function escapeHtml(
-      value
-    ) {
-
-      return String(value)
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
-
-    }
-
-
-    async function selectMkvAudioTrack(
-      id
-    ) {
-
-      if (
-        id === ""
-      ) {
-
-        return;
-
-      }
-
-
-      selectedMkvAudioId =
-        id;
-
-
-      const api =
-        getMoviApi();
-
-
-      if (!api) {
-        return;
-      }
-
-
-      try {
-
-        if (
-          typeof api.selectAudioTrack ===
-          "function"
-        ) {
-
-          await api.selectAudioTrack(
-            id
-          );
-
-          return;
-
-        }
-
-
-        if (
-          typeof api.selectAudioLang ===
-          "function"
-        ) {
-
-          const track =
-            mkvAudioTracks.find(
-              item =>
-                String(item.id) ===
-                String(id)
-            );
-
-
-          if (
-            track?.language
-          ) {
-
-            await api.selectAudioLang(
-              track.language
-            );
-
-          }
-
-        }
-
-      } catch (error) {
-
-        console.warn(
-          "Audio track selection failed:",
-          error
-        );
-
-      }
-
-    }
-
-
-    async function selectMkvSubtitleTrack(
-      id
-    ) {
-
-      selectedMkvSubtitleId =
-        id === ""
-          ? null
-          : id;
-
-
-      const api =
-        getMoviApi();
-
-
-      if (!api) {
-        return;
-      }
-
-
-      try {
-
-        if (
-          typeof api.selectSubtitleTrack ===
-          "function"
-        ) {
-
-          await api.selectSubtitleTrack(
-            id === ""
-              ? null
-              : id
-          );
-
-          return;
-
-        }
-
-
-        if (
-          typeof api.selectSubtitleLang ===
-          "function"
-        ) {
-
-          if (id === "") {
-
-            await api.selectSubtitleLang(
-              null
-            );
-
-          }
-
-          else {
-
-            const track =
-              mkvSubtitleTracks.find(
-                item =>
-                  String(item.id) ===
-                  String(id)
-              );
-
-
-            await api.selectSubtitleLang(
-              track?.language || null
-            );
-
-          }
-
-        }
-
-      } catch (error) {
-
-        console.warn(
-          "Subtitle track selection failed:",
-          error
-        );
-
-      }
-
-    }
-
-
-    async function playMkvSource(
-      source
-    ) {
-
-      const jobId =
-        ++mkvJobId;
-
-
-      updateStatus(
-        "loading"
-      );
-
-
-      destroyHls();
-
-
-      video.pause();
-
-      video.removeAttribute(
-        "src"
-      );
-
-      video.load();
-
-      video.style.display =
-        "none";
-
-
-      youtubeFrame.src =
-        "";
-
-      youtubeFrame.style.display =
-        "none";
-
-
-      try {
-
-        mkvPlayer.pause();
-
-      } catch (_) {}
-
-
-      mkvAudioTracks =
-        [];
-
-      mkvSubtitleTracks =
-        [];
-
-
-      selectedMkvAudioId =
-        null;
-
-
-      selectedMkvSubtitleId =
-        null;
-
-
-      mkvTracks.classList.remove(
-        "active"
-      );
-
-
-      mkvPlayer.style.display =
-        "block";
-
-
-      mkvPlayer.src =
-        source;
-
-
-      currentMode =
-        "mkv";
-
-      currentSource =
-        source;
-
-      currentTitle =
-        getFileName(source) ||
-        "MKV";
-
-
-      playerTitle.textContent =
-        currentTitle;
-
-
-      playerType.textContent =
-        "MKV";
-
-
-      playerSection.classList.add(
-        "active"
-      );
-
-
-      currentDownloadUrl =
-        "";
-
-      downloadBtn.disabled =
-        true;
-
-
-      const onLoaded =
+      mkvPlayer.onloadeddata =
         async () => {
 
           if (
             jobId !== mkvJobId
-          ) {
-
-            return;
-
-          }
+          ) return;
 
 
           updateStatus(
@@ -3261,327 +2324,91 @@
           );
 
 
-          saveHistory(
-            source
-          );
+          hideMkvProgress();
 
 
-          await readMkvTracks();
+          await updateMkvPlayerDiagnostics();
+
+
+          try {
+
+            await mkvPlayer.play();
+
+          } catch (_) {}
 
         };
 
 
-      const onError =
+      mkvPlayer.onerror =
         () => {
 
           if (
             jobId !== mkvJobId
-          ) {
-
-            return;
-
-          }
+          ) return;
 
 
-          console.error(
-            "MKV playback error"
+          setDiag(
+            "diagMovi",
+            "✗ MOVI decode/playback error",
+            "bad"
           );
 
 
+          const final =
+            document.getElementById(
+              "diagFinal"
+            );
+
+
+          final.textContent =
+            translations[
+              currentLanguage
+            ].diagFinalCodec;
+
+
+          final.style.color =
+            "#ffd166";
+
+
           updateStatus(
-            "mkvError"
+            "error"
           );
 
         };
 
 
-      mkvPlayer.addEventListener(
-        "loadeddata",
-        onLoaded,
-        { once: true }
-      );
-
-
-      mkvPlayer.addEventListener(
-        "error",
-        onError,
-        { once: true }
-      );
-
-
-      try {
-
-        if (
-          typeof mkvPlayer.play ===
-          "function"
-        ) {
-
-          await mkvPlayer.play();
-
-        }
-
-      } catch (_) {
-
-        /*
-          Browser autoplay may be blocked.
-          User can press play manually.
-        */
-
-      }
-
-
-      /*
-        Some versions of MOVI do not
-        emit loadeddata on the custom
-        element. Try reading metadata
-        shortly after loading.
-      */
-
-      setTimeout(
-        async () => {
+      mkvPlayer.onloadedmetadata =
+        () => {
 
           if (
-            jobId !== mkvJobId
-          ) {
+            jobId === mkvJobId
+          )
+            updateMkvPlayerDiagnostics();
 
-            return;
-
-          }
-
-
-          if (
-            !mkvAudioTracks.length &&
-            !mkvSubtitleTracks.length
-          ) {
-
-            await readMkvTracks();
-
-          }
-
-        },
-        1200
-      );
+        };
 
 
-      return true;
-
-    }
-
-
-    /* =========================================================
-       PLAY
-    ========================================================= */
-
-    async function playFromInput() {
-
-      const source =
-        urlInput.value.trim();
+      mkvPlayer.src =
+        source;
 
 
       if (
-        !source ||
-        !isValidUrl(source)
+        typeof mkvPlayer.setAttribute ===
+        "function"
       ) {
 
-        alert(
-          t("invalidUrl")
-        );
-
-        return;
-
-      }
-
-
-      await playVideo(
-        source
-      );
-
-    }
-
-
-    async function playVideo(
-      source
-    ) {
-
-      if (!source) {
-
-        source =
-          urlInput.value.trim();
-
-      }
-
-
-      if (
-        !source ||
-        !isValidUrl(source)
-      ) {
-
-        updateStatus(
-          "invalidUrl"
-        );
-
-        return false;
-
-      }
-
-
-      updateStatus(
-        "loading"
-      );
-
-
-      /* =========================
-         YOUTUBE
-      ========================= */
-
-      if (
-        isYouTube(source)
-      ) {
-
-        const success =
-          playYouTube(source);
-
-
-        if (success) {
-
-          saveHistory(
-            source
-          );
-
-        }
-
-
-        return success;
-
-      }
-
-
-      /* =========================
-         MKV
-      ========================= */
-
-      if (
-        isMkv(source)
-      ) {
-
-        return await playMkvSource(
+        mkvPlayer.setAttribute(
+          "src",
           source
         );
 
       }
 
 
-      /* =========================
-         RESET MKV
-      ========================= */
-
-      stopMkv();
-
-
-      /* =========================
-         RESET YOUTUBE
-      ========================= */
-
-      youtubeFrame.src =
-        "";
-
-      youtubeFrame.style.display =
-        "none";
-
-
-      /* =========================
-         HLS
-      ========================= */
-
-      if (
-        isHls(source)
-      ) {
-
-        return playHls(
-          source
-        );
-
-      }
-
-
-      /* =========================
-         NATIVE VIDEO
-      ========================= */
-
-      destroyHls();
-
-
-      video.style.display =
-        "block";
-
-
-      video.pause();
-
-      video.removeAttribute(
-        "src"
+      setMkvProgress(
+        10,
+        "mkvLoading"
       );
-
-      video.load();
-
-
-      currentMode =
-        "video";
-
-      currentSource =
-        source;
-
-      currentTitle =
-        getFileName(source) ||
-        "Video";
-
-
-      playerTitle.textContent =
-        currentTitle;
-
-
-      playerType.textContent =
-        "Video";
-
-
-      playerSection.classList.add(
-        "active"
-      );
-
-
-      video.src =
-        source;
-
-
-      currentDownloadUrl =
-        isDirectDownloadFormat(source)
-          ? source
-          : "";
-
-
-      downloadBtn.disabled =
-        !currentDownloadUrl;
-
-
-      video.play()
-        .then(() => {
-
-          updateStatus(
-            "playing"
-          );
-
-        })
-        .catch(() => {
-
-          /*
-            Autoplay may be blocked.
-            The video is still loaded.
-          */
-
-          updateStatus(
-            "ready"
-          );
-
-        });
 
 
       saveHistory(
@@ -3591,1166 +2418,820 @@
 
       return true;
 
-    }
 
+    } catch (error) {
 
-    /* =========================================================
-       DOWNLOAD
-    ========================================================= */
-
-    function downloadCurrent() {
-
-      if (
-        !currentDownloadUrl
-      ) {
-
-        updateStatus(
-          "downloadUnavailable"
-        );
-
-        return;
-
-      }
-
-
-      const link =
-        document.createElement(
-          "a"
-        );
-
-
-      link.href =
-        currentDownloadUrl;
-
-
-      link.download =
-        getFileName(
-          currentDownloadUrl
-        ) ||
-        "Mr-V-Player-Video";
-
-
-      link.target =
-        "_blank";
-
-
-      link.rel =
-        "noopener";
-
-
-      document.body.appendChild(
-        link
+      console.error(
+        "Online MKV playback error:",
+        error
       );
 
 
-      link.click();
-
-
-      link.remove();
-
-    }
-
-
-    /* =========================================================
-       CLEAR
-    ========================================================= */
-
-    function clearVideo() {
-
-      destroyHls();
-
-
-      mkvJobId++;
-
-
-      try {
-
-        mkvPlayer.pause();
-
-      } catch (_) {}
-
-
-      mkvPlayer.removeAttribute(
-        "src"
+      setDiag(
+        "diagMovi",
+        "✗ MOVI could not initialize",
+        "bad"
       );
 
 
-      mkvPlayer.style.display =
-        "none";
+      document.getElementById(
+        "diagFinal"
+      ).textContent =
+        translations[
+          currentLanguage
+        ].diagFinalCodec;
 
 
-      video.pause();
-
-      video.removeAttribute(
-        "src"
-      );
-
-      video.load();
-
-      video.style.display =
-        "block";
-
-
-      youtubeFrame.src =
-        "";
-
-      youtubeFrame.style.display =
-        "none";
-
-
-      mkvTracks.classList.remove(
-        "active"
-      );
-
-
-      mkvAudioTracks =
-        [];
-
-      mkvSubtitleTracks =
-        [];
-
-
-      selectedMkvAudioId =
-        null;
-
-
-      selectedMkvSubtitleId =
-        null;
-
-
-      currentSource =
-        "";
-
-
-      currentTitle =
-        "";
-
-
-      currentDownloadUrl =
-        "";
-
-
-      downloadBtn.disabled =
-        true;
-
-
-      playerTitle.textContent =
-        "No video selected";
-
-
-      playerType.textContent =
-        "-";
-
-
-      renderMkvTracks();
+      document.getElementById(
+        "diagFinal"
+      ).style.color =
+        "#ffd166";
 
 
       updateStatus(
-        "ready"
+        "mkvError"
       );
 
-    }
+
+      hideMkvProgress();
 
 
-    /* =========================================================
-       FULLSCREEN
-    ========================================================= */
-
-    function fullscreenVideo() {
-
-      let activePlayer =
-        video;
-
-
-      if (
-        mkvPlayer.style.display !==
-        "none"
-      ) {
-
-        activePlayer =
-          mkvPlayer;
-
-      }
-
-      else if (
-        youtubeFrame.style.display !==
-        "none"
-      ) {
-
-        activePlayer =
-          youtubeFrame;
-
-      }
-
-
-      if (
-        typeof activePlayer.requestFullscreen ===
-        "function"
-      ) {
-
-        activePlayer.requestFullscreen();
-
-      }
-
-      else if (
-        typeof activePlayer.webkitRequestFullscreen ===
-        "function"
-      ) {
-
-        activePlayer.webkitRequestFullscreen();
-
-      }
-
-      else if (
-        typeof activePlayer.webkitEnterFullscreen ===
-        "function"
-      ) {
-
-        activePlayer.webkitEnterFullscreen();
-
-      }
+      return false;
 
     }
 
-
-    /* =========================================================
-       HISTORY
-    ========================================================= */
-
-    function getHistory() {
-
-      try {
-
-        const value =
-          JSON.parse(
-            localStorage.getItem(
-              "mrVHistory"
-            ) || "[]"
-          );
+  }
 
 
-        return Array.isArray(value)
-          ? value
-          : [];
+  function handleMkvFile(event) {
 
-      } catch {
-
-        return [];
-
-      }
-
-    }
+    const file =
+      event.target.files &&
+      event.target.files[0];
 
 
-    function saveHistory(
-      url
-    ) {
-
-      if (!url) {
-        return;
-      }
+    if (!file) return;
 
 
-      let history =
-        getHistory();
+    playMkvSource(
+      file,
+      file.name
+    );
+
+  }
 
 
-      history =
-        history.filter(
-          item =>
-            item !== url
+  function updateStatus(key) {
+
+    statusBox.textContent =
+      translations[
+        currentLanguage
+      ][key] ||
+      key;
+
+  }
+
+
+  /* =========================
+     MKV DIAGNOSTICS
+  ========================= */
+
+  function setDiag(
+    id,
+    text,
+    cls = "info"
+  ) {
+
+    const el =
+      document.getElementById(id);
+
+
+    if (!el) return;
+
+
+    el.textContent =
+      text;
+
+
+    el.className =
+      "diag-value " +
+      cls;
+
+  }
+
+
+  function resetDiagnostics(
+    url = ""
+  ) {
+
+    const values = {
+
+      diagUrl:
+        url || "—",
+
+      diagProtocol:
+        "—",
+
+      diagCors:
+        "—",
+
+      diagHttp:
+        "—",
+
+      diagRange:
+        "—",
+
+      diagType:
+        "—",
+
+      diagMovi:
+        "—",
+
+      diagTracks:
+        "—"
+
+    };
+
+
+    Object.entries(values)
+      .forEach(
+        ([id, v]) =>
+          setDiag(
+            id,
+            v,
+            "info"
+          )
+      );
+
+
+    const final =
+      document.getElementById(
+        "diagFinal"
+      );
+
+
+    if (final)
+      final.textContent =
+        "—";
+
+  }
+
+
+  function protocolCheck(url) {
+
+    try {
+
+      const u =
+        new URL(
+          url,
+          location.href
         );
 
 
-      history.unshift(
+      if (
+        location.protocol ===
+          "https:" &&
+        u.protocol ===
+          "http:"
+      ) {
+
+        setDiag(
+          "diagProtocol",
+          "✗ HTTP from HTTPS page — Mixed Content",
+          "bad"
+        );
+
+
+        return "mixed";
+
+      }
+
+
+      setDiag(
+        "diagProtocol",
+        "✓ " +
+          u.protocol
+            .replace(
+              ":",
+              ""
+            )
+            .toUpperCase(),
+        "ok"
+      );
+
+
+      return "ok";
+
+    } catch (_) {
+
+      setDiag(
+        "diagProtocol",
+        "✗ Invalid URL",
+        "bad"
+      );
+
+
+      return "invalid";
+
+    }
+
+  }
+
+
+  async function runMkvDiagnostics(
+    urlArg
+  ) {
+
+    const url =
+      (
+        urlArg ||
+        urlInput.value ||
+        activeMkvUrl ||
+        ""
+      ).trim();
+
+
+    if (!url) return;
+
+
+    resetDiagnostics(
+      url
+    );
+
+
+    const protocol =
+      protocolCheck(
         url
       );
 
 
-      history =
-        history.slice(
-          0,
-          8
-        );
+    if (
+      protocol ===
+      "mixed"
+    ) {
 
-
-      localStorage.setItem(
-        "mrVHistory",
-        JSON.stringify(history)
+      setDiag(
+        "diagCors",
+        "— blocked before CORS check",
+        "warn"
       );
 
 
-      renderHistory();
-
-    }
-
-
-    function getFileName(
-      url
-    ) {
-
-      try {
-
-        const parsed =
-          new URL(url);
-
-
-        const path =
-          parsed.pathname;
-
-
-        const name =
-          path
-            .split("/")
-            .filter(Boolean)
-            .pop();
-
-
-        return name
-          ? decodeURIComponent(name)
-          : "";
-
-      } catch {
-
-        return "";
-
-      }
-
-    }
-
-
-    function renderHistory() {
-
-      const list =
-        document.getElementById(
-          "historyList"
-        );
-
-
-      if (!list) {
-        return;
-      }
-
-
-      const history =
-        getHistory();
-
-
-      list.innerHTML =
-        "";
-
-
-      if (!history.length) {
-
-        const empty =
-          document.createElement(
-            "div"
-          );
-
-
-        empty.className =
-          "empty";
-
-
-        empty.textContent =
-          t("noHistory");
-
-
-        list.appendChild(
-          empty
-        );
-
-
-        return;
-
-      }
-
-
-      history.forEach(
-        url => {
-
-          const item =
-            document.createElement(
-              "div"
-            );
-
-
-          item.className =
-            "history-item";
-
-
-          item.tabIndex =
-            0;
-
-
-          const main =
-            document.createElement(
-              "div"
-            );
-
-
-          main.className =
-            "history-main";
-
-
-          const name =
-            document.createElement(
-              "div"
-            );
-
-
-          name.className =
-            "history-name";
-
-
-          name.textContent =
-            getFileName(url) ||
-            url;
-
-
-          const urlText =
-            document.createElement(
-              "div"
-            );
-
-
-          urlText.className =
-            "history-url";
-
-
-          urlText.textContent =
-            url;
-
-
-          main.appendChild(
-            name
-          );
-
-
-          main.appendChild(
-            urlText
-          );
-
-
-          item.appendChild(
-            main
-          );
-
-
-          item.onclick =
-            () => {
-
-              urlInput.value =
-                url;
-
-
-              playVideo(
-                url
-              );
-
-
-              scrollToPlayer();
-
-            };
-
-
-          item.onkeydown =
-            event => {
-
-              if (
-                event.key === "Enter" ||
-                event.key === " "
-              ) {
-
-                event.preventDefault();
-
-                item.click();
-
-              }
-
-            };
-
-
-          list.appendChild(
-            item
-          );
-
-        }
+      setDiag(
+        "diagHttp",
+        "—",
+        "info"
       );
 
-    }
 
-
-    /* =========================================================
-       NAVIGATION
-    ========================================================= */
-
-    function scrollToSection(
-      id
-    ) {
-
-      const section =
-        document.getElementById(
-          id
-        );
-
-
-      if (!section) {
-        return;
-      }
-
-
-      section.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-    }
-
-
-    function showHome() {
-
-      scrollToSection(
-        "homeSection"
+      setDiag(
+        "diagRange",
+        "—",
+        "info"
       );
 
-    }
 
-
-    function scrollToHistory() {
-
-      scrollToSection(
-        "historySection"
+      setDiag(
+        "diagType",
+        "—",
+        "info"
       );
 
+
+      document.getElementById(
+        "diagFinal"
+      ).textContent =
+        translations[
+          currentLanguage
+        ].diagFinalMixed;
+
+
+      document.getElementById(
+        "diagFinal"
+      ).style.color =
+        "#ff6b6b";
+
+
+      return;
+
     }
 
 
-    function scrollToPlayer() {
-
-      scrollToSection(
-        "playerSection"
+    const btn =
+      document.getElementById(
+        "diagRunBtn"
       );
 
-    }
 
-
-    function goBackHome() {
-
-      scrollToSection(
-        "homeSection"
-      );
-
-    }
-
-
-    function openUrlInput(
-      type
-    ) {
-
-      currentMode =
-        type;
-
-
-      const placeholders = {
-
-        video:
-          t("enterUrl"),
-
-        mkv:
-          currentLanguage === "fa"
-            ? "لینک فایل MKV را وارد کنید..."
-            : "Enter MKV URL...",
-
-        hls:
-          currentLanguage === "fa"
-            ? "لینک HLS را وارد کنید..."
-            : "Enter HLS URL...",
-
-        youtube:
-          currentLanguage === "fa"
-            ? "لینک YouTube را وارد کنید..."
-            : "Enter YouTube URL..."
-
-      };
-
-
-      urlInput.placeholder =
-        placeholders[type] ||
-        t("enterUrl");
-
-
-      urlInput.focus();
-
-    }
-
-
-    function cardKey(
-      event,
-      type
-    ) {
-
-      if (
-        event.key === "Enter" ||
-        event.key === " "
-      ) {
-
-        event.preventDefault();
-
-        openUrlInput(
-          type
-        );
-
-      }
-
-    }
-
-
-    function urlInputKey(
-      event
-    ) {
-
-      if (
-        event.key === "Enter"
-      ) {
-
-        event.preventDefault();
-
-        playFromInput();
-
-      }
-
-    }
-
-
-    /* =========================================================
-       VIDEO EVENTS
-    ========================================================= */
-
-    video.addEventListener(
-      "playing",
-      () => {
-
-        updateStatus(
-          "playing"
-        );
-
-      }
-    );
-
-
-    video.addEventListener(
-      "pause",
-      () => {
-
-        if (
-          video.currentTime > 0 &&
-          !video.ended
-        ) {
-
-          updateStatus(
-            "paused"
-          );
-
-        }
-
-      }
-    );
-
-
-    video.addEventListener(
-      "error",
-      () => {
-
-        if (
-          video.style.display !==
-          "none"
-        ) {
-
-          updateStatus(
-            "error"
-          );
-
-        }
-
-      }
-    );
-
-
-    /* =========================================================
-       MKV EVENTS
-    ========================================================= */
-
-    mkvPlayer.addEventListener(
-      "play",
-      () => {
-
-        if (
-          mkvPlayer.style.display !==
-          "none"
-        ) {
-
-          updateStatus(
-            "mkvPlaying"
-          );
-
-        }
-
-      }
-    );
-
-
-    mkvPlayer.addEventListener(
-      "pause",
-      () => {
-
-        if (
-          mkvPlayer.style.display !==
-          "none"
-        ) {
-
-          updateStatus(
-            "mkvPaused"
-          );
-
-        }
-
-      }
-    );
-
-
-    mkvPlayer.addEventListener(
-      "loadedmetadata",
-      () => {
-
-        if (
-          currentMode === "mkv"
-        ) {
-
-          readMkvTracks();
-
-        }
-
-      }
-    );
-
-
-    /* =========================================================
-       MKV SELECT EVENTS
-    ========================================================= */
-
-    audioTrackSelect.addEventListener(
-      "change",
-      () => {
-
-        selectMkvAudioTrack(
-          audioTrackSelect.value
-        );
-
-      }
-    );
-
-
-    subtitleTrackSelect.addEventListener(
-      "change",
-      () => {
-
-        selectMkvSubtitleTrack(
-          subtitleTrackSelect.value
-        );
-
-      }
-    );
-
-
-    /* =========================================================
-       STATUS
-    ========================================================= */
-
-    function updateStatus(
-      key
-    ) {
-
-      statusBox.textContent =
-        t(key);
-
-    }
-
-
-    /* =========================================================
-       GAMEPAD
-    ========================================================= */
-
-    let focusedIndex =
-      0;
-
-    let gameElements =
-      [];
-
-    let gamepadActive =
-      false;
-
-    let lastGamepadTime =
-      0;
-
-
-    function updateGameElements() {
-
-      gameElements =
-        Array.from(
-          document.querySelectorAll(
-            "button, input, select, .video-card, .history-item"
-          )
-        ).filter(
-          element =>
-            !element.disabled &&
-            element.offsetParent !== null
-        );
-
-    }
-
-
-    function focusGameElement() {
-
-      updateGameElements();
-
-
-      if (
-        !gameElements.length
-      ) {
-
-        return;
-
-      }
-
-
-      if (
-        focusedIndex >=
-        gameElements.length
-      ) {
-
-        focusedIndex =
-          0;
-
-      }
-
-
-      if (
-        focusedIndex < 0
-      ) {
-
-        focusedIndex =
-          gameElements.length - 1;
-
-      }
-
-
-      gameElements[
-        focusedIndex
-      ].focus();
-
-    }
-
-
-    function gamepadAction(
-      callback
-    ) {
-
-      const now =
-        Date.now();
-
-
-      if (
-        now -
-        lastGamepadTime <
-        350
-      ) {
-
-        return;
-
-      }
-
-
-      lastGamepadTime =
-        now;
-
-
-      callback();
-
-    }
-
-
-    function startGamepad() {
-
-      if (
-        gamepadActive
-      ) {
-
-        return;
-
-      }
-
-
-      gamepadActive =
+    if (btn)
+      btn.disabled =
         true;
 
 
-      focusGameElement();
+    try {
 
+      const controller =
+        new AbortController();
 
-      gamepadLoop();
 
-    }
-
-
-    function gamepadLoop() {
-
-      const pads =
-        navigator.getGamepads?.() ||
-        [];
-
-
-      const pad =
-        pads[0];
-
-
-      if (pad) {
-
-        /*
-          A / Cross
-        */
-
-        if (
-          pad.buttons[0]?.pressed
-        ) {
-
-          gamepadAction(
-            () => {
-
-              const active =
-                document.activeElement;
-
-
-              if (
-                active &&
-                typeof active.click ===
-                "function"
-              ) {
-
-                active.click();
-
-              }
-
-            }
-          );
-
-        }
-
-
-        /*
-          DOWN
-        */
-
-        if (
-          pad.buttons[13]?.pressed
-        ) {
-
-          gamepadAction(
-            () => {
-
-              focusedIndex++;
-
-              focusGameElement();
-
-            }
-          );
-
-        }
-
-
-        /*
-          UP
-        */
-
-        if (
-          pad.buttons[12]?.pressed
-        ) {
-
-          gamepadAction(
-            () => {
-
-              focusedIndex--;
-
-              focusGameElement();
-
-            }
-          );
-
-        }
-
-
-        /*
-          RIGHT
-        */
-
-        if (
-          pad.buttons[15]?.pressed
-        ) {
-
-          gamepadAction(
-            () => {
-
-              focusedIndex++;
-
-              focusGameElement();
-
-            }
-          );
-
-        }
-
-
-        /*
-          LEFT
-        */
-
-        if (
-          pad.buttons[14]?.pressed
-        ) {
-
-          gamepadAction(
-            () => {
-
-              focusedIndex--;
-
-              focusGameElement();
-
-            }
-          );
-
-        }
-
-
-        /*
-          B / Circle
-        */
-
-        if (
-          pad.buttons[1]?.pressed
-        ) {
-
-          gamepadAction(
-            () => {
-
-              clearVideo();
-
-            }
-          );
-
-        }
-
-      }
-
-
-      requestAnimationFrame(
-        gamepadLoop
-      );
-
-    }
-
-
-    window.addEventListener(
-      "gamepadconnected",
-      () => {
-
-        console.log(
-          "Gamepad connected"
+      const timer =
+        setTimeout(
+          () =>
+            controller.abort(),
+          12000
         );
 
 
-        startGamepad();
+      let response;
+
+
+      try {
+
+        response =
+          await fetch(
+            url,
+            {
+              method:
+                "GET",
+
+              headers: {
+                "Range":
+                  "bytes=0-0"
+              },
+
+              mode:
+                "cors",
+
+              cache:
+                "no-store",
+
+              signal:
+                controller.signal
+
+            }
+          );
+
+      } finally {
+
+        clearTimeout(
+          timer
+        );
 
       }
-    );
 
 
-    /* =========================================================
-       TV MODE
-    ========================================================= */
+      setDiag(
+        "diagCors",
+        "✓ Browser received a CORS-readable response",
+        "ok"
+      );
 
-    function enableTVMode() {
 
-      document.body.classList.add(
-        "tv-mode"
+      setDiag(
+        "diagHttp",
+        String(
+          response.status
+        ) +
+          " " +
+          response.statusText,
+
+        response.ok ||
+          response.status ===
+            206
+          ? "ok"
+          : "warn"
+      );
+
+
+      const contentType =
+        response.headers.get(
+          "content-type"
+        ) ||
+        "(missing)";
+
+
+      setDiag(
+        "diagType",
+        contentType,
+
+        /matroska|mkv|octet-stream/i.test(
+          contentType
+        )
+          ? "ok"
+          : "warn"
+      );
+
+
+      const contentRange =
+        response.headers.get(
+          "content-range"
+        ) ||
+        "";
+
+
+      const acceptRanges =
+        response.headers.get(
+          "accept-ranges"
+        ) ||
+        "";
+
+
+      const rangeOK =
+        response.status ===
+          206 ||
+        /bytes/i.test(
+          contentRange
+        ) ||
+        /bytes/i.test(
+          acceptRanges
+        );
+
+
+      setDiag(
+        "diagRange",
+
+        rangeOK
+          ? "✓ " +
+            (
+              contentRange ||
+              acceptRanges ||
+              "206"
+            )
+          : "⚠ No 206/bytes evidence",
+
+        rangeOK
+          ? "ok"
+          : "warn"
+      );
+
+
+      if (!rangeOK)
+
+        document.getElementById(
+          "diagFinal"
+        ).textContent =
+          translations[
+            currentLanguage
+          ].diagFinalRange;
+
+      else
+
+        document.getElementById(
+          "diagFinal"
+        ).textContent =
+          translations[
+            currentLanguage
+          ].diagFinalReady;
+
+
+      document.getElementById(
+        "diagFinal"
+      ).style.color =
+        rangeOK
+          ? "#62e88b"
+          : "#ffd166";
+
+
+      try {
+
+        response.body?.cancel();
+
+      } catch (_) {}
+
+    } catch (error) {
+
+      const msg =
+        String(
+          error &&
+          error.message ||
+          error
+        );
+
+
+      if (
+        protocol ===
+        "mixed"
+      ) {
+
+        setDiag(
+          "diagCors",
+          "—",
+          "info"
+        );
+
+
+        document.getElementById(
+          "diagFinal"
+        ).textContent =
+          translations[
+            currentLanguage
+          ].diagFinalMixed;
+
+      } else {
+
+        setDiag(
+          "diagCors",
+          "✗ No CORS-readable response",
+          "bad"
+        );
+
+
+        setDiag(
+          "diagHttp",
+
+          msg.includes(
+            "AbortError"
+          )
+            ? "Timeout"
+            : "Blocked / no response",
+
+          "bad"
+        );
+
+
+        document.getElementById(
+          "diagFinal"
+        ).textContent =
+          translations[
+            currentLanguage
+          ].diagFinalCors;
+
+      }
+
+
+      document.getElementById(
+        "diagFinal"
+      ).style.color =
+        "#ff6b6b";
+
+    } finally {
+
+      if (btn)
+        btn.disabled =
+          false;
+
+    }
+
+  }
+
+
+  async function updateMkvPlayerDiagnostics() {
+
+    if (!mkvPlayer) return;
+
+
+    try {
+
+      const core =
+        mkvPlayer.player ||
+        mkvPlayer;
+
+
+      let audio = [];
+
+      let subs = [];
+
+
+      if (
+        typeof core.getAudioTracks ===
+        "function"
+      )
+
+        audio =
+          await Promise.resolve(
+            core.getAudioTracks()
+          ) || [];
+
+
+      else if (
+        typeof mkvPlayer.getAudioLangs ===
+        "function"
+      )
+
+        audio =
+          (
+            await Promise.resolve(
+              mkvPlayer.getAudioLangs()
+            ) || []
+          ).map(
+            (x, i) => ({
+              id: i,
+              language: x
+            })
+          );
+
+
+      if (
+        typeof core.getSubtitleTracks ===
+        "function"
+      )
+
+        subs =
+          await Promise.resolve(
+            core.getSubtitleTracks()
+          ) || [];
+
+
+      else if (
+        typeof mkvPlayer.getSubtitleLangs ===
+        "function"
+      )
+
+        subs =
+          (
+            await Promise.resolve(
+              mkvPlayer.getSubtitleLangs()
+            ) || []
+          ).map(
+            (x, i) => ({
+              id: i,
+              language: x
+            })
+          );
+
+
+      setDiag(
+        "diagTracks",
+        `✓ Audio: ${audio.length} · Subtitle: ${subs.length}`,
+        "ok"
+      );
+
+
+      setDiag(
+        "diagMovi",
+        "✓ MOVI loaded / metadata available",
+        "ok"
+      );
+
+
+      const final =
+        document.getElementById(
+          "diagFinal"
+        );
+
+
+      final.textContent =
+        translations[
+          currentLanguage
+        ].diagFinalReady;
+
+
+      final.style.color =
+        "#62e88b";
+
+
+    } catch (e) {
+
+      setDiag(
+        "diagMovi",
+        "⚠ Loaded but track metadata unavailable",
+        "warn"
       );
 
     }
 
-
-    const userAgent =
-      navigator.userAgent.toLowerCase();
+  }
 
 
-    if (
+  /* =========================
+     YOUTUBE DETECTION
+  ========================= */
 
-      userAgent.includes("xbox") ||
+  function isYouTube(url) {
 
-      userAgent.includes("playstation") ||
+    try {
 
-      userAgent.includes("smarttv") ||
+      const parsed =
+        new URL(url);
 
-      userAgent.includes("smart-tv") ||
 
-      userAgent.includes("tizen") ||
+      const host =
+        parsed.hostname.toLowerCase();
 
-      userAgent.includes("webos")
 
-    ) {
+      return (
 
-      enableTVMode();
+        host === "youtube.com" ||
+
+        host ===
+          "www.youtube.com" ||
+
+        host ===
+          "m.youtube.com" ||
+
+        host ===
+          "youtu.be" ||
+
+        host ===
+          "www.youtu.be" ||
+
+        host ===
+          "youtube-nocookie.com" ||
+
+        host ===
+          "www.youtube-nocookie.com"
+
+      );
+
+    } catch {
+
+      return false;
 
     }
 
-
-    /* =========================================================
-       STARTUP
-    ========================================================= */
-
-    loadLanguage();
-
-    renderHistory();
-
-    updateStatus(
-      "ready"
-    );
+  }
 
 
-    /*
-      Detect an already-connected gamepad.
-    */
+  function getYouTubeId(url) {
 
-    if (
-      navigator.getGamepads
-    ) {
+    try {
 
-      const pads =
-        navigator.getGamepads();
+      const parsed =
+        new URL(url);
+
+
+      const host =
+        parsed.hostname.toLowerCase();
 
 
       if (
-        pads.some(
-          pad =>
-            pad !== null
-        )
+
+        host ===
+          "youtu.be" ||
+
+        host ===
+          "www.youtu.be"
+
       ) {
 
-        startGamepad();
+        return parsed.pathname
+          .replace(/^\/+/, "")
+          .split("/")[0];
 
       }
 
+
+      if (
+        host.includes(
+          "youtube.com"
+        )
+      ) {
+
+        if (
+          parsed.pathname ===
+          "/watch"
+        ) {
+
+          return parsed.searchParams.get(
+            "v"
+          );
+
+        }
+
+
+        if (
+          parsed.pathname.startsWith(
+            "/shorts/"
+          )
+        ) {
+
+          return parsed.pathname
+            .split("/")[2];
+
+        }
+
+
+        if (
+          parsed.pathname.startsWith(
+            "/embed/"
+          )
+        ) {
+
+          return parsed.pathname
+            .split("/")[2];
+
+        }
+
+      }
+
+
+      return null;
+
+    } catch {
+
+      return null;
+
     }
 
-  </script>
+  }  /* =========================
+     START
+  ========================= */
+
+  setLanguage(
+    currentLanguage
+  );
+
+</script>
 
 </body>
-  </html>
+</html>
