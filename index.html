@@ -1,707 +1,493 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mr V Player</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/movi-player/dist/element.js"></script>
-  <!-- FFmpeg.wasm loader: single-threaded core, chosen for GitHub Pages compatibility -->
-  <script>
-    window.MRV_FFMPEG = {
-      mainURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.js",
-      workerURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/814.ffmpeg.js",
-      coreBaseURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd"
-    };
-  </script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #080808;
-      --card: #111111;
-      --card2: #171717;
-      --red: #e50914;
-      --red2: #ff1e2d;
-      --text: #ffffff;
-      --muted: #9a9a9a;
-      --border: #292929;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, "Segoe UI", sans-serif;
-      min-height: 100vh;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    header {
-      width: 100%;
-      padding: 18px 6%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      background: rgba(8, 8, 8, .95);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--red);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25px;
-      font-weight: bold;
-      box-shadow: 0 0 25px rgba(229, 9, 20, .25);
-    }
-
-    .brand-text h1 {
-      font-size: 21px;
-    }
-
-    .brand-text span {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    nav {
-      display: flex;
-      gap: 6px;
-    }
-
-    nav button,
-    .language-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      color: #ccc;
-      padding: 9px 13px;
-      border-radius: 9px;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    nav button:hover,
-    .language-btn:hover {
-      color: white;
-      background: #191919;
-    }
-
-    .language-btn {
-      border-color: var(--border);
-      color: white;
-      font-weight: bold;
-    }
-
-    main {
-      width: min(1050px, 92%);
-      margin: auto;
-      padding: 45px 0 60px;
-    }
-
-    section {
-      scroll-margin-top: 100px;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 35px 0 30px;
-    }
-
-    .hero h2 {
-      font-size: clamp(30px, 5vw, 52px);
-      margin-bottom: 12px;
-    }
-
-    .hero p {
-      color: var(--muted);
-      font-size: 16px;
-    }
-
-    /* =========================
-       CONSOLE HOME
-    ========================= */
-
-    .console-home {
-      margin-bottom: 35px;
-    }
-
-    .console-home .section-title {
-      margin-bottom: 20px;
-    }
-
-    .video-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .video-card {
-      min-height: 180px;
-      background: linear-gradient(145deg, #151515, #0d0d0d);
-      border: 2px solid var(--border);
-      border-radius: 22px;
-      padding: 25px;
-      cursor: pointer;
-      transition: .2s;
-      user-select: none;
-    }
-
-    .video-card:hover,
-    .video-card:focus {
-      border-color: var(--red);
-      transform: scale(1.04);
-      box-shadow: 0 0 30px rgba(229, 9, 20, .25);
-      outline: none;
-    }
-
-    .card-icon {
-      font-size: 45px;
-    }
-
-    .video-card h3 {
-      margin-top: 18px;
-      font-size: 24px;
-    }
-
-    .video-card p {
-      color: var(--muted);
-      margin-top: 8px;
-    }
-
-    /* =========================
-       PLAYER
-    ========================= */
-
-    .player-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      margin-top: 25px;
-    }
-
-    .url-row {
-      display: flex;
-      gap: 10px;
-    }
-
-    .url-input {
-      flex: 1;
-      min-width: 0;
-      height: 54px;
-      background: #080808;
-      border: 1px solid var(--border);
-      color: white;
-      border-radius: 12px;
-      padding: 0 16px;
-      outline: none;
-    }
-
-    .url-input:focus {
-      border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(229, 9, 20, .12);
-    }
-
-    .play-btn {
-      height: 54px;
-      padding: 0 28px;
-      border: none;
-      border-radius: 12px;
-      background: var(--red);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .play-btn:hover {
-      background: var(--red2);
-      transform: translateY(-1px);
-    }
-
-    .mkv-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    .mkv-file-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 0 16px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--card2);
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .mkv-file-btn:hover {
-      border-color: var(--red);
-    }
-
-    .mkv-hint {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .mkv-progress {
-      display: none;
-      margin-top: 12px;
-      height: 8px;
-      border-radius: 999px;
-      background: #202020;
-      overflow: hidden;
-    }
-
-    .mkv-progress-bar {
-      width: 0%;
-      height: 100%;
-      background: var(--red);
-      transition: width .15s linear;
-    }
-
-    .mkv-progress-text {
-      display: none;
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    body.tv-mode .mkv-file-btn {
-      min-height: 65px;
-      padding: 0 25px;
-      font-size: 20px;
-    }
-
-    body.tv-mode .mkv-hint {
-      font-size: 16px;
-    }
-
-    .video-container {
-      background: #000;
-      margin-top: 18px;
-      border-radius: 15px;
-      overflow: hidden;
-      border: 1px solid #222;
-      position: relative;
-    }
-
-    video {
-      display: block;
-      width: 100%;
-      max-height: 620px;
-      background: #000;
-    }
-
-    #youtubeFrame {
-      display: none;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border: 0;
-      background: #000;
-    }
-
-    .controls {
-      display: flex;
-      gap: 9px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .control-btn {
-      background: var(--card2);
-      color: white;
-      border: 1px solid var(--border);
-      padding: 11px 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .control-btn:hover {
-      border-color: #555;
-      background: #202020;
-    }
-
-    .control-btn:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
-
-    .status {
-      margin-top: 14px;
-      padding: 13px 15px;
-      border-radius: 10px;
-      background: #0b0b0b;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    /* =========================
-       HISTORY / SUPPORT
-    ========================= */
-
-    .content-section {
-      margin-top: 70px;
-    }
-
-    .section-title {
-      font-size: 28px;
-      margin-bottom: 18px;
-    }
-
-    .history-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .history-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 14px;
-      border-radius: 11px;
-      cursor: pointer;
-      color: #ddd;
-      word-break: break-all;
-      transition: .2s;
-    }
-
-    .history-item:hover,
-    .history-item:focus {
-      border-color: var(--red);
-      outline: none;
-    }
-
-    .empty {
-      color: var(--muted);
-      padding: 20px 0;
-    }
-
-    .support-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 28px;
-      text-align: center;
-    }
-
-    .support-card p {
-      color: var(--muted);
-      margin: 10px 0 22px;
-      line-height: 1.7;
-    }
-
-    .telegram-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      background: #229ed9;
-      color: white;
-      padding: 13px 22px;
-      border-radius: 11px;
-      font-weight: bold;
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      text-align: center;
-      color: #666;
-      padding: 25px;
-      font-size: 13px;
-    }
-
-    body.rtl .url-input {
-      direction: rtl;
-      text-align: right;
-    }
-
-    body.rtl .history-item {
-      direction: ltr;
-      text-align: left;
-    }
-
-    /* =========================
-       NORMAL FOCUS
-    ========================= */
-
-    button:focus,
-    input:focus,
-    a:focus {
-      outline: 2px solid var(--red);
-      outline-offset: 2px;
-    }
-
-    /* =========================
-       TV MODE - CONSOLE STYLE
-    ========================= */
-
-    body.tv-mode {
-      overflow-x: hidden;
-    }
-
-    body.tv-mode header {
-      padding: 25px 6%;
-    }
-
-    body.tv-mode .logo {
-      width: 60px;
-      height: 60px;
-      font-size: 32px;
-    }
-
-    body.tv-mode .brand-text h1 {
-      font-size: 32px;
-    }
-
-    body.tv-mode .brand-text span {
-      font-size: 16px;
-    }
-
-    body.tv-mode main {
-      width: 90%;
-      max-width: 1400px;
-    }
-
-    body.tv-mode .hero h2 {
-      font-size: 70px;
-    }
-
-    body.tv-mode .hero p {
-      font-size: 24px;
-    }
-
-    body.tv-mode .player-card {
-      padding: 35px;
-      border-radius: 30px;
-    }
-
-    body.tv-mode .url-input {
-      height: 75px;
-      font-size: 28px;
-    }
-
-    body.tv-mode .play-btn {
-      height: 75px;
-      font-size: 28px;
-      padding: 0 45px;
-    }
-
-    body.tv-mode video {
-      max-height: 750px;
-    }
-
-    body.tv-mode .control-btn {
-      font-size: 24px;
-      padding: 18px 30px;
-    }
-
-    body.tv-mode .video-card {
-      min-height: 240px;
-      padding: 35px;
-    }
-
-    body.tv-mode .video-card h3 {
-      font-size: 34px;
-    }
-
-    body.tv-mode .video-card p {
-      font-size: 20px;
-    }
-
-    body.tv-mode .card-icon {
-      font-size: 60px;
-    }
-
-    body.tv-mode button:focus,
-    body.tv-mode input:focus,
-    body.tv-mode a:focus,
-    body.tv-mode .video-card:focus {
-      outline: 5px solid var(--red);
-      outline-offset: 5px;
-      transform: scale(1.08);
-    }
-
-
-    /* =========================
-       MKV DIAGNOSTICS
-    ========================= */
-    .mkv-diagnostics {
-      margin-top: 16px;
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-    }
-    .mkv-diagnostics-head {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin-bottom:12px;
-    }
-    .mkv-diagnostics-title { font-weight:700; }
-    .diag-run {
-      background: var(--card2);
-      color:#fff;
-      border:1px solid var(--border);
-      border-radius:9px;
-      padding:8px 12px;
-      cursor:pointer;
-    }
-    .diag-grid { display:grid; gap:7px; }
-    .diag-row {
-      display:grid;
-      grid-template-columns:150px 1fr;
-      gap:10px;
-      padding:9px 10px;
-      border-radius:9px;
-      background:#111;
-      border:1px solid #202020;
-      font-size:13px;
-    }
-    .diag-label { color:#aaa; }
-    .diag-value.ok { color:#62e88b; }
-    .diag-value.warn { color:#ffd166; }
-    .diag-value.bad { color:#ff6b6b; }
-    .diag-value.info { color:#7db7ff; }
-    .diag-final {
-      margin-top:10px;
-      padding:11px 12px;
-      border-radius:9px;
-      background:#151515;
-      font-weight:700;
-    }
-    #mkvPlayer {
-      display:none;
-      width:100%;
-      max-height:620px;
-      background:#000;
-      aspect-ratio:16/9;
-    }
-    body.tv-mode #mkvPlayer { max-height:750px; }
-    @media (max-width:700px) {
-      .diag-row { grid-template-columns:1fr; }
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 900px) {
-      .video-cards {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 700px) {
-      header {
-        padding: 13px 4%;
-      }
-
-      .brand-text span {
-        display: none;
-      }
-
-      .brand-text h1 {
-        font-size: 18px;
-      }
-
-      .logo {
-        width: 38px;
-        height: 38px;
-        font-size: 21px;
-      }
-
-      nav {
-        display: none;
-      }
-
-      main {
-        width: 94%;
-        padding-top: 25px;
-      }
-
-      .hero {
-        padding-top: 20px;
-      }
-
-      .url-row {
-        flex-direction: column;
-      }
-
-      .play-btn {
-        width: 100%;
-      }
-
-      .controls {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .control-btn {
-        width: 100%;
-      }
-
-      .player-card {
-        padding: 12px;
-        border-radius: 15px;
-      }
-
-      .mkv-row {
-        align-items: stretch;
-      }
-
-      .mkv-file-btn {
-        width: 100%;
-      }
-
-      .mkv-hint {
-        width: 100%;
-      }
-
-      .video-card {
-        min-height: 155px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mr V Player</title>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/movi-player/dist/element.js"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#080808;
+  --card:#111;
+  --card2:#181818;
+  --red:#e50914;
+  --red2:#ff2633;
+  --text:#fff;
+  --muted:#999;
+  --border:#292929;
+  --green:#55e889;
+  --yellow:#ffd166;
+  --blue:#229ed9
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,"Segoe UI",sans-serif;
+  min-height:100vh
+}
+
+button,input{font:inherit}
+
+header{
+  width:100%;
+  padding:18px 6%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,8,8,.96);
+  position:sticky;
+  top:0;
+  z-index:100
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px
+}
+
+.logo{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:var(--red);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  font-weight:bold
+}
+
+.brand-text h1{font-size:21px}
+.brand-text span{color:var(--muted);font-size:12px}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+nav{
+  display:flex;
+  gap:5px
+}
+
+nav button,
+.language-btn{
+  background:transparent;
+  border:1px solid transparent;
+  color:#ccc;
+  padding:9px 13px;
+  border-radius:9px;
+  cursor:pointer
+}
+
+nav button:hover,
+.language-btn:hover{
+  background:#191919;
+  color:#fff
+}
+
+.language-btn{
+  border-color:var(--border);
+  color:#fff;
+  font-weight:bold
+}
+
+main{
+  width:min(1100px,92%);
+  margin:auto;
+  padding:35px 0 60px
+}
+
+.hero{
+  text-align:center;
+  padding:30px 0
+}
+
+.hero h2{
+  font-size:clamp(32px,5vw,54px);
+  margin-bottom:12px
+}
+
+.hero p{
+  color:var(--muted);
+  font-size:16px
+}
+
+.section-title{
+  font-size:28px;
+  margin-bottom:18px
+}
+
+.video-cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px
+}
+
+.video-card{
+  min-height:175px;
+  background:linear-gradient(145deg,#171717,#0d0d0d);
+  border:2px solid var(--border);
+  border-radius:20px;
+  padding:24px;
+  cursor:pointer;
+  transition:.2s
+}
+
+.video-card:hover,
+.video-card:focus{
+  border-color:var(--red);
+  transform:scale(1.03);
+  outline:none
+}
+
+.card-icon{font-size:44px}
+
+.video-card h3{
+  margin-top:15px;
+  font-size:23px
+}
+
+.video-card p{
+  color:var(--muted);
+  margin-top:7px
+}
+
+.player-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:20px;
+  margin-top:25px
+}
+
+.url-row{
+  display:flex;
+  gap:10px
+}
+
+.url-input{
+  flex:1;
+  min-width:0;
+  height:54px;
+  background:#080808;
+  border:1px solid var(--border);
+  color:#fff;
+  border-radius:12px;
+  padding:0 16px;
+  outline:none;
+  direction:ltr;
+  text-align:left
+}
+
+.url-input:focus{border-color:var(--red)}
+
+.play-btn{
+  height:54px;
+  padding:0 28px;
+  border:0;
+  border-radius:12px;
+  background:var(--red);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.play-btn:hover{background:var(--red2)}
+
+.mkv-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:12px
+}
+
+.mkv-file-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:0 17px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--card2);
+  color:#fff;
+  cursor:pointer;
+  font-weight:bold
+}
+
+.mkv-file-btn:hover{border-color:var(--red)}
+
+.mkv-hint{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5
+}
+
+.video-container{
+  background:#000;
+  margin-top:18px;
+  border-radius:15px;
+  overflow:hidden;
+  border:1px solid #222
+}
+
+video{
+  display:block;
+  width:100%;
+  max-height:620px;
+  background:#000
+}
+
+#mkvPlayer{
+  display:none;
+  width:100%;
+  max-height:620px;
+  background:#000;
+  aspect-ratio:16/9
+}
+
+#youtubeFrame{
+  display:none;
+  width:100%;
+  aspect-ratio:16/9;
+  border:0;
+  background:#000
+}
+
+.controls{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-top:14px
+}
+
+.control-btn{
+  background:var(--card2);
+  color:#fff;
+  border:1px solid var(--border);
+  padding:11px 16px;
+  border-radius:10px;
+  cursor:pointer
+}
+
+.control-btn:hover{border-color:#555}
+
+.status{
+  margin-top:14px;
+  padding:13px 15px;
+  border-radius:10px;
+  background:#0b0b0b;
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:14px
+}
+
+.mkv-panel{
+  display:none;
+  margin-top:15px;
+  padding:16px;
+  background:#0b0b0b;
+  border:1px solid var(--border);
+  border-radius:14px
+}
+
+.mkv-panel.visible{display:block}
+
+.mkv-panel-title{
+  font-weight:bold;
+  margin-bottom:13px
+}
+
+.track-group{
+  margin-top:14px
+}
+
+.track-group-title{
+  color:#aaa;
+  font-size:13px;
+  margin-bottom:8px
+}
+
+.track-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px
+}
+
+.track-btn{
+  background:#171717;
+  color:#ddd;
+  border:1px solid #303030;
+  border-radius:9px;
+  padding:9px 12px;
+  cursor:pointer
+}
+
+.track-btn:hover,
+.track-btn.active{
+  border-color:var(--red);
+  background:#241010;
+  color:#fff
+}
+
+.track-btn.off{
+  border-color:#555
+}
+
+.track-info{
+  display:block;
+  color:#888;
+  font-size:11px;
+  margin-top:3px
+}
+
+.mkv-diagnostics{
+  margin-top:16px;
+  background:#0a0a0a;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px
+}
+
+.mkv-diagnostics-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px
+}
+
+.diag-run{
+  background:var(--card2);
+  color:#fff;
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:8px 12px;
+  cursor:pointer
+}
+
+.diag-grid{display:grid;gap:7px}
+
+.diag-row{
+  display:grid;
+  grid-template-columns:160px 1fr;
+  gap:10px;
+  padding:9px 10px;
+  border-radius:9px;
+  background:#111;
+  border:1px solid #202020;
+  font-size:13px
+}
+
+.diag-label{color:#aaa}
+.diag-value.ok{color:var(--green)}
+.diag-value.warn{color:var(--yellow)}
+.diag-value.bad{color:#ff6b6b}
+
+.content-section{margin-top:65px}
+
+.history-list{
+  display:grid;
+  gap:10px
+}
+
+.history-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:14px;
+  border-radius:11px;
+  cursor:pointer;
+  color:#ddd;
+  word-break:break-all
+}
+
+.history-item:hover{
+  border-color:var(--red)
+}
+
+.empty{
+  color:var(--muted);
+  padding:20px 0
+}
+
+.support-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:28px;
+  text-align:center
+}
+
+.support-card p{
+  color:var(--muted);
+  margin:10px 0 22px;
+  line-height:1.7
+}
+
+.telegram-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  background:var(--blue);
+  color:#fff;
+  padding:13px 22px;
+  border-radius:11px;
+  font-weight:bold
+}
+
+footer{
+  border-top:1px solid var(--border);
+  text-align:center;
+  color:#666;
+  padding:25px;
+  font-size:13px
+}
+
+body.tv-mode header{padding:25px 6%}
+body.tv-mode .logo{width:60px;height:60px;font-size:32px}
+body.tv-mode .brand-text h1{font-size:32px}
+body.tv-mode main{width:90%;max-width:1400px}
+body.tv-mode .hero h2{font-size:70px}
+body.tv-mode .video-card{min-height:240px;padding:35px}
+body.tv-mode .video-card h3{font-size:34px}
+body.tv-mode .control-btn{font-size:22px;padding:17px 27px}
+
+button:focus,
+input:focus,
+a:focus,
+.video-card:focus{
+  outline:2px solid var(--red);
+  outline-offset:2px
+}
+
+@media(max-width:800px){
+  .video-cards{grid-template-columns:1fr}
+  .url-row{flex-direction:column}
+  .play-btn{width:100%}
+  nav button{padding:7px}
+  .diag-row{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+  header{padding:13px 4%}
+  .brand-text span{display:none}
+  .brand-text h1{font-size:17px}
+  .logo{width:39px;height:39px}
+  main{width:94%}
+}
+</style>
 </head>
 
 <body>
@@ -709,2382 +495,1256 @@
 <header>
   <div class="brand">
     <div class="logo">V</div>
-
     <div class="brand-text">
       <h1>Mr V Player</h1>
-      <span data-i18n="subtitle">Universal Network Video Player</span>
+      <span>Network & MKV Player</span>
     </div>
   </div>
 
   <div class="header-right">
     <nav>
-      <button onclick="scrollToSection('home')" data-i18n="home">Home</button>
-      <button onclick="scrollToSection('history')" data-i18n="history">History</button>
-      <button onclick="scrollToSection('support')" data-i18n="support">Support</button>
+      <button onclick="scrollToSection('home')">خانه</button>
+      <button onclick="scrollToSection('history')">تاریخچه</button>
+      <button onclick="scrollToSection('support')">پشتیبانی</button>
     </nav>
-
-    <button
-      class="language-btn"
-      onclick="toggleLanguage()"
-      id="languageBtn">
-      🇮🇷 فارسی
-    </button>
+    <button class="language-btn" onclick="toggleLanguage()">EN</button>
   </div>
 </header>
 
 <main>
 
-  <!-- =========================
-       CONSOLE HOME SCREEN
-  ========================= -->
+<section id="home">
 
-  <section id="consoleHome" class="console-home">
+  <div class="hero">
+    <h2>Mr V Player</h2>
+    <p>پخش‌کننده ویدئو، HLS، YouTube و MKV</p>
+  </div>
 
-    <h2 class="section-title">
-      Mr V Player
-    </h2>
+  <div class="video-cards">
 
-    <div class="video-cards">
+    <div class="video-card" tabindex="0" onclick="focusUrl()">
+      <div class="card-icon">🌐</div>
+      <h3>Network</h3>
+      <p>MP4 / WebM / MOV / M4V / HLS</p>
+    </div>
 
-      <div
-        class="video-card"
-        tabindex="0"
-        onclick="goToPlayer()"
-        onkeydown="cardKey(event, 'play')">
+    <div class="video-card" tabindex="0" onclick="openMkvFile()">
+      <div class="card-icon">🎬</div>
+      <h3>MKV</h3>
+      <p>چند ترک صوتی و زیرنویس</p>
+    </div>
 
-        <div class="card-icon">▶</div>
+    <div class="video-card" tabindex="0" onclick="focusUrl()">
+      <div class="card-icon">▶️</div>
+      <h3>YouTube</h3>
+      <p>پخش ویدئوهای YouTube</p>
+    </div>
 
-        <h3 data-i18n="startWatching">
-          Start Watching
-        </h3>
+  </div>
 
-        <p data-i18n="startWatchingText">
-          Enter your video link
-        </p>
+  <div class="player-card">
 
+    <div class="url-row">
+      <input
+        id="urlInput"
+        class="url-input"
+        type="text"
+        placeholder="Video URL / M3U8 / MKV / YouTube"
+        autocomplete="off"
+      >
+      <button class="play-btn" onclick="playFromInput()">PLAY</button>
+    </div>
+
+    <div class="mkv-row">
+
+      <button class="mkv-file-btn" onclick="openMkvFile()">
+        📁 انتخاب فایل MKV
+      </button>
+
+      <input
+        id="mkvFileInput"
+        type="file"
+        accept=".mkv,video/x-matroska"
+        style="display:none"
+        onchange="handleMkvFile(this.files[0])"
+      >
+
+      <span class="mkv-hint">
+        MKV آنلاین یا فایل محلی را انتخاب کنید.
+      </span>
+
+    </div>
+
+    <div id="mkvProgress" style="display:none;margin-top:12px">
+      <div style="height:8px;background:#222;border-radius:99px;overflow:hidden">
+        <div id="mkvProgressBar" style="height:100%;width:0;background:var(--red)"></div>
+      </div>
+      <div id="mkvProgressText" style="color:#888;font-size:12px;margin-top:6px"></div>
+    </div>
+
+    <div class="video-container">
+
+      <video
+        id="video"
+        controls
+        playsinline
+        preload="metadata"
+      ></video>
+
+      <movi-player
+        id="mkvPlayer"
+        controls
+        playsinline
+        sw="auto"
+      ></movi-player>
+
+      <iframe
+        id="youtubeFrame"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+
+    </div>
+
+    <div class="controls">
+
+      <button class="control-btn" onclick="togglePlay()">▶ / ⏸</button>
+      <button class="control-btn" onclick="seek(-10)">⏪ 10s</button>
+      <button class="control-btn" onclick="seek(10)">10s ⏩</button>
+      <button class="control-btn" onclick="toggleMute()">🔊</button>
+      <button class="control-btn" onclick="fullscreen()">⛶</button>
+      <button class="control-btn" onclick="toggleTvMode()">📺 TV</button>
+
+    </div>
+
+    <div id="status" class="status">
+      آماده پخش
+    </div>
+
+    <div id="mkvTrackPanel" class="mkv-panel">
+
+      <div class="mkv-panel-title">
+        🎧 Audio / Subtitle Tracks
       </div>
 
-
-      <div
-        class="video-card"
-        tabindex="0"
-        onclick="goToHistory()"
-        onkeydown="cardKey(event, 'history')">
-
-        <div class="card-icon">🕘</div>
-
-        <h3 data-i18n="historyCard">
-          History
-        </h3>
-
-        <p data-i18n="historyCardText">
-          Continue watching
-        </p>
-
+      <div class="track-group">
+        <div class="track-group-title">Audio</div>
+        <div id="audioTrackButtons" class="track-buttons"></div>
       </div>
 
-
-      <div
-        class="video-card"
-        tabindex="0"
-        onclick="goToSupport()"
-        onkeydown="cardKey(event, 'support')">
-
-        <div class="card-icon">⚙</div>
-
-        <h3 data-i18n="supportCard">
-          Support
-        </h3>
-
-        <p data-i18n="supportCardText">
-          Player options
-        </p>
-
+      <div class="track-group">
+        <div class="track-group-title">Subtitle</div>
+        <div id="subtitleTrackButtons" class="track-buttons"></div>
       </div>
 
     </div>
 
-  </section>
+    <div class="mkv-diagnostics">
 
-
-  <!-- =========================
-       PLAYER HOME
-  ========================= -->
-
-  <section id="home">
-
-    <div class="hero">
-
-      <h2 data-i18n="heroTitle">
-        Play Your Stream
-      </h2>
-
-      <p data-i18n="heroText">
-        Enter a video URL or YouTube link and start watching.
-      </p>
-
-    </div>
-
-
-    <div class="player-card">
-
-      <div class="url-row">
-
-        <input
-          id="urlInput"
-          class="url-input"
-          type="url"
-          placeholder="Enter video URL or YouTube link..."
-          data-placeholder="urlPlaceholder"
-          autocomplete="off">
-
-        <button
-          class="play-btn"
-          onclick="playVideo()"
-          data-i18n="play">
-          ▶ PLAY
+      <div class="mkv-diagnostics-head">
+        <div><b>MKV Diagnostics</b></div>
+        <button class="diag-run" onclick="runDiagnostics()">
+          بررسی
         </button>
-
       </div>
 
-      <div class="mkv-row">
+      <div class="diag-grid">
 
-        <label class="mkv-file-btn" for="mkvFileInput">
-          <span data-i18n="openMkv">📁 Open MKV File</span>
-        </label>
-
-        <input
-          id="mkvFileInput"
-          type="file"
-          accept=".mkv,video/x-matroska,video/*"
-          hidden>
-
-        <span class="mkv-hint" data-i18n="mkvHint">
-          MKV links are processed in your browser. Large files need extra memory.
-        </span>
-
-      </div>
-
-
-      <div class="mkv-progress" id="mkvProgress">
-        <div class="mkv-progress-bar" id="mkvProgressBar"></div>
-      </div>
-
-      <div class="mkv-progress-text" id="mkvProgressText"></div>
-
-      <div class="video-container">
-
-        <video
-          id="video"
-          controls
-          playsinline>
-        </video>
-
-        <movi-player
-          id="mkvPlayer"
-          controls
-          playsinline>
-        </movi-player>
-
-        <iframe
-          id="youtubeFrame"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-        </iframe>
-
-      </div>
-
-
-      <div class="controls">
-
-        <button
-          class="control-btn"
-          onclick="fullscreenVideo()"
-          data-i18n="fullscreen">
-          ⛶ Fullscreen
-        </button>
-
-        <button
-          class="control-btn"
-          onclick="downloadVideo()"
-          id="downloadBtn"
-          disabled
-          data-i18n="download">
-          ⬇️ Download
-        </button>
-
-        <button
-          class="control-btn"
-          onclick="clearVideo()"
-          data-i18n="clear">
-          ✕ Clear
-        </button>
-
-        <button
-          class="control-btn"
-          onclick="newUrl()"
-          data-i18n="newUrl">
-          ＋ New URL
-        </button>
-
-      </div>
-
-
-      <div class="status" id="status">
-        <span data-i18n="ready">Ready.</span>
-      </div>
-
-
-      <div class="mkv-diagnostics" id="mkvDiagnostics">
-        <div class="mkv-diagnostics-head">
-          <div class="mkv-diagnostics-title" data-i18n="mkvDiagnosticsTitle">MKV Diagnostics</div>
-          <button class="diag-run" id="diagRunBtn" onclick="runMkvDiagnostics()" data-i18n="runDiagnostics">🔎 Check MKV</button>
+        <div class="diag-row">
+          <div class="diag-label">Source</div>
+          <div id="diagSource" class="diag-value">—</div>
         </div>
-        <div class="diag-grid">
-          <div class="diag-row"><div class="diag-label" data-i18n="diagUrl">URL</div><div id="diagUrl" class="diag-value info">—</div></div>
-          <div class="diag-row"><div class="diag-label" data-i18n="diagProtocol">Protocol / Mixed Content</div><div id="diagProtocol" class="diag-value info">—</div></div>
-          <div class="diag-row"><div class="diag-label" data-i18n="diagCors">CORS</div><div id="diagCors" class="diag-value info">—</div></div>
-          <div class="diag-row"><div class="diag-label" data-i18n="diagHttp">HTTP Status</div><div id="diagHttp" class="diag-value info">—</div></div>
-          <div class="diag-row"><div class="diag-label" data-i18n="diagRange">Range / 206</div><div id="diagRange" class="diag-value info">—</div></div>
-          <div class="diag-row"><div class="diag-label" data-i18n="diagType">Content-Type</div><div id="diagType" class="diag-value info">—</div></div>
-          <div class="diag-row"><div class="diag-label" data-i18n="diagMovi">MOVI / Decode</div><div id="diagMovi" class="diag-value info">—</div></div>
-          <div class="diag-row"><div class="diag-label" data-i18n="diagTracks">Tracks</div><div id="diagTracks" class="diag-value info">—</div></div>
+
+        <div class="diag-row">
+          <div class="diag-label">HTTP / CORS</div>
+          <div id="diagHttp" class="diag-value">—</div>
         </div>
-        <div id="diagFinal" class="diag-final">—</div>
+
+        <div class="diag-row">
+          <div class="diag-label">Range</div>
+          <div id="diagRange" class="diag-value">—</div>
+        </div>
+
+        <div class="diag-row">
+          <div class="diag-label">Content-Type</div>
+          <div id="diagType" class="diag-value">—</div>
+        </div>
+
+        <div class="diag-row">
+          <div class="diag-label">Player</div>
+          <div id="diagPlayer" class="diag-value">—</div>
+        </div>
+
+        <div class="diag-row">
+          <div class="diag-label">Tracks</div>
+          <div id="diagTracks" class="diag-value">—</div>
+        </div>
+
       </div>
 
     </div>
 
-  </section>
+  </div>
 
+</section>
 
-  <!-- =========================
-       HISTORY
-  ========================= -->
+<section id="history" class="content-section">
 
-  <section id="history" class="content-section">
+  <h2 class="section-title">History</h2>
 
-    <h2
-      class="section-title"
-      data-i18n="historyTitle">
-      History
-    </h2>
+  <div id="historyList" class="history-list"></div>
 
-    <div
-      id="historyList"
-      class="history-list">
-    </div>
+</section>
 
-  </section>
+<section id="support" class="content-section">
 
+  <h2 class="section-title">Support</h2>
 
-  <!-- =========================
-       SUPPORT
-  ========================= -->
+  <div class="support-card">
+    <p>
+      برای ارتباط، گزارش مشکل یا پیشنهاد قابلیت جدید
+      می‌توانید از Telegram استفاده کنید.
+    </p>
 
-  <section id="support" class="content-section">
+    <a
+      class="telegram-btn"
+      href="https://t.me/Adrian_Vahdani"
+      target="_blank"
+      rel="noopener"
+    >
+      ✈ Telegram
+    </a>
+  </div>
 
-    <h2
-      class="section-title"
-      data-i18n="supportTitle">
-      Support
-    </h2>        href="https://t.me/Adrian_Vahdani"
-        target="_blank"
-        rel="noopener">
-        ✈ Telegram
-      </a>
-    </div>
-  </section>
+</section>
 
 </main>
 
-
 <footer>
-  © 2026 Mr V Player
+  Mr V Player
 </footer>
 
-
 <script>
-
-  /* =========================
-     TRANSLATIONS
-  ========================= */
-
-  const translations = {
-
-    en: {
-
-      subtitle: "Universal Network Video Player",
-      home: "Home",
-      history: "History",
-      support: "Support",
-
-      startWatching: "Start Watching",
-      startWatchingText: "Enter your video link",
-
-      historyCard: "History",
-      historyCardText: "Continue watching",
-
-      supportCard: "Support",
-      supportCardText: "Player options",
-
-      heroTitle: "Play Your Stream",
-
-      heroText:
-        "Enter a video URL or YouTube link and start watching.",
-
-      urlPlaceholder:
-        "Enter video URL or YouTube link...",
-
-      play: "▶ PLAY",
-
-      fullscreen: "⛶ Fullscreen",
-
-      download: "⬇️ Download",
-
-      clear: "✕ Clear",
-
-      newUrl: "＋ New URL",
-
-      openMkv: "📁 Open MKV File",
-
-      mkvHint:
-        "MKV links are processed in your browser. Large files need extra memory.",
-
-      mkvLoading:
-        "Preparing MKV engine...",
-
-      mkvDownloading:
-        "Downloading MKV...",
-
-      mkvProcessing:
-        "Processing MKV...",
-
-      mkvRemuxing:
-        "Converting MKV container without re-encoding...",
-
-      mkvTranscoding:
-        "MKV codec is not browser-friendly; transcoding...",
-
-      mkvReady:
-        "MKV is ready.",
-
-      mkvError:
-        "Could not process this MKV.",
-
-      mkvDiagnosticsTitle:
-        "MKV Diagnostics",
-
-      runDiagnostics:
-        "🔎 Check MKV",
-
-      diagUrl:
-        "URL",
-
-      diagProtocol:
-        "Protocol / Mixed Content",
-
-      diagCors:
-        "CORS",
-
-      diagHttp:
-        "HTTP Status",
-
-      diagRange:
-        "Range / 206",
-
-      diagType:
-        "Content-Type",
-
-      diagMovi:
-        "MOVI / Decode",
-
-      diagTracks:
-        "Tracks",
-
-      diagFinalReady:
-        "✓ Stream appears ready for online MKV playback.",
-
-      diagFinalMixed:
-        "✗ Mixed Content: this HTTP URL is blocked from an HTTPS page.",
-
-      diagFinalCors:
-        "✗ CORS blocked: the server did not permit this page to read the MKV.",
-
-      diagFinalRange:
-        "⚠ Range/206 is not available; streaming and seeking may fail.",
-
-      diagFinalCodec:
-        "⚠ The file reached the player, but decoding/codec support failed.",
-
-      diagFinalNetwork:
-        "✗ The MKV could not be inspected from the browser. Check server/network access.",
-
-      ready: "Ready.",
-
-      loading: "Loading...",
-
-      playing: "Playing",
-
-      error:
-        "Unable to play this video.",
-
-      youtube:
-        "YouTube video loaded.",
-
-      downloadUnavailable:
-        "Download is available only for direct video files.",
-
-      historyTitle:
-        "History",
-
-      noHistory:
-        "No videos in history yet.",
-
-      supportTitle:
-        "Support",
-
-      supportText:
-        "Need help with Mr V Player? Contact us on Telegram."
-
-    },
-
-
-    fa: {
-
-      subtitle:
-        "پخش‌کننده ویدیوی شبکه‌ای",
-
-      home: "خانه",
-
-      history:
-        "تاریخچه",
-
-      support:
-        "پشتیبانی",
-
-      startWatching:
-        "شروع تماشا",
-
-      startWatchingText:
-        "لینک ویدیو را وارد کنید",
-
-      historyCard:
-        "تاریخچه",
-
-      historyCardText:
-        "ادامه تماشا",
-
-      supportCard:
-        "پشتیبانی",
-
-      supportCardText:
-        "گزینه‌های پلیر",
-
-      heroTitle:
-        "ویدیوی خود را پخش کنید",
-
-      heroText:
-        "آدرس ویدیو یا لینک یوتیوب را وارد کنید و شروع به تماشا کنید.",
-
-      urlPlaceholder:
-        "آدرس ویدیو یا لینک یوتیوب را وارد کنید...",
-
-      play:
-        "▶ پخش",
-
-      fullscreen:
-        "⛶ تمام صفحه",
-
-      download:
-        "⬇️ دانلود",
-
-      clear:
-        "✕ پاک کردن",
-
-      newUrl:
-        "＋ آدرس جدید",
-
-      openMkv:
-        "📁 باز کردن فایل MKV",
-
-      mkvHint:
-        "لینک MKV داخل مرورگر پردازش می‌شود. فایل‌های بزرگ به حافظه بیشتری نیاز دارند.",
-
-      mkvLoading:
-        "در حال آماده‌سازی موتور MKV...",
-
-      mkvDownloading:
-        "در حال دریافت MKV...",
-
-      mkvProcessing:
-        "در حال پردازش MKV...",
-
-      mkvRemuxing:
-        "در حال تبدیل کانتینر MKV بدون انکود مجدد...",
-
-      mkvTranscoding:
-        "کدک MKV برای مرورگر مناسب نیست؛ در حال تبدیل...",
-
-      mkvReady:
-        "MKV آماده پخش است.",
-
-      mkvError:
-        "پردازش MKV انجام نشد.",
-
-      mkvDiagnosticsTitle:
-        "تشخیص مشکل MKV",
-
-      runDiagnostics:
-        "🔎 بررسی MKV",
-
-      diagUrl:
-        "آدرس",
-
-      diagProtocol:
-        "پروتکل / Mixed Content",
-
-      diagCors:
-        "CORS",
-
-      diagHttp:
-        "وضعیت HTTP",
-
-      diagRange:
-        "Range / 206",
-
-      diagType:
-        "Content-Type",
-
-      diagMovi:
-        "MOVI / Decode",
-
-      diagTracks:
-        "ترک‌ها",
-
-      diagFinalReady:
-        "✓ منبع برای استریم آنلاین MKV مناسب به نظر می‌رسد.",
-
-      diagFinalMixed:
-        "✗ Mixed Content: این لینک HTTP از صفحه HTTPS توسط Chrome مسدود می‌شود.",
-
-      diagFinalCors:
-        "✗ CORS: سرور اجازه خواندن MKV از این صفحه را نمی‌دهد.",
-
-      diagFinalRange:
-        "⚠ Range/206 در دسترس نیست؛ استریم یا Seek ممکن است مشکل داشته باشد.",
-
-      diagFinalCodec:
-        "⚠ فایل به پلیر رسید، اما Decode/Codec با مشکل مواجه شد.",
-
-      diagFinalNetwork:
-        "✗ مرورگر نتوانست MKV را بررسی کند؛ دسترسی سرور/شبکه را بررسی کنید.",
-
-      ready:
-        "آماده.",
-
-      loading:
-        "در حال بارگذاری...",
-
-      playing:
-        "در حال پخش",
-
-      error:
-        "امکان پخش این ویدیو وجود ندارد.",
-
-      youtube:
-        "ویدیوی یوتیوب بارگذاری شد.",
-
-      downloadUnavailable:
-        "دانلود فقط برای فایل‌های مستقیم ویدیویی فعال است.",
-
-      historyTitle:
-        "تاریخچه",
-
-      noHistory:
-        "هنوز ویدیویی در تاریخچه وجود ندارد.",
-
-      supportTitle:
-        "پشتیبانی",
-
-      supportText:
-        "برای دریافت کمک درباره Mr V Player از طریق تلگرام با ما در ارتباط باشید."
-
-    }
-
-  };
-
-
-  /* =========================
-     LANGUAGE
-  ========================= */
-
-  let currentLanguage =
-    localStorage.getItem("mrVLanguage");
-
-
-  if (!currentLanguage) {
-
-    const browserLanguage =
-      navigator.language ||
-      navigator.userLanguage ||
-      "";
-
-    currentLanguage =
-      browserLanguage
-        .toLowerCase()
-        .startsWith("fa")
-        ? "fa"
-        : "en";
-  }
-
-
-  function setLanguage(lang) {
-
-    currentLanguage = lang;
-
-    localStorage.setItem(
-      "mrVLanguage",
-      lang
-    );
-
-    document.documentElement.lang =
-      lang;
-
-
-    if (lang === "fa") {
-
-      document.documentElement.dir =
-        "rtl";
-
-      document.body.classList.add(
-        "rtl"
-      );
-
-    } else {
-
-      document.documentElement.dir =
-        "ltr";
-
-      document.body.classList.remove(
-        "rtl"
-      );
-
-    }
-
-
-    document
-      .querySelectorAll("[data-i18n]")
-      .forEach(element => {
-
-        const key =
-          element.getAttribute(
-            "data-i18n"
-          );
-
-        if (
-          translations[lang][key]
-        ) {
-
-          element.textContent =
-            translations[lang][key];
-
-        }
-
-      });
-
-
-    document
-      .querySelectorAll("[data-placeholder]")
-      .forEach(element => {
-
-        const key =
-          element.getAttribute(
-            "data-placeholder"
-          );
-
-        if (
-          translations[lang][key]
-        ) {
-
-          element.placeholder =
-            translations[lang][key];
-
-        }
-
-      });
-
-
-    document.getElementById(
-      "languageBtn"
-    ).textContent =
-      lang === "fa"
-        ? "🇬🇧 English"
-        : "🇮🇷 فارسی";
-
-
-    updateStatus("ready");
-
-    renderHistory();
-
-  }
-
-
-  function toggleLanguage() {
-
-    setLanguage(
-      currentLanguage === "fa"
-        ? "en"
-        : "fa"
-    );
-
-  }
-
-
-  /* =========================
-     PLAYER ELEMENTS
-  ========================= */
-
-  const video =
-    document.getElementById("video");
-
-
-  const youtubeFrame =
-    document.getElementById(
-      "youtubeFrame"
-    );
-
-
-  const urlInput =
-    document.getElementById(
-      "urlInput"
-    );
-
-
-  const statusBox =
-    document.getElementById(
-      "status"
-    );
-
-
-  const downloadBtn =
-    document.getElementById(
-      "downloadBtn"
-    );
-
-
-  let hls = null;
-
-
-  let currentDownloadUrl = "";
-
-
-  let mkvFFmpeg = null;
-
-  let mkvFFmpegLoading = null;
-
-  let mkvObjectUrl = "";
-
-  let mkvJobId = 0;
-
-  let activeMkvUrl = "";
-
-  let selectedInputType = "video";
-
-
-  const mkvPlayer =
-    document.getElementById("mkvPlayer");
-
-
-  const mkvProgress =
-    document.getElementById("mkvProgress");
-
-
-  const mkvProgressBar =
-    document.getElementById("mkvProgressBar");
-
-
-  const mkvProgressText =
-    document.getElementById("mkvProgressText");
-
-
-  const mkvFileInput =
-    document.getElementById("mkvFileInput");
-
-
-  function setMkvProgress(
-    percent,
-    textKey
-  ) {
-
-    mkvProgress.style.display =
-      "block";
-
-    mkvProgressBar.style.width =
-      Math.max(
-        0,
-        Math.min(100, percent)
-      ) + "%";
-
-    mkvProgressText.style.display =
-      "block";
-
-    mkvProgressText.textContent =
-      translations[currentLanguage][textKey] ||
-      textKey;
-
-  }
-
-
-  function hideMkvProgress() {
-
-    mkvProgress.style.display =
-      "none";
-
-    mkvProgressText.style.display =
-      "none";
-
-    mkvProgressBar.style.width =
-      "0%";
-
-  }
-
-
-  function cleanupMkvOutput() {
-
-    if (mkvObjectUrl) {
-
-      URL.revokeObjectURL(
-        mkvObjectUrl
-      );
-
-      mkvObjectUrl = "";
-
-    }
-
-  }
-
-
-  function isMkv(url) {
-
-    return /\.mkv(?:[?#].*)?$/i.test(url) ||
-      selectedInputType === "mkv";
-
-  }
-
-
-  function isMkvFile(file) {
-
-    return !!file &&
-      (/\.mkv$/i.test(file.name) ||
-       file.type === "video/x-matroska");
-
-  }
-
-
-  async function toBlobURLLocal(
-    url,
-    mimeType
-  ) {
-
-    const response =
-      await fetch(url);
-
-    if (!response.ok) {
-
-      throw new Error(
-        "Failed to download FFmpeg asset: " +
-        response.status
-      );
-
-    }
-
-    const data =
-      await response.arrayBuffer();
-
-    return URL.createObjectURL(
-      new Blob(
-        [data],
-        {
-          type: mimeType
-        }
-      )
-    );
-
-  }
-
-
-  async function loadMkvFFmpeg() {
-
-    if (
-      mkvFFmpeg &&
-      mkvFFmpeg.loaded
-    ) {
-
-      return mkvFFmpeg;
-
-    }
-
-
-    if (mkvFFmpegLoading) {
-
-      return mkvFFmpegLoading;
-
-    }
-
-
-    mkvFFmpegLoading =
-      (async function() {
-
-        setMkvProgress(
-          2,
-          "mkvLoading"
-        );
-
-
-        const config =
-          window.MRV_FFMPEG;
-
-
-        if (!config) {
-
-          throw new Error(
-            "FFmpeg configuration missing"
-          );
-
-        }
-
-
-        // @ffmpeg/ffmpeg 0.12.x normally creates a worker from a
-        // relative chunk. We blob-load both the driver and its worker
-        // chunk so GitHub Pages does not have to host a Node/bundler build.
-
-        const mainResponse =
-          await fetch(
-            config.mainURL
-          );
-
-
-        const workerResponse =
-          await fetch(
-            config.workerURL
-          );
-
-
-        if (
-          !mainResponse.ok ||
-          !workerResponse.ok
-        ) {
-
-          throw new Error(
-            "Unable to download FFmpeg loader"
-          );
-
-        }
-
-
-        let mainSource =
-          await mainResponse.text();
-
-
-        const workerSource =
-          await workerResponse.text();
-
-
-        const workerBlobURL =
-          URL.createObjectURL(
-            new Blob(
-              [workerSource],
-              {
-                type:
-                  "text/javascript"
-              }
-            )
-          );
-
-
-        // Patch the UMD bundle's split-chunk URL so its root worker can
-        // load the worker chunk from our same-origin blob URL.
-
-        const patched =
-          mainSource.replace(
-            /new URL\(e\.p\+e\.u\(814\),e\.b\)/,
-            "r.workerLoadURL"
-          );
-
-
-        if (
-          patched === mainSource
-        ) {
-
-          URL.revokeObjectURL(
-            workerBlobURL
-          );
-
-          throw new Error(
-            "FFmpeg loader format changed; patch not found"
-          );
-
-        }
-
-
-        const mainBlobURL =
-          URL.createObjectURL(
-            new Blob(
-              [patched],
-              {
-                type:
-                  "text/javascript"
-              }
-            )
-          );
-
-
-        await new Promise(
-          (resolve, reject) => {
-
-            const script =
-              document.createElement(
-                "script"
-              );
-
-            script.src =
-              mainBlobURL;
-
-            script.onload =
-              resolve;
-
-            script.onerror =
-              () =>
-                reject(
-                  new Error(
-                    "Unable to initialize FFmpeg driver"
-                  )
-                );
-
-            document.head.appendChild(
-              script
-            );
-
-          }
-        );
-
-
-        if (
-          !window.FFmpegWASM ||
-          !window.FFmpegWASM.FFmpeg
-        ) {
-
-          throw new Error(
-            "FFmpegWASM is unavailable"
-          );
-
-        }
-
-
-        mkvFFmpeg =
-          new window.FFmpegWASM.FFmpeg();
-
-
-        mkvFFmpeg.on(
-          "progress",
-          ({ progress }) => {
-
-            setMkvProgress(
-              10 +
-                (
-                  Math.max(
-                    0,
-                    Math.min(
-                      1,
-                      progress
-                    )
-                  ) * 85
-                ),
-              "mkvProcessing"
-            );
-
-          }
-        );
-
-
-        const coreBase =
-          config.coreBaseURL;
-
-
-        const coreURL =
-          await toBlobURLLocal(
-            `${coreBase}/ffmpeg-core.js`,
-            "text/javascript"
-          );
-
-
-        const wasmURL =
-          await toBlobURLLocal(
-            `${coreBase}/ffmpeg-core.wasm`,
-            "application/wasm"
-          );
-
-
-        await mkvFFmpeg.load({
-          coreURL,
-          wasmURL,
-          workerLoadURL:
-            workerBlobURL
-        });
-
-
-        setMkvProgress(
-          8,
-          "mkvReady"
-        );
-
-
-        return mkvFFmpeg;
-
-      })();
-
-
-    try {
-
-      return await mkvFFmpegLoading;
-
-    } finally {
-
-      mkvFFmpegLoading = null;
-
-    }
-
-  }
-
-
-  async function fetchMkvSource(
-    source
-  ) {
-
-    if (
-      source instanceof File
-    ) {
-
-      return new Uint8Array(
-        await source.arrayBuffer()
-      );
-
-    }
-
-
-    const response =
-      await fetch(source);
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        "MKV request failed: " +
-        response.status
-      );
-
-    }
-
-
-    const contentLength =
-      Number(
-        response.headers.get(
-          "content-length"
-        ) || 0
-      );
-
-
-    if (!response.body) {
-
-      return new Uint8Array(
-        await response.arrayBuffer()
-      );
-
-    }
-
-
-    const reader =
-      response.body.getReader();
-
-
-    const chunks = [];
-
-    let received = 0;
-
-
-    while (true) {
-
-      const {
-        value,
-        done
-      } =
-        await reader.read();
-
-
-      if (done) break;
-
-
-      if (value) {
-
-        chunks.push(value);
-
-        received +=
-          value.byteLength;
-
-
-        if (contentLength) {
-
-          setMkvProgress(
-            5 +
-              (
-                received /
-                contentLength
-              ) * 25,
-            "mkvDownloading"
-          );
-
-        }
-
-      }
-
-    }
-
-
-    const data =
-      new Uint8Array(
-        received
-      );
-
-
-    let offset = 0;
-
-
-    for (
-      const chunk of chunks
-    ) {
-
-      data.set(
-        chunk,
-        offset
-      );
-
-      offset +=
-        chunk.byteLength;
-
-    }
-
-
-    return data;
-
-  }
-
-
-  async function playMkvSource(
-    source,
-    displayName
-  ) {
-
-    const jobId =
-      ++mkvJobId;
-
-
-    activeMkvUrl =
-      typeof source === "string"
-        ? source
-        : "";
-
-
-    updateStatus("loading");
-
-    hideMkvProgress();
-
-
-    resetDiagnostics(
-      activeMkvUrl ||
-      displayName ||
-      ""
-    );
-
-
-    youtubeFrame.src = "";
-
-    youtubeFrame.style.display =
-      "none";
-
-
-    video.style.display =
-      "none";
-
-
-    if (mkvPlayer)
-      mkvPlayer.style.display =
-        "block";
-
-
-    if (hls) {
-      hls.destroy();
-      hls = null;
-    }
-
-
+const video = document.getElementById("video");
+const mkvPlayer = document.getElementById("mkvPlayer");
+const youtubeFrame = document.getElementById("youtubeFrame");
+const urlInput = document.getElementById("urlInput");
+const statusBox = document.getElementById("status");
+
+let hls = null;
+let currentSource = "";
+let currentMkvSource = "";
+let tvMode = false;
+
+const HISTORY_KEY = "mrvplayer_history_v4";
+
+function setStatus(text){
+  statusBox.textContent = text;
+}
+
+function scrollToSection(id){
+  document.getElementById(id)?.scrollIntoView({
+    behavior:"smooth"
+  });
+}
+
+function focusUrl(){
+  urlInput.focus();
+  urlInput.scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+}
+
+function openMkvFile(){
+  document.getElementById("mkvFileInput").click();
+}
+
+function hideAllPlayers(){
+  video.style.display = "none";
+  mkvPlayer.style.display = "none";
+  youtubeFrame.style.display = "none";
+
+  try{
     video.pause();
+  }catch(e){}
 
+  youtubeFrame.src = "about:blank";
+}
 
-    video.removeAttribute(
-      "src"
-    );
+function cleanupHls(){
+  if(hls){
+    try{hls.destroy()}catch(e){}
+    hls = null;
+  }
+}
 
+function isYouTube(url){
+  return /youtube\.com|youtu\.be/i.test(url);
+}
 
-    video.load();
+function getYouTubeId(url){
 
+  try{
 
-    cleanupMkvOutput();
+    const u = new URL(url);
 
-
-    currentDownloadUrl =
-      "";
-
-
-    downloadBtn.disabled =
-      true;
-
-
-    if (
-      typeof source !== "string"
-    ) {
-
-      // Local MKV files still use the existing FFmpeg/WASM path.
-
-      video.style.display =
-        "block";
-
-
-      if (mkvPlayer)
-        mkvPlayer.style.display =
-          "none";
-
-
-      try {
-
-        const ffmpeg =
-          await loadMkvFFmpeg();
-
-
-        if (
-          jobId !== mkvJobId
-        ) return false;
-
-
-        setMkvProgress(
-          5,
-          "mkvDownloading"
-        );
-
-
-        const inputData =
-          await fetchMkvSource(
-            source
-          );
-
-
-        const inputName =
-          "input_" +
-          jobId +
-          ".mkv";
-
-
-        const outputName =
-          "output_" +
-          jobId +
-          ".mp4";
-
-
-        await ffmpeg.writeFile(
-          inputName,
-          inputData
-        );
-
-
-        setMkvProgress(
-          35,
-          "mkvRemuxing"
-        );
-
-
-        let remuxOK =
-          true;
-
-
-        try {
-
-          await ffmpeg.exec([
-            "-i",
-            inputName,
-            "-map",
-            "0:v:0",
-            "-map",
-            "0:a:0?",
-            "-c",
-            "copy",
-            "-movflags",
-            "+faststart",
-            outputName
-          ]);
-
-        } catch (_) {
-
-          remuxOK =
-            false;
-
-        }
-
-
-        if (!remuxOK) {
-
-          setMkvProgress(
-            35,
-            "mkvTranscoding"
-          );
-
-
-          await ffmpeg.exec([
-            "-i",
-            inputName,
-            "-map",
-            "0:v:0",
-            "-map",
-            "0:a:0?",
-            "-c:v",
-            "libx264",
-            "-preset",
-            "ultrafast",
-            "-crf",
-            "23",
-            "-c:a",
-            "aac",
-            "-b:a",
-            "160k",
-            "-movflags",
-            "+faststart",
-            outputName
-          ]);
-
-        }
-
-
-        if (
-          jobId !== mkvJobId
-        ) return false;
-
-
-        const outputData =
-          await ffmpeg.readFile(
-            outputName
-          );
-
-
-        const bytes =
-          outputData instanceof Uint8Array
-            ? outputData
-            : new Uint8Array(
-                outputData
-              );
-
-
-        mkvObjectUrl =
-          URL.createObjectURL(
-            new Blob(
-              [bytes.buffer],
-              {
-                type:
-                  "video/mp4"
-              }
-            )
-          );
-
-
-        video.src =
-          mkvObjectUrl;
-
-
-        currentDownloadUrl =
-          mkvObjectUrl;
-
-
-        downloadBtn.disabled =
-          false;
-
-
-        video.onloadedmetadata =
-          () => {
-
-            updateStatus(
-              "mkvReady"
-            );
-
-            hideMkvProgress();
-
-          };
-
-
-        video.onerror =
-          () => {
-
-            updateStatus(
-              "error"
-            );
-
-            hideMkvProgress();
-
-          };
-
-
-        await video.play()
-          .catch(() => {});
-
-
-        try {
-
-          await ffmpeg.deleteFile(
-            inputName
-          );
-
-          await ffmpeg.deleteFile(
-            outputName
-          );
-
-        } catch (_) {}
-
-
-        saveHistory(
-          displayName ||
-          "MKV file"
-        );
-
-
-        return true;
-
-      } catch (error) {
-
-        console.error(
-          "Local MKV playback error:",
-          error
-        );
-
-
-        updateStatus(
-          "mkvError"
-        );
-
-
-        hideMkvProgress();
-
-
-        return false;
-
-      }
-
+    if(u.hostname.includes("youtu.be")){
+      return u.pathname.substring(1);
     }
 
-
-    await runMkvDiagnostics(
-      activeMkvUrl
-    );
-
-
-    if (
-      jobId !== mkvJobId ||
-      !mkvPlayer
-    ) return false;
-
-
-    try {
-
-      await customElements.whenDefined(
-        "movi-player"
-      );
-
-
-      if (
-        jobId !== mkvJobId
-      ) return false;
-
-
-      mkvPlayer.onloadeddata =
-        async () => {
-
-          if (
-            jobId !== mkvJobId
-          ) return;
-
-
-          updateStatus(
-            "mkvReady"
-          );
-
-
-          hideMkvProgress();
-
-
-          await updateMkvPlayerDiagnostics();
-
-
-          try {
-
-            await mkvPlayer.play();
-
-          } catch (_) {}
-
-        };
-
-
-      mkvPlayer.onerror =
-        () => {
-
-          if (
-            jobId !== mkvJobId
-          ) return;
-
-
-          setDiag(
-            "diagMovi",
-            "✗ MOVI decode/playback error",
-            "bad"
-          );
-
-
-          const final =
-            document.getElementById(
-              "diagFinal"
-            );
-
-
-          final.textContent =
-            translations[
-              currentLanguage
-            ].diagFinalCodec;
-
-
-          final.style.color =
-            "#ffd166";
-
-
-          updateStatus(
-            "error"
-          );
-
-        };
-
-
-      mkvPlayer.onloadedmetadata =
-        () => {
-
-          if (
-            jobId === mkvJobId
-          )
-            updateMkvPlayerDiagnostics();
-
-        };
-
-
-      mkvPlayer.src =
-        source;
-
-
-      if (
-        typeof mkvPlayer.setAttribute ===
-        "function"
-      ) {
-
-        mkvPlayer.setAttribute(
-          "src",
-          source
-        );
-
-      }
-
-
-      setMkvProgress(
-        10,
-        "mkvLoading"
-      );
-
-
-      saveHistory(
-        source
-      );
-
-
-      return true;
-
-
-    } catch (error) {
-
-      console.error(
-        "Online MKV playback error:",
-        error
-      );
-
-
-      setDiag(
-        "diagMovi",
-        "✗ MOVI could not initialize",
-        "bad"
-      );
-
-
-      document.getElementById(
-        "diagFinal"
-      ).textContent =
-        translations[
-          currentLanguage
-        ].diagFinalCodec;
-
-
-      document.getElementById(
-        "diagFinal"
-      ).style.color =
-        "#ffd166";
-
-
-      updateStatus(
-        "mkvError"
-      );
-
-
-      hideMkvProgress();
-
-
-      return false;
-
+    if(u.searchParams.get("v")){
+      return u.searchParams.get("v");
     }
 
+    const match = u.pathname.match(
+      /\/(?:shorts|embed)\/([^/?]+)/
+    );
+
+    return match ? match[1] : null;
+
+  }catch(e){
+    return null;
+  }
+}
+
+function isHls(url){
+  return /\.m3u8(?:$|\?)/i.test(url);
+}
+
+function isMkv(url){
+  return /\.mkv(?:$|\?)/i.test(url);
+}
+
+function isVideoFile(url){
+  return /\.(mp4|webm|mov|m4v|ogg|ogv)(?:$|\?)/i.test(url);
+}
+
+async function playFromInput(){
+
+  const source = urlInput.value.trim();
+
+  if(!source){
+    setStatus("لینک وارد نشده است.");
+    return;
   }
 
+  addHistory(source);
 
-  function handleMkvFile(event) {
+  if(isYouTube(source)){
+    playYouTube(source);
+    return;
+  }
 
-    const file =
-      event.target.files &&
-      event.target.files[0];
+  if(isMkv(source)){
+    await playMkvSource(source, source);
+    return;
+  }
 
+  if(isHls(source)){
+    playHls(source);
+    return;
+  }
 
-    if (!file) return;
+  playNormalVideo(source);
+}
 
+function playNormalVideo(source){
 
-    playMkvSource(
-      file,
-      file.name
+  cleanupHls();
+  hideAllPlayers();
+
+  video.style.display = "block";
+  video.src = source;
+  currentSource = source;
+
+  video.play()
+    .then(()=>{
+      setStatus("در حال پخش ویدئو");
+    })
+    .catch(()=>{
+      setStatus("ویدئو آماده است؛ برای پخش Play را بزنید.");
+    });
+
+  video.onerror = ()=>{
+    setStatus("خطا در پخش ویدئو یا CORS.");
+  };
+}
+
+function playHls(source){
+
+  cleanupHls();
+  hideAllPlayers();
+
+  video.style.display = "block";
+  currentSource = source;
+
+  if(window.Hls && Hls.isSupported()){
+
+    hls = new Hls({
+      enableWorker:true,
+      lowLatencyMode:false
+    });
+
+    hls.loadSource(source);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED,()=>{
+      video.play().catch(()=>{});
+      setStatus("HLS آماده پخش است.");
+    });
+
+    hls.on(Hls.Events.ERROR,(event,data)=>{
+
+      if(data.fatal){
+        setStatus(
+          "خطای HLS: " +
+          (data.details || "unknown")
+        );
+      }
+
+    });
+
+  }else if(video.canPlayType("application/vnd.apple.mpegurl")){
+
+    video.src = source;
+
+    video.play().catch(()=>{});
+
+    setStatus("HLS native آماده پخش است.");
+
+  }else{
+
+    setStatus("این مرورگر HLS را پشتیبانی نمی‌کند.");
+
+  }
+}
+
+function playYouTube(source){
+
+  cleanupHls();
+  hideAllPlayers();
+
+  const id = getYouTubeId(source);
+
+  if(!id){
+    setStatus("لینک YouTube نامعتبر است.");
+    return;
+  }
+
+  youtubeFrame.style.display = "block";
+
+  youtubeFrame.src =
+    "https://www.youtube.com/embed/" +
+    encodeURIComponent(id) +
+    "?autoplay=1&rel=0";
+
+  setStatus("YouTube آماده پخش است.");
+}
+
+async function playMkvSource(source, displayName){
+
+  cleanupHls();
+  hideAllPlayers();
+
+  mkvPlayer.style.display = "block";
+  currentMkvSource = source;
+
+  resetTrackPanel();
+
+  document.getElementById("diagSource").textContent =
+    displayName || source;
+
+  document.getElementById("diagPlayer").textContent =
+    "Movi Player";
+
+  setStatus("در حال بارگذاری MKV...");
+
+  try{
+
+    mkvPlayer.src = source;
+
+    if(typeof mkvPlayer.setAttribute === "function"){
+      mkvPlayer.setAttribute("src",source);
+    }
+
+    await waitForMkvMetadata();
+
+    setStatus("MKV آماده پخش است.");
+
+    await updateMkvPlayerDiagnostics();
+
+    await renderMkvTrackPanel();
+
+    try{
+      await mkvPlayer.play();
+    }catch(e){}
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      "خطا در پخش MKV: " +
+      (error?.message || error)
     );
 
   }
 
+}
 
-  function updateStatus(key) {
+function waitForMkvMetadata(){
 
-    statusBox.textContent =
-      translations[
-        currentLanguage
-      ][key] ||
-      key;
+  return new Promise((resolve,reject)=>{
 
-  }
+    let done = false;
 
-
-  /* =========================
-     MKV DIAGNOSTICS
-  ========================= */
-
-  function setDiag(
-    id,
-    text,
-    cls = "info"
-  ) {
-
-    const el =
-      document.getElementById(id);
-
-
-    if (!el) return;
-
-
-    el.textContent =
-      text;
-
-
-    el.className =
-      "diag-value " +
-      cls;
-
-  }
-
-
-  function resetDiagnostics(
-    url = ""
-  ) {
-
-    const values = {
-
-      diagUrl:
-        url || "—",
-
-      diagProtocol:
-        "—",
-
-      diagCors:
-        "—",
-
-      diagHttp:
-        "—",
-
-      diagRange:
-        "—",
-
-      diagType:
-        "—",
-
-      diagMovi:
-        "—",
-
-      diagTracks:
-        "—"
-
+    const finish = ()=>{
+      if(done)return;
+      done = true;
+      clearTimeout(timer);
+      resolve();
     };
 
+    const fail = (e)=>{
+      if(done)return;
+      done = true;
+      clearTimeout(timer);
+      reject(e);
+    };
 
-    Object.entries(values)
-      .forEach(
-        ([id, v]) =>
-          setDiag(
-            id,
-            v,
-            "info"
-          )
-      );
+    const timer = setTimeout(
+      finish,
+      8000
+    );
 
+    mkvPlayer.addEventListener(
+      "loadedmetadata",
+      finish,
+      {once:true}
+    );
 
-    const final =
-      document.getElementById(
-        "diagFinal"
-      );
+    mkvPlayer.addEventListener(
+      "loadeddata",
+      finish,
+      {once:true}
+    );
 
+    mkvPlayer.addEventListener(
+      "error",
+      fail,
+      {once:true}
+    );
 
-    if (final)
-      final.textContent =
-        "—";
+  });
+
+}
+
+function normalizeTrack(track,index,type){
+
+  if(typeof track === "string"){
+
+    return {
+      id:index,
+      index,
+      type,
+      name:track,
+      language:track,
+      default:false,
+      forced:false,
+      codec:"",
+      channels:""
+    };
 
   }
 
+  track = track || {};
 
-  function protocolCheck(url) {
+  const language =
+    track.language ||
+    track.lang ||
+    track.languageCode ||
+    track.langCode ||
+    "";
 
-    try {
+  const name =
+    track.name ||
+    track.title ||
+    track.label ||
+    track.trackName ||
+    track.codec ||
+    "";
 
-      const u =
-        new URL(
-          url,
-          location.href
+  return {
+    id:
+      track.id ??
+      track.trackId ??
+      track.index ??
+      index,
+
+    index,
+
+    type,
+
+    name:name || (
+      type === "audio"
+        ? "Audio " + (index + 1)
+        : "Subtitle " + (index + 1)
+    ),
+
+    language,
+
+    default:
+      !!(
+        track.default ??
+        track.isDefault ??
+        track.defaultTrack
+      ),
+
+    forced:
+      !!(
+        track.forced ??
+        track.isForced ??
+        track.forcedTrack
+      ),
+
+    codec:
+      track.codec ||
+      track.codecName ||
+      "",
+
+    channels:
+      track.channels ||
+      track.channelCount ||
+      track.audioChannels ||
+      ""
+  };
+
+}
+
+async function getMkvTrackInfo(){
+
+  const audio = [];
+  const subtitles = [];
+
+  try{
+
+    if(typeof mkvPlayer.getAudioTracks === "function"){
+
+      const list =
+        await Promise.resolve(
+          mkvPlayer.getAudioTracks()
         );
 
+      if(Array.isArray(list)){
+        list.forEach((t,i)=>{
+          audio.push(
+            normalizeTrack(t,i,"audio")
+          );
+        });
+      }
 
-      if (
-        location.protocol ===
-          "https:" &&
-        u.protocol ===
-          "http:"
-      ) {
+    }
 
-        setDiag(
-          "diagProtocol",
-          "✗ HTTP from HTTPS page — Mixed Content",
-          "bad"
+  }catch(e){
+    console.warn("getAudioTracks",e);
+  }
+
+  try{
+
+    if(typeof mkvPlayer.getSubtitleTracks === "function"){
+
+      const list =
+        await Promise.resolve(
+          mkvPlayer.getSubtitleTracks()
         );
 
+      if(Array.isArray(list)){
+        list.forEach((t,i)=>{
+          subtitles.push(
+            normalizeTrack(t,i,"subtitle")
+          );
+        });
+      }
 
-        return "mixed";
+    }
+
+  }catch(e){
+    console.warn("getSubtitleTracks",e);
+  }
+
+  /*
+   * Movi documented API fallback.
+   */
+  if(!audio.length){
+
+    try{
+
+      if(typeof mkvPlayer.getAudioLangs === "function"){
+
+        const list =
+          await Promise.resolve(
+            mkvPlayer.getAudioLangs()
+          ) || [];
+
+        list.forEach((lang,i)=>{
+          audio.push({
+            id:i,
+            index:i,
+            type:"audio",
+            name:lang || ("Audio "+(i+1)),
+            language:lang || "",
+            default:i===0,
+            forced:false,
+            codec:"",
+            channels:""
+          });
+        });
 
       }
 
-
-      setDiag(
-        "diagProtocol",
-        "✓ " +
-          u.protocol
-            .replace(
-              ":",
-              ""
-            )
-            .toUpperCase(),
-        "ok"
-      );
-
-
-      return "ok";
-
-    } catch (_) {
-
-      setDiag(
-        "diagProtocol",
-        "✗ Invalid URL",
-        "bad"
-      );
-
-
-      return "invalid";
-
+    }catch(e){
+      console.warn("getAudioLangs",e);
     }
 
   }
 
+  if(!subtitles.length){
 
-  async function runMkvDiagnostics(
-    urlArg
-  ) {
+    try{
 
-    const url =
-      (
-        urlArg ||
-        urlInput.value ||
-        activeMkvUrl ||
-        ""
-      ).trim();
+      if(typeof mkvPlayer.getSubtitleLangs === "function"){
 
+        const list =
+          await Promise.resolve(
+            mkvPlayer.getSubtitleLangs()
+          ) || [];
 
-    if (!url) return;
+        list.forEach((lang,i)=>{
+          subtitles.push({
+            id:i,
+            index:i,
+            type:"subtitle",
+            name:lang || ("Subtitle "+(i+1)),
+            language:lang || "",
+            default:false,
+            forced:false,
+            codec:"",
+            channels:""
+          });
+        });
 
+      }
 
-    resetDiagnostics(
-      url
+    }catch(e){
+      console.warn("getSubtitleLangs",e);
+    }
+
+  }
+
+  return {
+    audio,
+    subtitles
+  };
+
+}
+
+function trackLabel(track){
+
+  const parts = [];
+
+  if(track.name){
+    parts.push(track.name);
+  }
+
+  if(
+    track.language &&
+    track.language !== track.name
+  ){
+    parts.push(track.language);
+  }
+
+  if(track.default){
+    parts.push("Default");
+  }
+
+  if(track.forced){
+    parts.push("Forced");
+  }
+
+  if(track.codec){
+    parts.push(track.codec);
+  }
+
+  if(track.channels){
+    parts.push(
+      track.channels +
+      (String(track.channels).match(/ch/i)
+        ? ""
+        : "ch")
     );
+  }
 
+  return parts.join(" · ") ||
+    (
+      track.type === "audio"
+        ? "Audio"
+        : "Subtitle"
+    );
+}
 
-    const protocol =
-      protocolCheck(
-        url
+function resetTrackPanel(){
+
+  document.getElementById(
+    "mkvTrackPanel"
+  ).classList.remove("visible");
+
+  document.getElementById(
+    "audioTrackButtons"
+  ).innerHTML = "";
+
+  document.getElementById(
+    "subtitleTrackButtons"
+  ).innerHTML = "";
+
+}
+
+async function renderMkvTrackPanel(){
+
+  const tracks =
+    await getMkvTrackInfo();
+
+  const panel =
+    document.getElementById("mkvTrackPanel");
+
+  const audioBox =
+    document.getElementById("audioTrackButtons");
+
+  const subtitleBox =
+    document.getElementById("subtitleTrackButtons");
+
+  audioBox.innerHTML = "";
+  subtitleBox.innerHTML = "";
+
+  if(!tracks.audio.length &&
+     !tracks.subtitles.length){
+
+    panel.classList.remove("visible");
+    return tracks;
+
+  }
+
+  panel.classList.add("visible");
+
+  tracks.audio.forEach((track,i)=>{
+
+    const button =
+      document.createElement("button");
+
+    button.className = "track-btn";
+
+    button.type = "button";
+
+    button.textContent =
+      trackLabel(track);
+
+    button.title =
+      JSON.stringify(track,null,2);
+
+    button.onclick = ()=>{
+      selectMkvAudio(track,i);
+    };
+
+    audioBox.appendChild(button);
+
+  });
+
+  if(!tracks.subtitles.length){
+
+    const span =
+      document.createElement("span");
+
+    span.style.color = "#777";
+    span.textContent =
+      "Subtitle track موجود نیست";
+
+    subtitleBox.appendChild(span);
+
+  }else{
+
+    const off =
+      document.createElement("button");
+
+    off.className = "track-btn off";
+    off.type = "button";
+    off.textContent = "✕ Off";
+
+    off.onclick = disableMkvSubtitle;
+
+    subtitleBox.appendChild(off);
+
+    tracks.subtitles.forEach((track,i)=>{
+
+      const button =
+        document.createElement("button");
+
+      button.className = "track-btn";
+      button.type = "button";
+      button.textContent =
+        trackLabel(track);
+
+      button.title =
+        JSON.stringify(track,null,2);
+
+      button.onclick = ()=>{
+        selectMkvSubtitle(track,i);
+      };
+
+      subtitleBox.appendChild(button);
+
+    });
+
+  }
+
+  return tracks;
+
+}
+
+async function selectMkvAudio(track,index){
+
+  try{
+
+    if(typeof mkvPlayer.selectAudioTrack === "function"){
+
+      await Promise.resolve(
+        mkvPlayer.selectAudioTrack(
+          track.id ?? index
+        )
       );
 
+    }else if(
+      typeof mkvPlayer.selectAudioLang === "function"
+    ){
 
-    if (
-      protocol ===
-      "mixed"
-    ) {
-
-      setDiag(
-        "diagCors",
-        "— blocked before CORS check",
-        "warn"
+      await Promise.resolve(
+        mkvPlayer.selectAudioLang(
+          track.language || track.name
+        )
       );
 
+    }else{
 
-      setDiag(
-        "diagHttp",
-        "—",
-        "info"
+      setStatus(
+        "API انتخاب Audio در این نسخه Movi موجود نیست."
       );
-
-
-      setDiag(
-        "diagRange",
-        "—",
-        "info"
-      );
-
-
-      setDiag(
-        "diagType",
-        "—",
-        "info"
-      );
-
-
-      document.getElementById(
-        "diagFinal"
-      ).textContent =
-        translations[
-          currentLanguage
-        ].diagFinalMixed;
-
-
-      document.getElementById(
-        "diagFinal"
-      ).style.color =
-        "#ff6b6b";
-
-
       return;
 
     }
 
+    setStatus(
+      "Audio: " + trackLabel(track)
+    );
 
-    const btn =
-      document.getElementById(
-        "diagRunBtn"
-      );
+    markActiveTrack(
+      "audioTrackButtons",
+      index
+    );
 
+  }catch(error){
 
-    if (btn)
-      btn.disabled =
-        true;
+    console.error(error);
 
-
-    try {
-
-      const controller =
-        new AbortController();
-
-
-      const timer =
-        setTimeout(
-          () =>
-            controller.abort(),
-          12000
-        );
-
-
-      let response;
-
-
-      try {
-
-        response =
-          await fetch(
-            url,
-            {
-              method:
-                "GET",
-
-              headers: {
-                "Range":
-                  "bytes=0-0"
-              },
-
-              mode:
-                "cors",
-
-              cache:
-                "no-store",
-
-              signal:
-                controller.signal
-
-            }
-          );
-
-      } finally {
-
-        clearTimeout(
-          timer
-        );
-
-      }
-
-
-      setDiag(
-        "diagCors",
-        "✓ Browser received a CORS-readable response",
-        "ok"
-      );
-
-
-      setDiag(
-        "diagHttp",
-        String(
-          response.status
-        ) +
-          " " +
-          response.statusText,
-
-        response.ok ||
-          response.status ===
-            206
-          ? "ok"
-          : "warn"
-      );
-
-
-      const contentType =
-        response.headers.get(
-          "content-type"
-        ) ||
-        "(missing)";
-
-
-      setDiag(
-        "diagType",
-        contentType,
-
-        /matroska|mkv|octet-stream/i.test(
-          contentType
-        )
-          ? "ok"
-          : "warn"
-      );
-
-
-      const contentRange =
-        response.headers.get(
-          "content-range"
-        ) ||
-        "";
-
-
-      const acceptRanges =
-        response.headers.get(
-          "accept-ranges"
-        ) ||
-        "";
-
-
-      const rangeOK =
-        response.status ===
-          206 ||
-        /bytes/i.test(
-          contentRange
-        ) ||
-        /bytes/i.test(
-          acceptRanges
-        );
-
-
-      setDiag(
-        "diagRange",
-
-        rangeOK
-          ? "✓ " +
-            (
-              contentRange ||
-              acceptRanges ||
-              "206"
-            )
-          : "⚠ No 206/bytes evidence",
-
-        rangeOK
-          ? "ok"
-          : "warn"
-      );
-
-
-      if (!rangeOK)
-
-        document.getElementById(
-          "diagFinal"
-        ).textContent =
-          translations[
-            currentLanguage
-          ].diagFinalRange;
-
-      else
-
-        document.getElementById(
-          "diagFinal"
-        ).textContent =
-          translations[
-            currentLanguage
-          ].diagFinalReady;
-
-
-      document.getElementById(
-        "diagFinal"
-      ).style.color =
-        rangeOK
-          ? "#62e88b"
-          : "#ffd166";
-
-
-      try {
-
-        response.body?.cancel();
-
-      } catch (_) {}
-
-    } catch (error) {
-
-      const msg =
-        String(
-          error &&
-          error.message ||
-          error
-        );
-
-
-      if (
-        protocol ===
-        "mixed"
-      ) {
-
-        setDiag(
-          "diagCors",
-          "—",
-          "info"
-        );
-
-
-        document.getElementById(
-          "diagFinal"
-        ).textContent =
-          translations[
-            currentLanguage
-          ].diagFinalMixed;
-
-      } else {
-
-        setDiag(
-          "diagCors",
-          "✗ No CORS-readable response",
-          "bad"
-        );
-
-
-        setDiag(
-          "diagHttp",
-
-          msg.includes(
-            "AbortError"
-          )
-            ? "Timeout"
-            : "Blocked / no response",
-
-          "bad"
-        );
-
-
-        document.getElementById(
-          "diagFinal"
-        ).textContent =
-          translations[
-            currentLanguage
-          ].diagFinalCors;
-
-      }
-
-
-      document.getElementById(
-        "diagFinal"
-      ).style.color =
-        "#ff6b6b";
-
-    } finally {
-
-      if (btn)
-        btn.disabled =
-          false;
-
-    }
+    setStatus(
+      "انتخاب Audio انجام نشد."
+    );
 
   }
 
+}
 
-  async function updateMkvPlayerDiagnostics() {
+async function selectMkvSubtitle(track,index){
 
-    if (!mkvPlayer) return;
+  try{
 
+    if(
+      typeof mkvPlayer.selectSubtitleTrack ===
+      "function"
+    ){
 
-    try {
-
-      const core =
-        mkvPlayer.player ||
-        mkvPlayer;
-
-
-      let audio = [];
-
-      let subs = [];
-
-
-      if (
-        typeof core.getAudioTracks ===
-        "function"
-      )
-
-        audio =
-          await Promise.resolve(
-            core.getAudioTracks()
-          ) || [];
-
-
-      else if (
-        typeof mkvPlayer.getAudioLangs ===
-        "function"
-      )
-
-        audio =
-          (
-            await Promise.resolve(
-              mkvPlayer.getAudioLangs()
-            ) || []
-          ).map(
-            (x, i) => ({
-              id: i,
-              language: x
-            })
-          );
-
-
-      if (
-        typeof core.getSubtitleTracks ===
-        "function"
-      )
-
-        subs =
-          await Promise.resolve(
-            core.getSubtitleTracks()
-          ) || [];
-
-
-      else if (
-        typeof mkvPlayer.getSubtitleLangs ===
-        "function"
-      )
-
-        subs =
-          (
-            await Promise.resolve(
-              mkvPlayer.getSubtitleLangs()
-            ) || []
-          ).map(
-            (x, i) => ({
-              id: i,
-              language: x
-            })
-          );
-
-
-      setDiag(
-        "diagTracks",
-        `✓ Audio: ${audio.length} · Subtitle: ${subs.length}`,
-        "ok"
+      await Promise.resolve(
+        mkvPlayer.selectSubtitleTrack(
+          track.id ?? index
+        )
       );
 
+    }else if(
+      typeof mkvPlayer.selectSubtitleLang ===
+      "function"
+    ){
 
-      setDiag(
-        "diagMovi",
-        "✓ MOVI loaded / metadata available",
-        "ok"
+      await Promise.resolve(
+        mkvPlayer.selectSubtitleLang(
+          track.language || track.name
+        )
       );
 
+    }else{
 
-      const final =
-        document.getElementById(
-          "diagFinal"
+      setStatus(
+        "API انتخاب Subtitle در این نسخه Movi موجود نیست."
+      );
+      return;
+
+    }
+
+    setStatus(
+      "Subtitle: " + trackLabel(track)
+    );
+
+    markActiveTrack(
+      "subtitleTrackButtons",
+      index + 1
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      "انتخاب Subtitle انجام نشد."
+    );
+
+  }
+
+}
+
+async function disableMkvSubtitle(){
+
+  try{
+
+    if(
+      typeof mkvPlayer.disableSubtitles ===
+      "function"
+    ){
+
+      await Promise.resolve(
+        mkvPlayer.disableSubtitles()
+      );
+
+    }else if(
+      typeof mkvPlayer.selectSubtitleLang ===
+      "function"
+    ){
+
+      await Promise.resolve(
+        mkvPlayer.selectSubtitleLang(null)
+      );
+
+    }else if(
+      typeof mkvPlayer.selectSubtitleTrack ===
+      "function"
+    ){
+
+      await Promise.resolve(
+        mkvPlayer.selectSubtitleTrack(-1)
+      );
+
+    }else{
+
+      setStatus(
+        "خاموش کردن Subtitle توسط API این نسخه Movi در دسترس نیست."
+      );
+      return;
+
+    }
+
+    setStatus("Subtitle خاموش شد.");
+
+    markActiveTrack(
+      "subtitleTrackButtons",
+      0
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      "خاموش کردن Subtitle انجام نشد."
+    );
+
+  }
+
+}
+
+function markActiveTrack(containerId,index){
+
+  const box =
+    document.getElementById(containerId);
+
+  [...box.children].forEach(
+    (button,i)=>{
+      button.classList.toggle(
+        "active",
+        i === index
+      );
+    }
+  );
+
+}
+
+async function updateMkvPlayerDiagnostics(){
+
+  const tracks =
+    await getMkvTrackInfo();
+
+  const trackText =
+    "Audio: " +
+    tracks.audio.length +
+    " · Subtitle: " +
+    tracks.subtitles.length;
+
+  const el =
+    document.getElementById("diagTracks");
+
+  el.textContent = trackText;
+
+  el.className =
+    "diag-value " +
+    (
+      tracks.audio.length ||
+      tracks.subtitles.length
+        ? "ok"
+        : "warn"
+    );
+
+  document.getElementById(
+    "diagPlayer"
+  ).textContent =
+    "Movi Player / MKV";
+
+}
+
+async function runDiagnostics(){
+
+  const source =
+    currentMkvSource ||
+    currentSource ||
+    "";
+
+  if(!source){
+
+    setDiag(
+      "diagSource",
+      "هیچ منبعی انتخاب نشده",
+      "warn"
+    );
+
+    return;
+
+  }
+
+  setDiag(
+    "diagSource",
+    source,
+    "ok"
+  );
+
+  setDiag(
+    "diagPlayer",
+    "Movi Player",
+    "ok"
+  );
+
+  if(
+    location.protocol === "https:" &&
+    /^http:\/\//i.test(source)
+  ){
+
+    setDiag(
+      "diagHttp",
+      "Mixed Content",
+      "bad"
+    );
+
+  }else{
+
+    setDiag(
+      "diagHttp",
+      "HTTPS / بررسی CORS...",
+      "warn"
+    );
+
+    try{
+
+      const response =
+        await fetch(source,{
+          method:"GET",
+          headers:{
+            "Range":"bytes=0-1"
+          }
+        });
+
+      const cors =
+        response.headers.get(
+          "access-control-allow-origin"
         );
 
+      const range =
+        response.headers.get(
+          "accept-ranges"
+        );
 
-      final.textContent =
-        translations[
-          currentLanguage
-        ].diagFinalReady;
-
-
-      final.style.color =
-        "#62e88b";
-
-
-    } catch (e) {
+      const type =
+        response.headers.get(
+          "content-type"
+        );
 
       setDiag(
-        "diagMovi",
-        "⚠ Loaded but track metadata unavailable",
+        "diagHttp",
+        response.status +
+        (cors ? " · CORS ✓" : " · CORS header ؟"),
+        cors ? "ok" : "warn"
+      );
+
+      setDiag(
+        "diagRange",
+        range ||
+        (
+          response.status === 206
+            ? "206 Partial Content"
+            : "Range header not reported"
+        ),
+        response.status === 206 || !!range
+          ? "ok"
+          : "warn"
+      );
+
+      setDiag(
+        "diagType",
+        type || "unknown",
+        type && /matroska|octet-stream|video/i.test(type)
+          ? "ok"
+          : "warn"
+      );
+
+    }catch(error){
+
+      setDiag(
+        "diagHttp",
+        "Fetch/CORS blocked",
+        "bad"
+      );
+
+      setDiag(
+        "diagRange",
+        "نامشخص",
+        "warn"
+      );
+
+      setDiag(
+        "diagType",
+        "نامشخص",
         "warn"
       );
 
@@ -3092,144 +1752,378 @@
 
   }
 
+  await updateMkvPlayerDiagnostics();
 
-  /* =========================
-     YOUTUBE DETECTION
-  ========================= */
+}
 
-  function isYouTube(url) {
+function setDiag(id,text,state){
 
-    try {
+  const el =
+    document.getElementById(id);
 
-      const parsed =
-        new URL(url);
+  el.textContent = text;
+  el.className =
+    "diag-value " +
+    (state || "");
 
+}
 
-      const host =
-        parsed.hostname.toLowerCase();
+function togglePlay(){
 
+  if(mkvPlayer.style.display !== "none"){
 
-      return (
+    try{
 
-        host === "youtube.com" ||
+      if(mkvPlayer.paused){
+        mkvPlayer.play();
+      }else{
+        mkvPlayer.pause();
+      }
 
-        host ===
-          "www.youtube.com" ||
+    }catch(e){}
 
-        host ===
-          "m.youtube.com" ||
+    return;
 
-        host ===
-          "youtu.be" ||
+  }
 
-        host ===
-          "www.youtu.be" ||
+  if(video.style.display !== "none"){
 
-        host ===
-          "youtube-nocookie.com" ||
-
-        host ===
-          "www.youtube-nocookie.com"
-
-      );
-
-    } catch {
-
-      return false;
-
+    if(video.paused){
+      video.play();
+    }else{
+      video.pause();
     }
 
   }
 
+}
 
-  function getYouTubeId(url) {
+function seek(seconds){
 
-    try {
+  if(
+    video.style.display !== "none" &&
+    Number.isFinite(video.currentTime)
+  ){
 
-      const parsed =
-        new URL(url);
+    video.currentTime += seconds;
+    return;
 
+  }
 
-      const host =
-        parsed.hostname.toLowerCase();
+  if(mkvPlayer.style.display !== "none"){
 
+    try{
+      mkvPlayer.currentTime += seconds;
+    }catch(e){}
 
-      if (
+  }
 
-        host ===
-          "youtu.be" ||
+}
 
-        host ===
-          "www.youtu.be"
+function toggleMute(){
 
-      ) {
+  if(video.style.display !== "none"){
+    video.muted = !video.muted;
+  }
 
-        return parsed.pathname
-          .replace(/^\/+/, "")
-          .split("/")[0];
+}
 
+function fullscreen(){
+
+  const target =
+    mkvPlayer.style.display !== "none"
+      ? mkvPlayer
+      : video.style.display !== "none"
+        ? video
+        : youtubeFrame;
+
+  if(target?.requestFullscreen){
+    target.requestFullscreen().catch(()=>{});
+  }
+
+}
+
+function toggleTvMode(){
+
+  tvMode = !tvMode;
+
+  document.body.classList.toggle(
+    "tv-mode",
+    tvMode
+  );
+
+}
+
+function addHistory(url){
+
+  let history = [];
+
+  try{
+    history =
+      JSON.parse(
+        localStorage.getItem(HISTORY_KEY) || "[]"
+      );
+  }catch(e){}
+
+  history =
+    history.filter(
+      item => item !== url
+    );
+
+  history.unshift(url);
+
+  history =
+    history.slice(0,30);
+
+  localStorage.setItem(
+    HISTORY_KEY,
+    JSON.stringify(history)
+  );
+
+  renderHistory();
+
+}
+
+function loadHistory(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem(HISTORY_KEY) || "[]"
+    );
+
+  }catch(e){
+
+    return [];
+
+  }
+
+}
+
+function renderHistory(){
+
+  const box =
+    document.getElementById("historyList");
+
+  const history =
+    loadHistory();
+
+  box.innerHTML = "";
+
+  if(!history.length){
+
+    const empty =
+      document.createElement("div");
+
+    empty.className = "empty";
+    empty.textContent =
+      "هنوز چیزی پخش نشده است.";
+
+    box.appendChild(empty);
+    return;
+
+  }
+
+  history.forEach(url=>{
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "history-item";
+
+    item.tabIndex = 0;
+
+    item.textContent = url;
+
+    item.onclick = ()=>{
+
+      urlInput.value = url;
+      playFromInput();
+
+    };
+
+    item.onkeydown = e=>{
+
+      if(e.key === "Enter"){
+        item.click();
       }
 
+    };
 
-      if (
-        host.includes(
-          "youtube.com"
-        )
-      ) {
+    box.appendChild(item);
 
-        if (
-          parsed.pathname ===
-          "/watch"
-        ) {
+  });
 
-          return parsed.searchParams.get(
-            "v"
-          );
+}
 
-        }
+function handleMkvFile(file){
 
+  if(!file){
+    return;
+  }
 
-        if (
-          parsed.pathname.startsWith(
-            "/shorts/"
-          )
-        ) {
+  const url =
+    URL.createObjectURL(file);
 
-          return parsed.pathname
-            .split("/")[2];
+  addHistory(file.name);
 
-        }
+  playMkvSource(
+    url,
+    file.name
+  );
 
+}
 
-        if (
-          parsed.pathname.startsWith(
-            "/embed/"
-          )
-        ) {
+function toggleLanguage(){
 
-          return parsed.pathname
-            .split("/")[2];
+  const html =
+    document.documentElement;
 
-        }
+  if(html.lang === "fa"){
 
-      }
+    html.lang = "en";
+    html.dir = "ltr";
 
+    document.querySelector(
+      ".language-btn"
+    ).textContent = "FA";
 
-      return null;
+    document.querySelector(
+      "nav button:nth-child(1)"
+    ).textContent = "Home";
 
-    } catch {
+    document.querySelector(
+      "nav button:nth-child(2)"
+    ).textContent = "History";
 
-      return null;
+    document.querySelector(
+      "nav button:nth-child(3)"
+    ).textContent = "Support";
 
+  }else{
+
+    html.lang = "fa";
+    html.dir = "rtl";
+
+    document.querySelector(
+      ".language-btn"
+    ).textContent = "EN";
+
+    document.querySelector(
+      "nav button:nth-child(1)"
+    ).textContent = "خانه";
+
+    document.querySelector(
+      "nav button:nth-child(2)"
+    ).textContent = "تاریخچه";
+
+    document.querySelector(
+      "nav button:nth-child(3)"
+    ).textContent = "پشتیبانی";
+
+  }
+
+}
+
+video.addEventListener(
+  "loadedmetadata",
+  ()=>{
+    setStatus("ویدئو آماده پخش است.");
+  }
+);
+
+video.addEventListener(
+  "playing",
+  ()=>{
+    setStatus("در حال پخش");
+  }
+);
+
+video.addEventListener(
+  "pause",
+  ()=>{
+    setStatus("متوقف شده");
+  }
+);
+
+mkvPlayer.addEventListener(
+  "loadedmetadata",
+  async ()=>{
+    setStatus("MKV metadata loaded");
+
+    await updateMkvPlayerDiagnostics();
+    await renderMkvTrackPanel();
+  }
+);
+
+mkvPlayer.addEventListener(
+  "loadeddata",
+  async ()=>{
+    await updateMkvPlayerDiagnostics();
+    await renderMkvTrackPanel();
+  }
+);
+
+mkvPlayer.addEventListener(
+  "error",
+  ()=>{
+    setStatus(
+      "خطا در Movi/MKV. CORS و Range سرور را بررسی کنید."
+    );
+
+    setDiag(
+      "diagPlayer",
+      "Movi error",
+      "bad"
+    );
+  }
+);
+
+window.addEventListener(
+  "gamepadconnected",
+  ()=>{
+    setStatus(
+      "Gamepad متصل شد."
+    );
+  }
+);
+
+window.addEventListener(
+  "keydown",
+  e=>{
+
+    if(
+      e.target &&
+      (
+        e.target.tagName === "INPUT" ||
+        e.target.tagName === "TEXTAREA"
+      )
+    ){
+      return;
     }
 
-  }  /* =========================
-     START
-  ========================= */
+    if(e.code === "Space"){
+      e.preventDefault();
+      togglePlay();
+    }
 
-  setLanguage(
-    currentLanguage
-  );
+    if(e.key === "ArrowLeft"){
+      seek(-10);
+    }
+
+    if(e.key === "ArrowRight"){
+      seek(10);
+    }
+
+    if(e.key.toLowerCase() === "f"){
+      fullscreen();
+    }
+
+  }
+);
+
+renderHistory();
 
 </script>
 
