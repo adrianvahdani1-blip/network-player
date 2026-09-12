@@ -2274,3 +2274,1431 @@
           return parsed.pathname
             .split("/")[2];
       }
+if (
+  parsed.pathname.startsWith(
+    "/embed/"
+  )
+) {
+
+  return parsed.pathname
+    .split("/")[2];        }
+
+
+        if (
+          parsed.pathname.startsWith(
+            "/live/"
+          )
+        ) {
+
+          return parsed.pathname
+            .split("/")[2];
+
+        }
+
+      }
+
+    } catch {
+
+      return null;
+
+    }
+
+    return null;
+
+  }
+
+
+  /* =========================
+     DIRECT DOWNLOAD
+  ========================= */
+
+  function isDirectDownloadFormat(url) {
+
+    const cleanUrl =
+      url
+        .split("?")[0]
+        .split("#")[0]
+        .toLowerCase();
+
+
+    return (
+
+      cleanUrl.endsWith(".mp4") ||
+
+      cleanUrl.endsWith(".webm") ||
+
+      cleanUrl.endsWith(".mov") ||
+
+      cleanUrl.endsWith(".m4v")
+
+    );
+
+  }
+
+
+  /* =========================
+     YOUTUBE PLAYER
+  ========================= */
+
+  function playYouTube(url) {
+
+    const videoId =
+      getYouTubeId(url);
+
+
+    if (!videoId) {
+
+      updateStatus("error");
+
+      return false;
+
+    }
+
+
+    if (hls) {
+
+      hls.destroy();
+
+      hls = null;
+
+    }
+
+
+    /* Stop MKV player */
+
+    try {
+
+      mkvPlayer.pause();
+
+    } catch (_) {}
+
+
+    mkvPlayer.removeAttribute("src");
+
+    mkvPlayer.style.display =
+      "none";
+
+
+    video.pause();
+
+    video.removeAttribute("src");
+
+    video.load();
+
+
+    video.style.display =
+      "none";
+
+    youtubeFrame.style.display =
+      "block";
+
+
+    youtubeFrame.src =
+      "https://www.youtube.com/embed/" +
+      encodeURIComponent(videoId) +
+      "?autoplay=1&rel=0";
+
+
+    currentDownloadUrl = "";
+
+    downloadBtn.disabled = true;
+
+
+    if (mkvTracks) {
+
+      mkvTracks.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    updateStatus("youtube");
+
+    return true;
+
+  }
+
+
+  /* =========================
+     PLAY VIDEO
+  ========================= */
+
+  async function playVideo() {
+
+    const url =
+      urlInput.value.trim();
+
+
+    if (!url) {
+
+      statusBox.textContent =
+        currentLanguage === "fa"
+          ? "لطفاً آدرس ویدیو را وارد کنید."
+          : "Please enter a video URL.";
+
+      return;
+
+    }
+
+
+    updateStatus("loading");
+
+
+    /* =========================
+       YOUTUBE
+    ========================= */
+
+    if (isYouTube(url)) {
+
+      if (playYouTube(url)) {
+
+        saveHistory(url);
+
+      }
+
+      return;
+
+    }
+
+
+    /* =========================
+       MKV
+    ========================= */
+
+    if (isMkv(url)) {
+
+      await playMkvSource(
+        url,
+        url.split("/").pop()
+      );
+
+      return;
+
+    }
+
+
+    /* =========================
+       RESET MKV
+    ========================= */
+
+    mkvJobId++;
+
+
+    try {
+
+      mkvPlayer.pause();
+
+    } catch (_) {}
+
+
+    mkvPlayer.removeAttribute(
+      "src"
+    );
+
+    mkvPlayer.style.display =
+      "none";
+
+
+    if (mkvTracks) {
+
+      mkvTracks.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    /* =========================
+       RESET YOUTUBE
+    ========================= */
+
+    youtubeFrame.src = "";
+
+    youtubeFrame.style.display =
+      "none";
+
+
+    video.style.display =
+      "block";
+
+
+    /* =========================
+       DESTROY HLS
+    ========================= */
+
+    if (hls) {
+
+      hls.destroy();
+
+      hls = null;
+
+    }
+
+
+    video.pause();
+
+    video.removeAttribute(
+      "src"
+    );
+
+    video.load();
+
+
+    currentDownloadUrl =
+      "";
+
+
+    /* =========================
+       HLS
+    ========================= */
+
+    const isHLS =
+      url
+        .toLowerCase()
+        .includes(".m3u8");
+
+
+    if (
+      isHLS &&
+      window.Hls &&
+      Hls.isSupported()
+    ) {
+
+      hls = new Hls();
+
+
+      hls.loadSource(
+        url
+      );
+
+
+      hls.attachMedia(
+        video
+      );
+
+
+      hls.on(
+        Hls.Events.MANIFEST_PARSED,
+        function () {
+
+          video.play()
+            .then(() => {
+
+              updateStatus(
+                "playing"
+              );
+
+            })
+            .catch(() => {
+
+              updateStatus(
+                "ready"
+              );
+
+            });
+
+        }
+      );
+
+
+      hls.on(
+        Hls.Events.ERROR,
+        function (
+          event,
+          data
+        ) {
+
+          if (data.fatal) {
+
+            updateStatus(
+              "error"
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =========================
+       NATIVE VIDEO
+    ========================= */
+
+    else {
+
+      video.src =
+        url;
+
+
+      video.play()
+        .then(() => {
+
+          updateStatus(
+            "playing"
+          );
+
+        })
+        .catch(() => {
+
+          updateStatus(
+            "error"
+          );
+
+        });
+
+    }
+
+
+    /* =========================
+       DOWNLOAD
+    ========================= */
+
+    if (
+      isDirectDownloadFormat(url)
+    ) {
+
+      currentDownloadUrl =
+        url;
+
+      downloadBtn.disabled =
+        false;
+
+    } else {
+
+      currentDownloadUrl =
+        "";
+
+      downloadBtn.disabled =
+        true;
+
+    }
+
+
+    saveHistory(url);
+
+  }
+
+
+  /* =========================
+     DOWNLOAD
+  ========================= */
+
+  function downloadVideo() {
+
+    if (!currentDownloadUrl) {
+
+      updateStatus(
+        "downloadUnavailable"
+      );
+
+      return;
+
+    }
+
+
+    const link =
+      document.createElement("a");
+
+
+    link.href =
+      currentDownloadUrl;
+
+
+    link.download =
+      "Mr-V-Player-Video";
+
+
+    link.target =
+      "_blank";
+
+
+    link.rel =
+      "noopener";
+
+
+    document.body.appendChild(
+      link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+      link
+    );
+
+  }
+
+
+  /* =========================
+     CLEAR
+  ========================= */
+
+  function clearVideo() {
+
+    if (hls) {
+
+      hls.destroy();
+
+      hls = null;
+
+    }
+
+
+    mkvJobId++;
+
+
+    try {
+
+      mkvPlayer.pause();
+
+    } catch (_) {}
+
+
+    mkvPlayer.removeAttribute(
+      "src"
+    );
+
+
+    mkvPlayer.style.display =
+      "none";
+
+
+    if (mkvTracks) {
+
+      mkvTracks.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    video.pause();
+
+    video.removeAttribute(
+      "src"
+    );
+
+    video.load();
+
+
+    video.style.display =
+      "block";
+
+
+    youtubeFrame.src =
+      "";
+
+    youtubeFrame.style.display =
+      "none";
+
+
+    currentDownloadUrl =
+      "";
+
+
+    downloadBtn.disabled =
+      true;
+
+
+    mkvAudioTracks = [];
+
+    mkvSubtitleTracks = [];
+
+
+    renderMkvTracks();
+
+
+    updateStatus(
+      "ready"
+    );
+
+  }
+
+
+  /* =========================
+     NEW URL
+  ========================= */
+
+  function newUrl() {
+
+    clearVideo();
+
+
+    urlInput.value =
+      "";
+
+
+    urlInput.focus();
+
+  }
+
+
+  /* =========================
+     FULLSCREEN
+  ========================= */
+
+  function fullscreenVideo() {
+
+    let activePlayer;
+
+
+    if (
+      mkvPlayer.style.display !==
+      "none"
+    ) {
+
+      activePlayer =
+        mkvPlayer;
+
+    }
+
+    else if (
+      youtubeFrame.style.display !==
+      "none"
+    ) {
+
+      activePlayer =
+        youtubeFrame;
+
+    }
+
+    else {
+
+      activePlayer =
+        video;
+
+    }
+
+
+    if (
+      activePlayer.requestFullscreen
+    ) {
+
+      activePlayer.requestFullscreen();
+
+    }
+
+    else if (
+      activePlayer.webkitRequestFullscreen
+    ) {
+
+      activePlayer.webkitRequestFullscreen();
+
+    }
+
+    else if (
+      activePlayer.webkitEnterFullscreen
+    ) {
+
+      activePlayer.webkitEnterFullscreen();
+
+    }
+
+      }  /* =========================
+     HISTORY
+  ========================= */
+
+  function getHistory() {
+
+    try {
+
+      return JSON.parse(
+        localStorage.getItem(
+          "mrVHistory"
+        ) || "[]"
+      );
+
+    } catch {
+
+      return [];
+
+    }
+
+  }
+
+
+  function saveHistory(url) {
+
+    let history =
+      getHistory();
+
+
+    history =
+      history.filter(
+        item => item !== url
+      );
+
+
+    history.unshift(url);
+
+
+    history =
+      history.slice(0, 8);
+
+
+    localStorage.setItem(
+      "mrVHistory",
+      JSON.stringify(history)
+    );
+
+
+    renderHistory();
+
+  }
+
+
+  function renderHistory() {
+
+    const list =
+      document.getElementById(
+        "historyList"
+      );
+
+
+    if (!list) return;
+
+
+    const history =
+      getHistory();
+
+
+    list.innerHTML = "";
+
+
+    if (!history.length) {
+
+      const empty =
+        document.createElement(
+          "div"
+        );
+
+
+      empty.className =
+        "empty";
+
+
+      empty.textContent =
+        translations[
+          currentLanguage
+        ].noHistory;
+
+
+      list.appendChild(
+        empty
+      );
+
+
+      return;
+
+    }
+
+
+    history.forEach(url => {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "history-item";
+
+
+      item.tabIndex =
+        0;
+
+
+      item.textContent =
+        url;
+
+
+      item.onclick =
+        function () {
+
+          urlInput.value =
+            url;
+
+
+          scrollToSection(
+            "home"
+          );
+
+
+          playVideo();
+
+        };
+
+
+      item.onkeydown =
+        function (event) {
+
+          if (
+            event.key === "Enter" ||
+            event.key === " "
+          ) {
+
+            event.preventDefault();
+
+            item.click();
+
+          }
+
+        };
+
+
+      list.appendChild(
+        item
+      );
+
+    });
+
+  }
+
+
+  /* =========================
+     NAVIGATION
+  ========================= */
+
+  function scrollToSection(id) {
+
+    const section =
+      document.getElementById(
+        id
+      );
+
+
+    if (section) {
+
+      section.scrollIntoView({
+        behavior: "smooth"
+      });
+
+    }
+
+  }
+
+
+  function goToPlayer() {
+
+    scrollToSection(
+      "home"
+    );
+
+
+    setTimeout(
+      function () {
+
+        urlInput.focus();
+
+      },
+      400
+    );
+
+  }
+
+
+  function goToHistory() {
+
+    scrollToSection(
+      "history"
+    );
+
+  }
+
+
+  function goToSupport() {
+
+    scrollToSection(
+      "support"
+    );
+
+  }
+
+
+  /* =========================
+     HOME CARD KEYBOARD
+  ========================= */
+
+  function cardKey(
+    event,
+    action
+  ) {
+
+    if (
+      event.key === "Enter" ||
+      event.key === " "
+    ) {
+
+      event.preventDefault();
+
+
+      if (
+        action === "play"
+      ) {
+
+        goToPlayer();
+
+      }
+
+
+      if (
+        action === "history"
+      ) {
+
+        goToHistory();
+
+      }
+
+
+      if (
+        action === "support"
+      ) {
+
+        goToSupport();
+
+      }
+
+    }
+
+  }
+
+
+  /* =========================
+     ENTER KEY
+  ========================= */
+
+  urlInput.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        playVideo();
+
+      }
+
+    }
+  );
+
+
+  /* =========================
+     MKV TRACK EVENTS
+  ========================= */
+
+  if (audioTrackSelect) {
+
+    audioTrackSelect.addEventListener(
+      "change",
+      function () {
+
+        selectMkvAudioTrack(
+          this.value
+        );
+
+      }
+    );
+
+  }
+
+
+  if (subtitleTrackSelect) {
+
+    subtitleTrackSelect.addEventListener(
+      "change",
+      function () {
+
+        selectMkvSubtitleTrack(
+          this.value
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =========================
+     VIDEO EVENTS
+  ========================= */
+
+  video.addEventListener(
+    "playing",
+    function () {
+
+      updateStatus(
+        "playing"
+      );
+
+    }
+  );
+
+
+  video.addEventListener(
+    "error",
+    function () {
+
+      if (
+        video.style.display !==
+        "none"
+      ) {
+
+        updateStatus(
+          "error"
+        );
+
+      }
+
+    }
+  );
+
+
+  /* =========================
+     MKV PLAYER EVENTS
+  ========================= */
+
+  if (mkvPlayer) {
+
+    mkvPlayer.addEventListener(
+      "play",
+      function () {
+
+        updateStatus(
+          "mkvPlaying"
+        );
+
+      }
+    );
+
+
+    mkvPlayer.addEventListener(
+      "pause",
+      function () {
+
+        if (
+          mkvPlayer.style.display !==
+          "none"
+        ) {
+
+          updateStatus(
+            "mkvPaused"
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =========================
+     GAMEPAD SUPPORT
+  ========================= */
+
+  let focusedIndex = 0;
+
+  let gameElements = [];
+
+  let gamepadActive = false;
+
+  let lastGamepadTime = 0;
+
+
+  function updateGameElements() {
+
+    gameElements =
+      Array.from(
+        document.querySelectorAll(
+          "button, input, a, select, .video-card, .history-item"
+        )
+      ).filter(
+        element =>
+          !element.disabled &&
+          element.offsetParent !== null
+      );
+
+  }
+
+
+  function focusGameElement() {
+
+    updateGameElements();
+
+
+    if (
+      gameElements.length === 0
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      focusedIndex >=
+      gameElements.length
+    ) {
+
+      focusedIndex = 0;
+
+    }
+
+
+    if (
+      focusedIndex < 0
+    ) {
+
+      focusedIndex =
+        gameElements.length - 1;
+
+    }
+
+
+    gameElements[
+      focusedIndex
+    ].focus();
+
+  }
+
+
+  function startGamepad() {
+
+    if (
+      gamepadActive
+    ) {
+
+      return;
+
+    }
+
+
+    gamepadActive =
+      true;
+
+
+    updateGameElements();
+
+
+    focusGameElement();
+
+
+    gamepadLoop();
+
+  }
+
+
+  function gamepadLoop() {
+
+    const pads =
+      navigator.getGamepads();
+
+
+    const pad =
+      pads[0];
+
+
+    if (pad) {
+
+      const now =
+        Date.now();
+
+
+      /* =====================
+         A / X
+      ===================== */
+
+      if (
+        pad.buttons[0] &&
+        pad.buttons[0].pressed
+      ) {
+
+        if (
+          now -
+          lastGamepadTime >
+          350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+
+          const active =
+            document.activeElement;
+
+
+          if (
+            active &&
+            typeof active.click ===
+            "function"
+          ) {
+
+            active.click();
+
+          }
+
+        }
+
+      }
+
+
+      /* =====================
+         DOWN
+      ===================== */
+
+      if (
+        pad.buttons[13] &&
+        pad.buttons[13].pressed
+      ) {
+
+        if (
+          now -
+          lastGamepadTime >
+          350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+
+          focusedIndex++;
+
+
+          focusGameElement();
+
+        }
+
+      }
+
+
+      /* =====================
+         UP
+      ===================== */
+
+      if (
+        pad.buttons[12] &&
+        pad.buttons[12].pressed
+      ) {
+
+        if (
+          now -
+          lastGamepadTime >
+          350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+
+          focusedIndex--;
+
+
+          focusGameElement();
+
+        }
+
+      }
+
+
+      /* =====================
+         RIGHT
+      ===================== */
+
+      if (
+        pad.buttons[15] &&
+        pad.buttons[15].pressed
+      ) {
+
+        if (
+          now -
+          lastGamepadTime >
+          350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+
+          focusedIndex++;
+
+
+          focusGameElement();
+
+        }
+
+      }
+
+
+      /* =====================
+         LEFT
+      ===================== */
+
+      if (
+        pad.buttons[14] &&
+        pad.buttons[14].pressed
+      ) {
+
+        if (
+          now -
+          lastGamepadTime >
+          350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+
+          focusedIndex--;
+
+
+          focusGameElement();
+
+        }
+
+      }
+
+
+      /* =====================
+         B / CIRCLE
+      ===================== */
+
+      if (
+        pad.buttons[1] &&
+        pad.buttons[1].pressed
+      ) {
+
+        if (
+          now -
+          lastGamepadTime >
+          350
+        ) {
+
+          lastGamepadTime =
+            now;
+
+
+          clearVideo();
+
+        }
+
+      }
+
+    }
+
+
+    requestAnimationFrame(
+      gamepadLoop
+    );
+
+  }
+
+
+  window.addEventListener(
+    "gamepadconnected",
+    function () {
+
+      console.log(
+        "Gamepad connected"
+      );
+
+
+      startGamepad();
+
+    }
+  );
+
+
+  /* =========================
+     AUTO START GAMEPAD
+  ========================= */
+
+  if (
+    navigator.getGamepads
+  ) {
+
+    const pads =
+      navigator.getGamepads();
+
+
+    if (
+      pads.some(
+        pad => pad !== null
+      )
+    ) {
+
+      startGamepad();
+
+    }
+
+  }
+
+
+  /* =========================
+     AUTO TV MODE
+  ========================= */
+
+  function enableTVMode() {
+
+    document.body.classList.add(
+      "tv-mode"
+    );
+
+  }
+
+
+  const userAgent =
+    navigator.userAgent.toLowerCase();
+
+
+  if (
+
+    userAgent.includes(
+      "xbox"
+    ) ||
+
+    userAgent.includes(
+      "playstation"
+    ) ||
+
+    userAgent.includes(
+      "smarttv"
+    ) ||
+
+    userAgent.includes(
+      "smart-tv"
+    ) ||
+
+    userAgent.includes(
+      "tizen"
+    ) ||
+
+    userAgent.includes(
+      "webos"
+    )
+
+  ) {
+
+    enableTVMode();
+
+  }
+
+
+  /* =========================
+     START
+  ========================= */
+
+  setLanguage(
+    currentLanguage
+  );
+
+</script>
+
+</body>
+</html>
