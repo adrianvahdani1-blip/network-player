@@ -1,1 +1,245 @@
 
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart School</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma;background:#f2f6fc;color:#193453}
+button,input{font:inherit}
+button{border:0;border-radius:10px;padding:12px 16px;background:#1769df;color:white;cursor:pointer}
+input{width:100%;padding:13px;margin:8px 0;border:1px solid #dce5f0;border-radius:10px}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#dcecff,#f8fbff)}
+.loginbox{background:white;padding:30px;border-radius:22px;width:100%;max-width:400px;text-align:center;box-shadow:0 10px 40px #174a8018}
+.logo{background:#1769df;color:white;border-radius:17px;width:60px;height:60px;display:grid;place-items:center;font-size:30px;margin:auto}
+a{color:#1769df;text-decoration:none}
+#app{display:none}
+header{background:white;padding:15px 5%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0001}
+header b{font-size:20px;color:#1769df}
+.layout{display:flex;gap:18px;max-width:1200px;margin:25px auto;padding:0 15px}
+nav,.panel,.card{background:white;border-radius:16px;padding:16px}
+nav{width:210px;flex-shrink:0}
+nav button{display:block;width:100%;text-align:right;margin:5px 0;background:white;color:#31506f}
+nav button.active,nav button:hover{background:#eaf2ff;color:#1769df}
+main{flex:1;min-width:0}
+.welcome{background:linear-gradient(110deg,#1769df,#55a0f5);color:white;padding:25px;border-radius:18px;margin-bottom:18px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}
+.card small{color:#71839b}
+.num{font-size:27px;color:#1769df;font-weight:bold;margin-top:12px}
+.panel{margin:14px 0;box-shadow:0 4px 15px #00000008}
+.item{padding:12px;border-bottom:1px solid #edf1f6}
+.section{display:none}
+.section.active{display:block}
+.tag{background:#eaf2ff;color:#1769df;padding:5px 9px;border-radius:8px}
+.secondary{background:#eaf2ff;color:#1769df}
+.danger{background:#e74c3c}
+footer{text-align:center;color:#8291a5;padding:20px;font-size:12px}
+@media(max-width:700px){
+.layout{display:block}
+nav{width:100%;display:flex;overflow-x:auto;margin-bottom:15px;gap:4px}
+nav button{white-space:nowrap;width:auto;text-align:center}
+.cards{grid-template-columns:repeat(2,1fr)}
+header{padding:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="login" id="login">
+ <div class="loginbox">
+  <div class="logo">S</div>
+  <h1>Smart School</h1>
+  <p>سامانه هوشمند مدیریت و آموزش مدرسه</p>
+  <input id="username" placeholder="نام کاربری">
+  <input id="password" type="password" placeholder="رمز عبور">
+  <button style="width:100%" onclick="loginUser()">ورود به سامانه</button>
+  <p id="error" style="color:red"></p>
+  <a href="https://t.me/Adrian_Vahdani" target="_blank">پشتیبانی تلگرام</a>
+ </div>
+</div>
+
+<div id="app">
+<header>
+ <b>🎓 Smart School</b>
+ <span id="userLabel"></span>
+ <button class="danger" onclick="logout()">خروج</button>
+</header>
+
+<div class="layout">
+<nav>
+ <button class="active" onclick="show('home',this)">🏠 داشبورد</button>
+ <button onclick="show('school',this)">📚 مدیریت مدرسه</button>
+ <button onclick="show('attendance',this)">📝 حضور و غیاب</button>
+ <button onclick="show('grades',this)">📊 معدل</button>
+ <button onclick="show('lab',this)">🔬 آزمایشگاه</button>
+ <button onclick="show('ranking',this)">🏆 رتبه‌بندی</button>
+ <a href="https://t.me/Adrian_Vahdani" target="_blank">پشتیبانی تلگرام ↗</a>
+</nav>
+
+<main>
+<section id="home" class="section active">
+ <div class="welcome">
+  <h2>به مدرسه هوشمند خوش آمدید 👋</h2>
+  <p>آموزش، مدیریت و کشف دنیای علم در یک محیط دیجیتال</p>
+ </div>
+ <div class="cards">
+  <div class="card"><small>دانش‌آموزان</small><div class="num">۱۲۸</div></div>
+  <div class="card"><small>کلاس‌های فعال</small><div class="num">۸</div></div>
+  <div class="card"><small>آزمایش‌های علمی</small><div class="num">۱۲</div></div>
+ </div>
+ <div class="panel">
+  <h3>امکانات سامانه</h3>
+  <div class="item">مدیریت مدرسه <span class="tag">فعال</span></div>
+  <div class="item">آزمایشگاه مجازی <span class="tag">فعال</span></div>
+  <div class="item">گزارش عملکرد <span class="tag">فعال</span></div>
+ </div>
+</section>
+
+<section id="school" class="section">
+ <div class="welcome"><h2>مدیریت مدرسه</h2><p>اطلاعات و امکانات آموزشی</p></div>
+ <div class="panel">
+  <div class="item">نام سامانه: Smart School</div>
+  <div class="item">تعداد دانش‌آموزان: ۱۲۸ نفر</div>
+  <div class="item">تعداد کلاس‌ها: ۸ کلاس</div>
+  <div class="item">وضعیت: فعال</div>
+ </div>
+</section>
+
+<section id="attendance" class="section">
+ <div class="welcome"><h2>حضور و غیاب</h2><p>ثبت حضور دانش‌آموزان</p></div>
+ <div class="panel">
+  <input id="studentName" placeholder="نام دانش‌آموز">
+  <button onclick="addAttendance()">ثبت حضور</button>
+  <div id="attendanceList"></div>
+ </div>
+</section>
+
+<section id="grades" class="section">
+ <div class="welcome"><h2>نمرات و معدل</h2><p>محاسبه معدل دانش‌آموز</p></div>
+ <div class="panel">
+  <input id="g1" type="number" min="0" max="20" placeholder="نمره اول">
+  <input id="g2" type="number" min="0" max="20" placeholder="نمره دوم">
+  <input id="g3" type="number" min="0" max="20" placeholder="نمره سوم">
+  <button onclick="calculate()">محاسبه معدل</button>
+  <h3 id="average">معدل: ـ</h3>
+ </div>
+</section>
+
+<section id="lab" class="section">
+ <div class="welcome"><h2>آزمایشگاه علمی مجازی 🔬</h2><p>علم را تجربه کن!</p></div>
+ <div class="panel">
+  <h3>🌍 منظومه شمسی</h3>
+  <p>زمین سومین سیاره از خورشید است.</p>
+  <div style="font-size:35px;text-align:center">☀️ 🪐 🌍 🔴 🪐</div>
+ </div>
+ <div class="panel">
+  <h3>⚡ مدار الکتریکی</h3>
+  <p>کلید را بزن تا لامپ روشن یا خاموش شود.</p>
+  <div id="bulb" style="font-size:55px;text-align:center">⚫</div>
+  <button onclick="toggleBulb()" id="switch">روشن کردن لامپ</button>
+ </div>
+ <div class="panel">
+  <h3>🧪 آزمون علمی</h3>
+  <p>کدام سیاره به سیاره سرخ معروف است؟</p>
+  <button class="secondary" onclick="quiz(false)">زمین</button>
+  <button class="secondary" onclick="quiz(true)">مریخ</button>
+  <p id="quizResult"></p>
+ </div>
+</section>
+
+<section id="ranking" class="section">
+ <div class="welcome"><h2>🏆 رتبه‌بندی</h2><p>جدول امتیازات دانش‌آموزان</p></div>
+ <div class="panel">
+  <div class="item">🥇 دانش‌آموز اول — ۹۸۰ امتیاز</div>
+  <div class="item">🥈 دانش‌آموز دوم — ۹۲۰ امتیاز</div>
+  <div class="item">🥉 دانش‌آموز سوم — ۸۷۰ امتیاز</div>
+ </div>
+</section>
+</main>
+</div>
+<footer>© 2026 Smart School | سامانه هوشمند مدرسه</footer>
+</div>
+
+<script>
+const accounts={
+ manager:{password:"1423",name:"مدیر مدرسه"},
+ teacher:{password:"2345",name:"معلم"},
+ student1:{password:"3456",name:"دانش‌آموز اول"},
+ student2:{password:"4567",name:"دانش‌آموز دوم"}
+};
+
+function loginUser(){
+ const u=document.getElementById("username").value.trim();
+ const p=document.getElementById("password").value;
+ if(accounts[u] && accounts[u].password===p){
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
+  document.getElementById("userLabel").textContent=accounts[u].name;
+  document.getElementById("error").textContent="";
+ }else{
+  document.getElementById("error").textContent="نام کاربری یا رمز اشتباه است.";
+ }
+}
+
+function logout(){
+ document.getElementById("app").style.display="none";
+ document.getElementById("login").style.display="grid";
+ document.getElementById("password").value="";
+}
+
+function show(id,btn){
+ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
+}
+
+let attendance=[];
+try{attendance=JSON.parse(localStorage.getItem("smartAttendance")||"[]")}catch(e){}
+
+function renderAttendance(){
+ const list=document.getElementById("attendanceList");
+ list.innerHTML="";
+ attendance.forEach(name=>{
+  const item=document.createElement("div");
+  item.className="item";
+  item.textContent=name+" — حاضر";
+  list.appendChild(item);
+ });
+}
+
+function addAttendance(){
+ const input=document.getElementById("studentName");
+ const name=input.value.trim();
+ if(!name){alert("نام دانش‌آموز را وارد کن.");return}
+ attendance.push(name);
+ localStorage.setItem("smartAttendance",JSON.stringify(attendance));
+ input.value="";
+ renderAttendance();
+}
+
+function calculate(){
+ const vals=["g1","g2","g3"].map(id=>document.getElementById(id).value);
+ if(vals.some(v=>v==="")){alert("هر سه نمره را وارد کن.");return}
+ const nums=vals.map(Number);
+ if(nums.some(n=>!Number.isFinite(n)||n<0||n>20)){alert("نمره باید بین صفر تا ۲۰ باشد.");return}
+ document.getElementById("average").textContent="معدل: "+(nums.reduce((a,b)=>a+b,0)/3).toFixed(2);
+}
+
+let bulbOn=false;
+function toggleBulb(){
+ bulbOn=!bulbOn;
+ document.getElementById("bulb").textContent=bulbOn?"💡":"⚫";
+ document.getElementById("switch").textContent=bulbOn?"خاموش کردن لامپ":"روشن کردن لامپ";
+}
+
+function quiz(correct){
+ document.getElementById("quizResult").textContent=correct?"آفرین! پاسخ درست است 🌟":"اشتباه است؛ دوباره تلاش کن.";
+}
+
+renderAttendance();
+</script>
+</body>
+</html>
