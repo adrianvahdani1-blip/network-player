@@ -1,245 +1,674 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Smart School</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مدیریت مدرسه | Adrien Vahdani</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#06070f" id="tc">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<script>try{var d=document.documentElement,v=localStorage.getItem('theme1')||'dark',z=localStorage.getItem('zoom1');d.dataset.theme=(v==='light'||(v==='auto'&&matchMedia('(prefers-color-scheme: light)').matches))?'light':'dark';if(z)d.style.setProperty('--zm',z)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap">
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Tahoma;background:#f2f6fc;color:#193453}
-button,input{font:inherit}
-button{border:0;border-radius:10px;padding:12px 16px;background:#1769df;color:white;cursor:pointer}
-input{width:100%;padding:13px;margin:8px 0;border:1px solid #dce5f0;border-radius:10px}
-.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#dcecff,#f8fbff)}
-.loginbox{background:white;padding:30px;border-radius:22px;width:100%;max-width:400px;text-align:center;box-shadow:0 10px 40px #174a8018}
-.logo{background:#1769df;color:white;border-radius:17px;width:60px;height:60px;display:grid;place-items:center;font-size:30px;margin:auto}
-a{color:#1769df;text-decoration:none}
-#app{display:none}
-header{background:white;padding:15px 5%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0001}
-header b{font-size:20px;color:#1769df}
-.layout{display:flex;gap:18px;max-width:1200px;margin:25px auto;padding:0 15px}
-nav,.panel,.card{background:white;border-radius:16px;padding:16px}
-nav{width:210px;flex-shrink:0}
-nav button{display:block;width:100%;text-align:right;margin:5px 0;background:white;color:#31506f}
-nav button.active,nav button:hover{background:#eaf2ff;color:#1769df}
-main{flex:1;min-width:0}
-.welcome{background:linear-gradient(110deg,#1769df,#55a0f5);color:white;padding:25px;border-radius:18px;margin-bottom:18px}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}
-.card small{color:#71839b}
-.num{font-size:27px;color:#1769df;font-weight:bold;margin-top:12px}
-.panel{margin:14px 0;box-shadow:0 4px 15px #00000008}
-.item{padding:12px;border-bottom:1px solid #edf1f6}
-.section{display:none}
-.section.active{display:block}
-.tag{background:#eaf2ff;color:#1769df;padding:5px 9px;border-radius:8px}
-.secondary{background:#eaf2ff;color:#1769df}
-.danger{background:#e74c3c}
-footer{text-align:center;color:#8291a5;padding:20px;font-size:12px}
-@media(max-width:700px){
-.layout{display:block}
-nav{width:100%;display:flex;overflow-x:auto;margin-bottom:15px;gap:4px}
-nav button{white-space:nowrap;width:auto;text-align:center}
-.cards{grid-template-columns:repeat(2,1fr)}
-header{padding:12px}
+:root{--h:225;--a:hsl(var(--h) 95% 64%);--b:hsl(calc(var(--h) + 70) 95% 62%);--tx:#eef0ff;--mu:#9aa0c4;--card:rgba(255,255,255,.07);--bd:rgba(255,255,255,.14)}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{font-family:Vazirmatn,Tahoma,sans-serif;color:var(--tx);background:#06070f;line-height:1.7;overflow-x:hidden}
+.bgw{position:fixed;inset:0;z-index:-2;will-change:transform;animation:drift 22s ease-in-out infinite alternate}
+.bg{--h:225;position:absolute;inset:0;transition:opacity .9s ease;will-change:opacity;background:radial-gradient(60% 50% at 20% 10%,hsl(var(--h) 90% 45% / .55),transparent),radial-gradient(50% 50% at 85% 30%,hsl(calc(var(--h) + 70) 90% 50% / .45),transparent),radial-gradient(60% 60% at 50% 100%,hsl(calc(var(--h) - 50) 90% 40% / .5),transparent)}
+#b2{opacity:0}
+@keyframes drift{to{transform:translateZ(0) scale(1.08)}}
+#fx{position:fixed;inset:0;z-index:-1;pointer-events:none;will-change:transform}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+nav{position:sticky;top:0;height:100vh;padding:calc(22px + env(safe-area-inset-top,0px)) 14px 22px;border-left:1px solid var(--bd);background:rgba(8,9,20,.88);display:flex;flex-direction:column;gap:6px}
+.logo{font-weight:800;font-size:19px;margin-bottom:14px}
+.logo small{display:block;font-size:12px;font-weight:400;color:var(--mu)}
+button,a.btn,.nb,.hi{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button,a.btn{position:relative;overflow:hidden;font:inherit;cursor:pointer;text-decoration:none}
+.nb{border:0;background:none;color:var(--tx);text-align:right;padding:11px 14px;border-radius:12px;font-weight:700;display:flex;gap:10px;align-items:center;transition:background .25s}
+.nb:hover{background:var(--card)}
+.nb.on{background:linear-gradient(135deg,var(--a),var(--b))}
+main{padding:calc(26px + env(safe-area-inset-top,0px)) 26px 30px;max-width:980px;width:100%}
+h2{font-size:24px;margin-bottom:14px}
+.mu{color:var(--mu);font-size:14px}
+.big{font-size:28px;font-weight:800}
+.card{background:rgba(20,22,48,.66);border:1px solid var(--bd);border-radius:18px;padding:16px;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px -10px var(--a)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.btn{border:0;color:#fff;font-weight:700;padding:10px 18px;border-radius:12px;background:linear-gradient(135deg,var(--a),var(--b));display:inline-block;transition:transform .15s}
+.btn:active{transform:scale(.95)}
+.btn.del{background:#ff4d6d44;padding:3px 10px;font-size:13px}
+input,select{font:inherit;color:var(--tx);background:rgba(255,255,255,.08);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;min-width:0}
+select option{color:#111}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.row>*{flex:1 1 130px}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--bd)}
+.bar{height:10px;border-radius:9px;background:linear-gradient(90deg,var(--a),var(--b));transition:width .8s}
+.pg{display:none}
+.pg.on{display:block;animation:in .5s cubic-bezier(.2,.9,.3,1)}
+@keyframes in{from{opacity:0;transform:translateY(12px)}}
+.calc{max-width:340px;margin:auto}
+.disp{background:rgba(0,0,0,.35);border-radius:14px;padding:16px;font-size:30px;direction:ltr;text-align:left;min-height:70px;overflow-x:auto;margin-bottom:10px}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.keys .btn{padding:16px 0;font-size:20px;background:var(--card);border:1px solid var(--bd)}
+.keys .btn.op{background:linear-gradient(135deg,var(--a),var(--b))}
+.rp{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:rp .7s ease-out forwards;pointer-events:none}
+@keyframes rp{to{transform:scale(1);opacity:0}}
+.sp{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--a);pointer-events:none;z-index:99}
+.ring{position:fixed;width:400px;height:400px;border-radius:50%;border:3px solid var(--a);will-change:transform,opacity;pointer-events:none;z-index:98}
+
+.credit{margin-top:14px;text-align:center;padding:26px 18px;position:relative;overflow:hidden}
+.credit::before{content:"";position:absolute;inset:-60%;will-change:transform;background:conic-gradient(from 0deg,transparent 0 70%,var(--a),var(--b),transparent);animation:spin 7s linear infinite;opacity:.35;z-index:0}
+.credit>*{position:relative;z-index:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.credit .t1{font-size:14px;color:var(--mu)}
+.credit .t2{font-size:26px;font-weight:800;margin:6px 0;background:linear-gradient(90deg,var(--a),var(--b),var(--a));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.credit .t3{font-size:15px;line-height:2}
+.credit .t3 b{color:var(--tx)}
+.credit .seal{display:inline-block;margin-top:10px;padding:4px 16px;border:1px solid var(--bd);border-radius:99px;font-size:12px;color:var(--mu)}
+
+#lg{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,7,15,.55);overflow:auto}
+#lg.off{display:none}
+.lgc{width:100%;max-width:380px;text-align:center;padding:26px 20px;position:relative;overflow:hidden;background:rgba(18,20,44,.88);animation:in .6s cubic-bezier(.2,.9,.3,1)}
+.lgc::before{content:"";position:absolute;inset:-60%;will-change:transform;background:conic-gradient(from 0deg,transparent 0 70%,var(--a),var(--b),transparent);animation:spin 7s linear infinite;opacity:.3;z-index:0}
+.lgc>*{position:relative;z-index:1}
+.lgc h2{margin-bottom:4px}
+.lgc select,.lgc input{width:100%;margin-top:12px;font-size:16px}
+.lgc .btn{width:100%;margin-top:14px;padding:13px}
+#le{color:#ff7d95;font-size:14px;min-height:22px;margin-top:8px}
+.shake{animation:shk .4s}
+@keyframes shk{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+.who{margin-top:auto;padding:10px 14px;border-top:1px solid var(--bd);font-size:13px}
+.who .btn{width:100%;margin-top:8px;padding:8px;background:var(--card);border:1px solid var(--bd)}
+@media(max-width:760px){.who{display:none}.nb.out{display:flex}}
+.nb.out{display:none}
+body.locked .app{filter:blur(0);visibility:hidden}
+
+.calc{max-width:480px;margin:auto}
+.calc .disp{background:rgba(0,0,0,.4);border-radius:16px;padding:12px 16px;direction:ltr;text-align:right;min-height:96px;margin-bottom:10px;display:flex;flex-direction:column;justify-content:flex-end;font-size:inherit}
+#cd{font-size:30px;word-break:break-all;line-height:1.3}
+#cr{font-size:18px;color:var(--mu);min-height:26px}
+.ctop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
+.calc .keys{gap:7px}
+.calc .keys .btn{padding:14px 0;font-size:19px}
+.calc .keys.sci{grid-template-columns:repeat(5,1fr);margin-bottom:7px}
+.calc .keys.sci .btn{padding:10px 0;font-size:14px;background:rgba(255,255,255,.05)}
+.calc .keys.sci.hide{display:none}
+.hi{cursor:pointer;border-radius:8px}
+.hi:hover{background:var(--card)}
+.ltr{direction:ltr}
+.gpr{margin-top:8px}
+.gpr>*{flex:1 1 70px}
+body.ro [data-del]{display:none!important}
+[hidden]{display:none!important}
+footer{margin-top:30px;text-align:center;color:var(--mu);font-size:13px}
+@media(max-width:760px){
+.credit .t2{animation:none}
+.credit::before,.lgc::before{animation-duration:14s}
+.card{background:rgba(24,26,50,.82)}
+.card:hover{transform:none;box-shadow:none}
+.app{grid-template-columns:1fr}
+nav{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));border-left:0;border-top:1px solid var(--bd);z-index:20}
+.logo{display:none}
+.nb{flex-direction:column;gap:0;font-size:11px;padding:6px 8px;text-align:center}
+main{padding:calc(16px + env(safe-area-inset-top,0px)) 14px 100px}
+}
+@media(prefers-reduced-motion:reduce){.credit::before{display:none}*{animation:none!important;transition:none!important}}
+main{zoom:var(--zm,1)}
+.seg .btn{background:var(--card);border:1px solid var(--bd)}
+.seg .btn.act{background:linear-gradient(135deg,var(--a),var(--b));border-color:transparent;color:#fff}
+html[data-theme=light]{--tx:#1b1e3a;--mu:#5a6090;--card:rgba(30,40,110,.07);--bd:rgba(30,40,110,.18);color-scheme:light}
+html[data-theme=light] body{background:#eef0ff}
+html[data-theme=light] .bgw{opacity:.3}
+html[data-theme=light] nav{background:rgba(255,255,255,.93)}
+html[data-theme=light] .card{background:rgba(255,255,255,.82)}
+html[data-theme=light] .lgc{background:rgba(255,255,255,.95)}
+html[data-theme=light] #lg{background:rgba(238,240,255,.65)}
+html[data-theme=light] #edm{background:rgba(238,240,255,.75)}
+html[data-theme=light] .edc{background:rgba(255,255,255,.98)!important}
+html[data-theme=light] .disp,html[data-theme=light] .calc .disp{background:rgba(30,40,110,.08)}
+html[data-theme=light] input,html[data-theme=light] select{background:rgba(30,40,110,.06)}
+html[data-theme=light] .keys .btn:not(.op),html[data-theme=light] .calc .keys.sci .btn,html[data-theme=light] .seg .btn:not(.act),html[data-theme=light] .who .btn{color:var(--tx)}
+html[data-theme=light] .calc .keys.sci .btn{background:rgba(30,40,110,.06)}
+html[data-theme=light] .btn.del{color:#b0203f}
+html[data-theme=light] .btn.del.edt:hover{color:#fff}
+html[data-theme=light] .nb.on{color:#fff}
+
+.li>span:first-child{min-width:0;overflow-wrap:anywhere}
+.app{min-height:100vh;min-height:100dvh}
+nav{height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+.card{contain:layout style}
+:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+@media(max-width:760px){
+input,select{font-size:16px}
+.bgw{animation:none}
+nav{height:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
 }
 </style>
 </head>
 <body>
-
-<div class="login" id="login">
- <div class="loginbox">
-  <div class="logo">S</div>
-  <h1>Smart School</h1>
-  <p>سامانه هوشمند مدیریت و آموزش مدرسه</p>
-  <input id="username" placeholder="نام کاربری">
-  <input id="password" type="password" placeholder="رمز عبور">
-  <button style="width:100%" onclick="loginUser()">ورود به سامانه</button>
-  <p id="error" style="color:red"></p>
-  <a href="https://t.me/Adrian_Vahdani" target="_blank">پشتیبانی تلگرام</a>
- </div>
+<div id="lg">
+  <div class="card lgc" id="lgc">
+    <div style="font-size:42px">🔐</div>
+    <h2>ورود به سایت</h2>
+    <div class="mu">Adrien Vahdani | مدرسه استقلال ۱ و ۲</div>
+    <select id="lu" aria-label="نقش کاربری">
+      <option value="">نقش خودت رو انتخاب کن</option>
+      <option value="site">مدیر سایت</option>
+      <option value="mgr">مدیر</option>
+      <option value="vp">ناظم</option>
+      <option value="tch">معلم</option>
+      <option value="stu">دانش‌آموز</option>
+    </select>
+    <select id="ls" hidden aria-label="نام دانش‌آموز"></select>
+    <input id="lp" type="password" inputmode="numeric" autocomplete="off" placeholder="رمز عبور">
+    <div id="le" role="alert"></div>
+    <button class="btn" data-act="login">ورود</button>
+  </div>
 </div>
-
-<div id="app">
-<header>
- <b>🎓 Smart School</b>
- <span id="userLabel"></span>
- <button class="danger" onclick="logout()">خروج</button>
-</header>
-
-<div class="layout">
+<div class="bgw"><div class="bg" id="b1"></div><div class="bg" id="b2"></div></div><canvas id="fx"></canvas>
+<div class="app">
 <nav>
- <button class="active" onclick="show('home',this)">🏠 داشبورد</button>
- <button onclick="show('school',this)">📚 مدیریت مدرسه</button>
- <button onclick="show('attendance',this)">📝 حضور و غیاب</button>
- <button onclick="show('grades',this)">📊 معدل</button>
- <button onclick="show('lab',this)">🔬 آزمایشگاه</button>
- <button onclick="show('ranking',this)">🏆 رتبه‌بندی</button>
- <a href="https://t.me/Adrian_Vahdani" target="_blank">پشتیبانی تلگرام ↗</a>
+  <div class="logo">🏫 مدیریت مدرسه<small>Adrien Vahdani</small></div>
+  <button class="nb on" data-go="dash">📊 داشبورد</button>
+  <button class="nb" data-go="cls">🏷️ کلاس‌ها</button>
+  <button class="nb" data-go="stu">🎓 دانش‌آموزان</button>
+  <button class="nb" data-go="grd">📝 نمرات</button>
+  <button class="nb" data-go="cal">🧮 ماشین‌حساب</button>
+  <button class="nb" data-go="sup">💬 پشتیبانی</button>
+  <div class="who"><span id="wh"></span><button class="btn" data-act="logout">خروج</button></div>
+  <button class="nb out" data-act="logout">🚪 خروج</button>
 </nav>
-
 <main>
-<section id="home" class="section active">
- <div class="welcome">
-  <h2>به مدرسه هوشمند خوش آمدید 👋</h2>
-  <p>آموزش، مدیریت و کشف دنیای علم در یک محیط دیجیتال</p>
- </div>
- <div class="cards">
-  <div class="card"><small>دانش‌آموزان</small><div class="num">۱۲۸</div></div>
-  <div class="card"><small>کلاس‌های فعال</small><div class="num">۸</div></div>
-  <div class="card"><small>آزمایش‌های علمی</small><div class="num">۱۲</div></div>
- </div>
- <div class="panel">
-  <h3>امکانات سامانه</h3>
-  <div class="item">مدیریت مدرسه <span class="tag">فعال</span></div>
-  <div class="item">آزمایشگاه مجازی <span class="tag">فعال</span></div>
-  <div class="item">گزارش عملکرد <span class="tag">فعال</span></div>
- </div>
+<section class="pg on" id="dash">
+  <h2>داشبورد</h2>
+  <div class="grid" id="st"></div>
+  <div class="card"><b>کلاس‌ها بر اساس دسته</b><div id="cb"></div></div>
 </section>
 
-<section id="school" class="section">
- <div class="welcome"><h2>مدیریت مدرسه</h2><p>اطلاعات و امکانات آموزشی</p></div>
- <div class="panel">
-  <div class="item">نام سامانه: Smart School</div>
-  <div class="item">تعداد دانش‌آموزان: ۱۲۸ نفر</div>
-  <div class="item">تعداد کلاس‌ها: ۸ کلاس</div>
-  <div class="item">وضعیت: فعال</div>
- </div>
+<section class="pg" id="cls">
+  <h2>کلاس‌ها</h2>
+  <div class="card" style="margin-bottom:12px"><b>افزودن کلاس</b>
+    <div class="row"><input id="cn" placeholder="نام کلاس، مثلاً هشتم ب"><select id="cc"></select><button class="btn" data-act="addC">افزودن</button></div>
+  </div>
+  <div id="cl"></div>
 </section>
 
-<section id="attendance" class="section">
- <div class="welcome"><h2>حضور و غیاب</h2><p>ثبت حضور دانش‌آموزان</p></div>
- <div class="panel">
-  <input id="studentName" placeholder="نام دانش‌آموز">
-  <button onclick="addAttendance()">ثبت حضور</button>
-  <div id="attendanceList"></div>
- </div>
+<section class="pg" id="stu">
+  <h2>دانش‌آموزان</h2>
+  <div class="card" style="margin-bottom:12px"><b>افزودن دانش‌آموز</b>
+    <div class="row"><input id="sn" placeholder="نام دانش‌آموز"><select id="sc"></select><button class="btn" data-act="addS">افزودن</button></div>
+  </div>
+  <div class="card"><div class="row" style="margin:0 0 6px"><b style="flex:2">فهرست و معدل</b><select id="ff"></select></div><div id="sl"></div></div>
 </section>
 
-<section id="grades" class="section">
- <div class="welcome"><h2>نمرات و معدل</h2><p>محاسبه معدل دانش‌آموز</p></div>
- <div class="panel">
-  <input id="g1" type="number" min="0" max="20" placeholder="نمره اول">
-  <input id="g2" type="number" min="0" max="20" placeholder="نمره دوم">
-  <input id="g3" type="number" min="0" max="20" placeholder="نمره سوم">
-  <button onclick="calculate()">محاسبه معدل</button>
-  <h3 id="average">معدل: ـ</h3>
- </div>
+<section class="pg" id="grd">
+  <h2>نمرات</h2>
+  <div class="card" id="ro-note" hidden style="margin-bottom:12px">👁️ شما فقط می‌تونید نمره‌هاتون رو ببینید. ثبت و تغییر نمره فقط با مدیر سایت، مدیر، ناظم و معلمه.</div>
+  <div class="card" style="margin-bottom:12px"><b>ثبت نمره (از ۲۰)</b>
+    <div class="row"><select id="gs"></select><input id="gj" placeholder="درس"><input id="gv" placeholder="نمره" inputmode="decimal"><button class="btn" data-act="addG">ثبت</button></div>
+  </div>
+  <div class="card"><div id="gl"></div></div>
 </section>
 
-<section id="lab" class="section">
- <div class="welcome"><h2>آزمایشگاه علمی مجازی 🔬</h2><p>علم را تجربه کن!</p></div>
- <div class="panel">
-  <h3>🌍 منظومه شمسی</h3>
-  <p>زمین سومین سیاره از خورشید است.</p>
-  <div style="font-size:35px;text-align:center">☀️ 🪐 🌍 🔴 🪐</div>
- </div>
- <div class="panel">
-  <h3>⚡ مدار الکتریکی</h3>
-  <p>کلید را بزن تا لامپ روشن یا خاموش شود.</p>
-  <div id="bulb" style="font-size:55px;text-align:center">⚫</div>
-  <button onclick="toggleBulb()" id="switch">روشن کردن لامپ</button>
- </div>
- <div class="panel">
-  <h3>🧪 آزمون علمی</h3>
-  <p>کدام سیاره به سیاره سرخ معروف است؟</p>
-  <button class="secondary" onclick="quiz(false)">زمین</button>
-  <button class="secondary" onclick="quiz(true)">مریخ</button>
-  <p id="quizResult"></p>
- </div>
+<section class="pg" id="cal">
+  <h2>ماشین‌حساب</h2>
+  <div class="calc card">
+    <div class="ctop"><span id="mi" class="mu"></span><button class="btn del" data-k="SCI">علمی ⇅</button></div>
+    <div class="disp"><div id="cd">0</div><div id="cr"></div></div>
+    <div class="keys sci" id="ks"></div>
+    <div class="keys" id="ck"></div>
+  </div>
+  <div class="card calc" style="margin-top:12px">
+    <div class="row" style="margin:0 0 4px"><b style="flex:2">🕘 تاریخچه (برای استفاده دوباره بزن روش)</b><button class="btn del" data-k="CLH" style="flex:0 0 auto">پاک کردن</button></div>
+    <div id="ch"></div>
+  </div>
+  <div class="card calc" style="margin-top:12px">
+    <b>🎓 ماشین‌حساب معدل با ضریب</b>
+    <div id="gp"></div>
+    <div class="row" style="align-items:center"><button class="btn" data-k="GADD">+ درس جدید</button><button class="btn del" data-k="GDEL">حذف آخری</button><div class="big" id="gr" style="flex:2 1 150px;text-align:left">معدل: —</div></div>
+  </div>
 </section>
 
-<section id="ranking" class="section">
- <div class="welcome"><h2>🏆 رتبه‌بندی</h2><p>جدول امتیازات دانش‌آموزان</p></div>
- <div class="panel">
-  <div class="item">🥇 دانش‌آموز اول — ۹۸۰ امتیاز</div>
-  <div class="item">🥈 دانش‌آموز دوم — ۹۲۰ امتیاز</div>
-  <div class="item">🥉 دانش‌آموز سوم — ۸۷۰ امتیاز</div>
- </div>
+<section class="pg" id="sup">
+  <h2>پشتیبانی</h2>
+  <div class="card"><div class="big">💬 سؤال یا مشکلی داری؟</div>
+    <p class="mu" style="margin:6px 0 14px">مستقیم توی تلگرام برای پشتیبانی پیام بده.</p>
+    <a class="btn" id="tg" data-act="tg" target="_blank" rel="noopener" href="#">باز کردن تلگرام</a>
+  </div>
+  <div class="card credit">
+    <div class="t1">طراحی و ساخته‌شده به‌صورت انحصاری</div>
+    <div class="t2">Adrien Vahdani</div>
+    <div class="t3">برای <b>مدرسه استقلال ۱ و ۲</b><br>با عشق، دقت و کلی ایده‌های خاص ✨</div>
+    <span class="seal">نسخه انحصاری مدرسه استقلال</span>
+  </div>
 </section>
+<footer>ساخته‌شده توسط Adrien Vahdani برای مدرسه استقلال ۱ و ۲</footer>
 </main>
-</div>
-<footer>© 2026 Smart School | سامانه هوشمند مدرسه</footer>
 </div>
 
 <script>
-const accounts={
- manager:{password:"1423",name:"مدیر مدرسه"},
- teacher:{password:"2345",name:"معلم"},
- student1:{password:"3456",name:"دانش‌آموز اول"},
- student2:{password:"4567",name:"دانش‌آموز دوم"}
+// آیدی تلگرام خودت رو اینجا بذار (بدون @)
+const TG='Adrian_Vahdani';
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const fa=n=>Number(n).toLocaleString('fa-IR',{maximumFractionDigits:2});
+const en=s=>String(s).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/٫/g,'.');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+const CATS=['ابتدایی','راهنمایی','دبیرستان'];
+const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+let ROLE=null,MYSID=null;
+let S;try{S=JSON.parse(localStorage.getItem('school1'))}catch(e){}
+if(!S)S={classes:[{id:'c1',name:'هفتم الف',cat:'راهنمایی'},{id:'c2',name:'دهم ریاضی',cat:'دبیرستان'},{id:'c3',name:'سوم ب',cat:'ابتدایی'}],
+students:[{id:'s1',name:'سارا احمدی',cid:'c1'},{id:'s2',name:'علی رضایی',cid:'c2'},{id:'s3',name:'مینا کریمی',cid:'c1'}],
+grades:[{id:'g1',sid:'s1',subj:'ریاضی',score:20},{id:'g2',sid:'s1',subj:'علوم',score:18},{id:'g3',sid:'s2',subj:'فیزیک',score:16},{id:'g4',sid:'s3',subj:'ریاضی',score:17}]};
+const save=()=>{if(!canEdit())return;try{localStorage.setItem('school1',JSON.stringify(S))}catch(e){}};
+
+const cn=id=>(S.classes.find(c=>c.id===id)||{}).name||'—';
+const sn=id=>(S.students.find(s=>s.id===id)||{}).name||'—';
+const sAvg=id=>avg(S.grades.filter(g=>g.sid===id).map(g=>g.score));
+function setOpts(sel,html){const v=sel.value;sel.innerHTML=html;if([...sel.options].some(o=>o.value===v))sel.value=v}
+
+function render(){
+  const vs=ROLE==='stu'?S.students.filter(s=>s.id===MYSID):S.students;
+  const vg=ROLE==='stu'?S.grades.filter(g=>g.sid===MYSID):S.grades;
+  const all=vg.map(g=>g.score);
+  $('#st').innerHTML=[['کلاس‌ها',fa(S.classes.length),'🏫'],['دانش‌آموزان',fa(vs.length),'🎓'],['نمره‌ها',fa(vg.length),'📝'],['میانگین کل',all.length?fa(avg(all)):'—','⭐']]
+    .map(([t,v,i])=>`<div class="card"><div style="font-size:26px">${i}</div><div class="mu">${t}</div><div class="big">${v}</div></div>`).join('');
+  const mx=Math.max(1,...CATS.map(c=>S.classes.filter(k=>k.cat===c).length));
+  $('#cb').innerHTML=CATS.map(c=>{const n=S.classes.filter(k=>k.cat===c).length;return`<div class="li"><span>${c}</span><span style="flex:1;margin:0 12px"><div class="bar" style="width:${n/mx*100}%"></div></span><b>${fa(n)}</b></div>`}).join('');
+  $('#cl').innerHTML=CATS.map(c=>{const ks=S.classes.filter(k=>k.cat===c);return`<div class="card" style="margin-bottom:12px"><b>${c}</b>`+(ks.map(k=>`<div class="li"><span>${esc(k.name)} <span class="mu">(${fa(S.students.filter(s=>s.cid===k.id).length)} نفر)</span></span><button class="btn del" data-del="c:${k.id}">حذف</button></div>`).join('')||'<div class="mu">هنوز کلاسی اضافه نشده</div>')+'</div>'}).join('');
+  const co=S.classes.map(k=>`<option value="${k.id}">${esc(k.name)}</option>`).join('');
+  setOpts($('#cc'),CATS.map(c=>`<option>${c}</option>`).join(''));
+  setOpts($('#sc'),co);
+  setOpts($('#ff'),'<option value="">همه کلاس‌ها</option>'+co);
+  setOpts($('#gs'),S.students.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join(''));
+  const f=$('#ff').value,ss=vs.filter(s=>!f||s.cid===f);
+  $('#sl').innerHTML=ss.map(s=>`<div class="li"><span>${esc(s.name)} <span class="mu">${esc(cn(s.cid))}</span></span><span><b>${S.grades.some(g=>g.sid===s.id)?fa(sAvg(s.id)):'—'}</b> <button class="btn del" data-del="s:${s.id}">حذف</button></span></div>`).join('')||'<div class="mu">دانش‌آموزی نیست</div>';
+  $('#gl').innerHTML=vg.map(g=>`<div class="li"><span>${esc(sn(g.sid))} <span class="mu">${esc(g.subj)}</span></span><span><b>${fa(g.score)}</b> <button class="btn del" data-del="g:${g.id}">حذف</button></span></div>`).join('')||'<div class="mu">نمره‌ای ثبت نشده</div>';
+}
+
+function show(p){
+  $$('.pg').forEach(x=>x.classList.toggle('on',x.id===p));
+  $$('.nb').forEach(x=>x.classList.toggle('on',x.dataset.go===p));
+  scrollTo(0,0);
+}
+
+// ماشین‌حساب
+let ex='',mem=0,deg=true,fresh=false,hist=[];
+try{hist=JSON.parse(localStorage.getItem('calc1'))||[]}catch(e){}
+
+function fact(n){if(n<0||n>170||n!==Math.floor(n))throw 0;let r=1;for(let i=2;i<=n;i++)r*=i;return r}
+const fmt=r=>{if(!isFinite(r))throw 0;if(Math.abs(r)<1e-12)r=0;return String(+r.toPrecision(12)).replace(/e\+?(-?\d+)/,'×10^$1')};
+function evalX(src){
+  const re=/\s*(\d+\.?\d*|\.\d+|asin|acos|atan|sin|cos|tan|log|ln|abs|√|π|e|[+\-−×÷*\/^!%()])/y;
+  const T=[];let m;re.lastIndex=0;
+  while(re.lastIndex<src.length){m=re.exec(src);if(!m)throw 0;T.push(m[1])}
+  let i=0;const pk=()=>T[i],nx=()=>T[i++];
+  const isNum=t=>t!==undefined&&/^[\d.]/.test(t);
+  const rd=x=>deg?x*Math.PI/180:x,dg=r=>deg?r*180/Math.PI:r;
+  const FN={sin:x=>Math.sin(rd(x)),cos:x=>Math.cos(rd(x)),tan:x=>Math.tan(rd(x)),asin:x=>dg(Math.asin(x)),acos:x=>dg(Math.acos(x)),atan:x=>dg(Math.atan(x)),log:Math.log10,ln:Math.log,'√':Math.sqrt,abs:Math.abs};
+  function ex_(){let v=term();while(pk()==='+'||pk()==='-'||pk()==='−'){const o=nx(),r=term();v=o==='+'?v+r:v-r}return v}
+  function term(){let v=un();for(;;){const t=pk();if(t==='×'||t==='*'){nx();v*=un()}else if(t==='÷'||t==='/'){nx();v/=un()}else if(t!==undefined&&(isNum(t)||t==='('||t==='π'||t==='e'||FN[t])){v*=un()}else return v}}
+  function un(){const t=pk();if(t==='-'||t==='−'){nx();return -un()}if(t==='+'){nx();return un()}return pw()}
+  function pw(){const b=pf();if(pk()==='^'){nx();return Math.pow(b,un())}return b}
+  function pf(){let v=pr();for(;;){if(pk()==='!'){nx();v=fact(v)}else if(pk()==='%'){nx();v/=100}else return v}}
+  function pr(){const t=nx();if(t===undefined)throw 0;if(isNum(t)){const n=parseFloat(t);if(isNaN(n))throw 0;return n}if(t==='π')return Math.PI;if(t==='e')return Math.E;if(t==='('){const v=ex_();if(nx()!==')')throw 0;return v}if(FN[t]){if(nx()!=='(')throw 0;const v=ex_();if(nx()!==')')throw 0;return FN[t](v)}throw 0}
+  const r=ex_();if(i<T.length)throw 0;return r}
+
+const SCI=['sin(','cos(','tan(','log(','ln(','asin(','acos(','atan(','√(','^','(',')','π','e','!','MC','MR','M+','M−','MODE'];
+const BAS=['C','⌫','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','±','0','.','='];
+const lab=k=>k==='MODE'?'DEG':k.length>1&&k.endsWith('(')?k.slice(0,-1):k==='^'?'xʸ':k;
+$('#ks').innerHTML=SCI.map(k=>`<button class="btn" data-k="${k}">${lab(k)}</button>`).join('');
+$('#ck').innerHTML=BAS.map(k=>`<button class="btn${'÷×−+='.includes(k)?' op':''}" data-k="${k}">${k}</button>`).join('');
+function ev(){let s=ex;const o=(s.match(/\(/g)||[]).length-(s.match(/\)/g)||[]).length;if(o>0)s+=')'.repeat(o);return fmt(evalX(s))}
+function rh(){$('#ch').innerHTML=hist.map((h,i)=>`<div class="li hi" data-hi="${i}"><span class="ltr">${esc(h.e)}</span><b class="ltr">= ${esc(h.r)}</b></div>`).join('')||'<div class="mu">هنوز محاسبه‌ای انجام نشده</div>'}
+function cshow(){
+  $('#cd').textContent=ex||'0';
+  let p='';if(ex&&!/^−?[\d.]+$/.test(ex)){try{p='= '+ev()}catch(e){}}
+  $('#cr').textContent=p;$('#mi').textContent=mem?'حافظه: '+fmt(mem):'';
+}
+function gpRow(w){const d=document.createElement('div');d.className='row gpr';d.innerHTML=`<input class="gn" placeholder="درس"><input class="gs" inputmode="decimal" placeholder="نمره از ۲۰"><input class="gw" inputmode="decimal" placeholder="ضریب" value="${w}">`;$('#gp').appendChild(d)}
+function gcalc(){let t=0,w=0;$$('#gp .gpr').forEach(r=>{const sc=parseFloat(en(r.querySelector('.gs').value)),ww=parseFloat(en(r.querySelector('.gw').value));if(sc>=0&&sc<=20&&ww>0){t+=sc*ww;w+=ww}});$('#gr').textContent=w?'معدل: '+fa(t/w):'معدل: —'}
+[3,3,2].forEach(gpRow);
+function calc(k){
+  if(k==='GADD'){gpRow(1);return}
+  if(k==='GDEL'){const r=$$('#gp .gpr');if(r.length>1)r[r.length-1].remove();gcalc();return}
+  if(k==='CLH'){hist=[];try{localStorage.setItem('calc1','[]')}catch(e){}rh();return}
+  if(k==='SCI'){$('#ks').classList.toggle('hide');return}
+  if(k==='MODE'){deg=!deg;$('[data-k="MODE"]').textContent=deg?'DEG':'RAD';cshow();return}
+  if(k==='MC')mem=0;
+  else if(k==='MR'){if(mem){if(fresh)ex='';ex+=fmt(mem)}}
+  else if(k==='M+'||k==='M−'){try{const v=parseFloat(ev().replace('×10^','e'));mem+=k==='M+'?v:-v}catch(e){}}
+  else if(k==='C')ex='';
+  else if(k==='⌫')ex=ex.replace(/(asin\(|acos\(|atan\(|sin\(|cos\(|tan\(|log\(|ln\(|√\(|abs\(|.)$/,'');
+  else if(k==='±')ex=ex.replace(/(−?)(\d+\.?\d*)$/,(m,s,n)=>s?n:'−'+n);
+  else if(k==='='){
+    if(!ex)return;
+    try{const r=ev();hist.unshift({e:ex,r});hist=hist.slice(0,20);try{localStorage.setItem('calc1',JSON.stringify(hist))}catch(e){}ex=r;fresh=true;rh();cshow();return}
+    catch(e){$('#cr').textContent='عبارت نامعتبر است';const d=$('.calc .disp');d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');return}
+  }
+  else{
+    if(fresh&&/^([\d.(πe]|asin|acos|atan|sin|cos|tan|log|ln|√|abs)/.test(k))ex='';
+    ex+=k;
+  }
+  if(k!=='='&&k!=='MR')fresh=false;
+  cshow();
+}
+$('#ch').addEventListener('click',e=>{const el=e.target.closest('[data-hi]');if(el){ex=hist[+el.dataset.hi].r;fresh=true;cshow()}});
+$('#gp').addEventListener('input',gcalc);
+addEventListener('keydown',e=>{
+  if(!$('#cal').classList.contains('on')||!$('#lg').classList.contains('off')||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  const m={'*':'×','/':'÷','-':'−','+':'+','Enter':'=','=':'=','Backspace':'⌫','Escape':'C','p':'π','^':'^','(':'(',')':')','%':'%','!':'!','.':'.'};
+  const k=/^[0-9]$/.test(e.key)?e.key:m[e.key];
+  if(k){e.preventDefault();calc(k)}
+});
+rh();cshow();
+
+// افکت‌ها
+let fi=0,hue=225,li=0;const lay=[$('#b1'),$('#b2')];
+function setHue(h){document.documentElement.style.setProperty('--h',h);li^=1;const on=lay[li],off=lay[li^1];on.style.setProperty('--h',h);on.style.opacity=1;off.style.opacity=0}
+function burst(x,y){if(calm)return;const n=innerWidth<760?8:14;for(let i=0;i<n;i++){const s=document.createElement('i');s.className='sp';s.style.left=x+'px';s.style.top=y+'px';document.body.appendChild(s);const a=i/n*6.283,d=40+Math.random()*60;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*d}px),calc(-50% + ${Math.sin(a)*d}px)) scale(0)`,opacity:0}],{duration:700,easing:'ease-out'}).onfinish=()=>s.remove()}}
+function ring(x,y){if(calm)return;const r=document.createElement('i');r.className='ring';r.style.left=x+'px';r.style.top=y+'px';document.body.appendChild(r);r.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:.9},{transform:'translate(-50%,-50%) scale(1)',opacity:0}],{duration:900,easing:'ease-out'}).onfinish=()=>r.remove()}
+function fxClick(e,b){
+  const r=b.getBoundingClientRect(),s=document.createElement('span'),d=Math.max(r.width,r.height)*2;
+  s.className='rp';s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;
+  b.appendChild(s);setTimeout(()=>s.remove(),700);
+  if(b.closest('.keys'))return;
+  hue=(hue+47)%360;setHue(hue);
+  const m=fi++%3;
+  if(m===0)burst(e.clientX,e.clientY);else if(m===1)ring(e.clientX,e.clientY);else{burst(e.clientX,e.clientY);ring(e.clientX,e.clientY)}
+}
+
+// کلیک‌ها
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button,a.btn');if(!b)return;
+  fxClick(e,b);
+  if(b.dataset.go)show(b.dataset.go);
+  if(b.dataset.k!==undefined)calc(b.dataset.k);
+  const a=b.dataset.act;
+  if((a==='addC'||a==='addS'||a==='addG'||b.dataset.del)&&!canEdit())return;
+  if(a==='addC'){const n=$('#cn').value.trim();if(n){S.classes.push({id:uid(),name:n,cat:$('#cc').value});$('#cn').value=''}}
+  if(a==='addS'){const n=$('#sn').value.trim();if(n&&$('#sc').value){S.students.push({id:uid(),name:n,cid:$('#sc').value});$('#sn').value=''}}
+  if(a==='addG'){const v=parseFloat(en($('#gv').value)),j=$('#gj').value.trim();if($('#gs').value&&j&&v>=0&&v<=20){S.grades.push({id:uid(),sid:$('#gs').value,subj:j,score:v});$('#gj').value='';$('#gv').value=''}}
+  if(b.dataset.del){
+    const[t,id]=b.dataset.del.split(':');
+    if(t==='c'){const ids=S.students.filter(s=>s.cid===id).map(s=>s.id);S.students=S.students.filter(s=>s.cid!==id);S.grades=S.grades.filter(g=>!ids.includes(g.sid));S.classes=S.classes.filter(c=>c.id!==id)}
+    if(t==='s'){S.students=S.students.filter(s=>s.id!==id);S.grades=S.grades.filter(g=>g.sid!==id)}
+    if(t==='g')S.grades=S.grades.filter(g=>g.id!==id);
+  }
+  if(a==='addC'||a==='addS'||a==='addG'||b.dataset.del){save();render()}
+});
+$('#ff').addEventListener('change',render);
+$('#tg').href='https://t.me/'+TG;
+
+// ذره‌های شناور
+const cv=$('#fx'),cx=cv.getContext('2d');let W,H;
+const P=Array.from({length:matchMedia('(max-width:760px)').matches?16:32},()=>({x:Math.random(),y:Math.random(),r:1+Math.random()*2.5,vx:(Math.random()-.5)*.0003,vy:-.0002-Math.random()*.0006}));
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight}
+addEventListener('resize',rs);rs();
+let fc=0,hh=225;
+function loop(){
+  if(document.hidden||!$('#lg').classList.contains('off')){requestAnimationFrame(loop);return}
+  if(fc++%30===0)hh=hue;
+  cx.clearRect(0,0,W,H);
+  cx.fillStyle=`hsla(${hh},90%,75%,.6)`;
+  for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.y<-.02)p.y=1.02;if(p.x<0)p.x=1;if(p.x>1)p.x=0;cx.beginPath();cx.arc(p.x*W,p.y*H,p.r,0,6.283);cx.fill()}
+  requestAnimationFrame(loop);
+}
+if(!calm)loop();
+render();
+
+// ---- ورود ----
+// رمزها و نقش‌ها (بعداً می‌تونی امنیتش رو بالاتر ببری)
+const USERS={site:{n:'مدیر سایت',p:'1423',edit:1},mgr:{n:'مدیر',p:'4567',edit:1},vp:{n:'ناظم',p:'2345',edit:1},tch:{n:'معلم',p:'7890',edit:1},stu:{n:'دانش‌آموز',p:'0123',edit:0}};
+const canEdit=()=>!!(ROLE&&USERS[ROLE]&&USERS[ROLE].edit);
+function applyPerm(){
+  const ro=!canEdit();
+  document.body.classList.toggle('ro',ro);
+  $$('[data-act^="add"]').forEach(b=>{const c=b.closest('.card');if(c)c.hidden=ro});
+  $('#ro-note').hidden=!ro;
+  render();
+}
+function setRole(r){
+  ROLE=r;
+  document.body.classList.remove('locked');$('#lg').classList.add('off');
+  $('#wh').textContent='وارد شده: '+USERS[r].n;
+  try{sessionStorage.setItem('role1',r)}catch(e){}
+  applyPerm();
+}
+function fillLs(){$('#ls').innerHTML='<option value="">نام خودت رو انتخاب کن</option>'+S.students.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}
+$('#lu').addEventListener('change',()=>{const st=$('#lu').value==='stu';$('#ls').hidden=!st;if(st)fillLs()});
+function doLogin(){
+  const r=$('#lu').value,p=en($('#lp').value.trim());
+  if(r==='stu'&&!$('#ls').value){$('#le').textContent='اول نام خودت رو انتخاب کن';return}
+  if(r&&USERS[r]&&USERS[r].p===p){$('#le').textContent='';$('#lp').value='';MYSID=r==='stu'?$('#ls').value:null;try{sessionStorage.setItem('sid1',MYSID||'')}catch(e){}setRole(r)}
+  else{$('#le').textContent=r?'رمز اشتباهه، دوباره امتحان کن':'اول نقشت رو انتخاب کن';const c=$('#lgc');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}
+}
+function doLogout(){
+  ROLE=null;MYSID=null;$('#ls').hidden=true;
+  try{sessionStorage.removeItem('role1')}catch(e){}
+  document.body.classList.add('locked');$('#lg').classList.remove('off');$('#lu').value='';$('#lp').value='';show('dash');
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='login')doLogin();if(b.dataset.act==='logout')doLogout()});
+$('#lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.body.classList.add('locked');
+let sr=null;try{sr=sessionStorage.getItem('role1')}catch(e){}
+if(sr&&USERS[sr]){try{MYSID=sessionStorage.getItem('sid1')||null}catch(e){}if(sr==='stu'&&!S.students.some(x=>x.id===MYSID)){sr=null}else setRole(sr)}
+</script>
+<style>
+.sg{display:grid;grid-template-columns:70px repeat(4,minmax(90px,1fr));gap:6px;min-width:520px;align-items:center}
+.sg input{width:100%}
+@media(max-width:760px){nav{overflow-x:auto;justify-content:flex-start}.nb{flex:0 0 auto}}
+@media print{body *{visibility:hidden}body{background:#fff!important}.bgw,#fx{display:none}
+#rcp,#rcp *{visibility:visible;color:#000!important}#rcp{position:absolute;top:0;right:0;left:0;background:#fff!important;border:0}#rcp .li{border-color:#999}}
+</style>
+<script>
+addEventListener('load',()=>{
+if(typeof S==='undefined'||typeof render==='undefined'){document.body.insertAdjacentHTML('afterbegin','<div style="position:fixed;inset:0;z-index:999;background:#111;color:#fff;padding:24px;font:16px Tahoma;direction:rtl">این فایل تنها اجرا نمی‌شه. محتواش باید داخل فایل اصلی سایت، قبل از &lt;/body&gt;، چسبانده بشه.</div>');return}
+S.att=S.att||{};S.sch=S.sch||{};S.pw=S.pw||{};
+const DAYS=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه'],ST={p:['✅','حاضر'],a:['❌','غایب'],l:['⏰','تأخیر']};
+const vis=()=>ROLE==='stu'?S.students.filter(s=>s.id===MYSID):S.students;
+const tod=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const opts=a=>a.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');
+const myC=()=>(S.students.find(s=>s.id===MYSID)||{}).cid;
+
+// منو و صفحه‌ها
+[['att','📅 حضور'],['rc','📄 کارنامه'],['sch','🗓️ برنامه'],['dat','💾 داده‌ها']].forEach(([g,t])=>{const b=document.createElement('button');b.className='nb';b.dataset.go=g;b.textContent=t;$('nav').insertBefore(b,$('.who'))});
+{const sp=$('[data-go="sup"]');if(sp)$('nav').insertBefore(sp,$('.who'))}
+$('footer').insertAdjacentHTML('beforebegin',`
+<section class="pg" id="att"><h2>حضور و غیاب</h2>
+<div class="card" style="margin-bottom:12px"><div class="row"><input type="date" id="ad"><select id="ac"></select></div><div class="mu" id="ajd" style="margin:6px 0"></div><div id="al"></div></div>
+<div class="card"><b>گزارش غیبت و تأخیر</b><div id="ar"></div></div></section>
+<section class="pg" id="rc"><h2>کارنامه</h2>
+<div class="card" style="margin-bottom:12px"><div class="row"><select id="rs"></select><button class="btn" data-x="print">🖨️ چاپ / PDF</button></div></div>
+<div class="card" id="rcp"></div></section>
+<section class="pg" id="sch"><h2>برنامه هفتگی</h2>
+<div class="card"><select id="sk" style="margin-bottom:10px"></select><div id="sg" style="overflow-x:auto"></div></div></section>
+<section class="pg" id="dat"><h2>داده‌ها</h2><div class="card">
+<div class="row"><button class="btn" data-x="csv">⬇️ خروجی CSV (اکسل)</button><button class="btn" data-x="bak">💾 پشتیبان JSON</button></div>
+<div class="row"><label class="btn" style="text-align:center">⬆️ ورود دانش‌آموز از CSV (نام,کلاس)<input type="file" accept=".csv,text/csv" id="fc" hidden></label>
+<label class="btn" style="text-align:center">♻️ بازیابی پشتیبان<input type="file" accept=".json" id="fj" hidden></label></div>
+<p class="mu" id="dm" style="margin-top:10px"></p></div></section>`);
+$('#sn').insertAdjacentHTML('afterend','<input id="sp" placeholder="رمز دانش‌آموز (اختیاری)" inputmode="numeric">');
+$('#ad').value=tod();
+
+// حضور و غیاب
+function rAtt(){
+  const d=$('#ad').value||tod();
+  setOpts($('#ac'),opts(S.classes.filter(k=>ROLE!=='stu'||k.id===myC())));
+  const c=$('#ac').value,m=S.att[d]||{},ed=canEdit();
+  try{$('#ajd').textContent='📆 '+new Date(d+'T12:00:00').toLocaleDateString('fa-IR',{dateStyle:'full'})}catch(e){}
+  const ss=vis().filter(s=>ROLE==='stu'||s.cid===c);
+  $('#al').innerHTML=ss.map(s=>`<div class="li"><span>${esc(s.name)}</span><span>`+(ed?Object.keys(ST).map(k=>`<button class="btn del" data-at="${s.id}:${k}" style="${m[s.id]===k?'background:var(--a);color:#fff':''}">${ST[k][0]} ${ST[k][1]}</button>`).join(' '):(m[s.id]?ST[m[s.id]].join(' '):'—'))+'</span></div>').join('')||'<div class="mu">دانش‌آموزی نیست</div>';
+  $('#ar').innerHTML=vis().map(s=>{let a=0,l=0;for(const k in S.att){const v=S.att[k][s.id];if(v==='a')a++;if(v==='l')l++}return`<div class="li"><span>${esc(s.name)}</span><span class="mu">غیبت ${fa(a)} · تأخیر ${fa(l)}</span></div>`}).join('')||'<div class="mu">—</div>';
+}
+
+// کارنامه + نمودار
+function rRc(){
+  setOpts($('#rs'),opts(vis()));
+  const s=S.students.find(x=>x.id===$('#rs').value);
+  if(!s){$('#rcp').innerHTML='<div class="mu">دانش‌آموزی نیست</div>';return}
+  const gs=S.grades.filter(g=>g.sid===s.id);let a=0,l=0;
+  for(const k in S.att){const v=S.att[k][s.id];if(v==='a')a++;if(v==='l')l++}
+  const bars=gs.map((g,i)=>{const h=g.score/20*100,x=i*56+12;return`<rect x="${x}" y="${120-h}" width="34" height="${h}" rx="6" fill="#6c8cff"/><text x="${x+17}" y="${114-h}" text-anchor="middle" font-size="12" fill="currentColor">${fa(g.score)}</text><text x="${x+17}" y="138" text-anchor="middle" font-size="11" fill="currentColor">${esc(g.subj.slice(0,7))}</text>`}).join('');
+  $('#rcp').innerHTML=`<div style="text-align:center"><div class="big">کارنامه</div><div class="mu">مدرسه استقلال ۱ و ۲</div></div>
+<p style="margin:10px 0"><b>${esc(s.name)}</b> — ${esc(cn(s.cid))}</p>`+
+  (gs.map(g=>`<div class="li"><span>${esc(g.subj)}</span><b>${fa(g.score)}</b></div>`).join('')||'<div class="mu">نمره‌ای ثبت نشده</div>')+
+  `<div class="li"><b>معدل</b><b>${gs.length?fa(avg(gs.map(g=>g.score))):'—'}</b></div><div class="li"><span>غیبت / تأخیر</span><b>${fa(a)} / ${fa(l)}</b></div>`+
+  (gs.length?`<div style="overflow-x:auto;margin-top:12px"><svg viewBox="0 0 ${Math.max(gs.length*56+12,280)} 146" width="${Math.max(gs.length*56+12,280)}" height="146" style="direction:ltr">${bars}</svg></div>`:'');
+}
+
+// برنامه هفتگی
+function rSch(){
+  setOpts($('#sk'),opts(S.classes.filter(k=>ROLE!=='stu'||k.id===myC())));
+  const c=$('#sk').value,m=S.sch[c]||{},ro=!canEdit()?'disabled':'';
+  $('#sg').innerHTML=c?'<div class="sg"><b></b>'+[1,2,3,4].map(p=>`<b class="mu" style="text-align:center">زنگ ${fa(p)}</b>`).join('')+DAYS.map((d,i)=>`<b>${d}</b>`+[0,1,2,3].map(p=>`<input data-sc="${i}-${p}" value="${esc(m[i+'-'+p]||'')}" ${ro}>`).join('')).join('')+'</div>':'<div class="mu">کلاسی نیست</div>';
+}
+$('#sg').addEventListener('input',e=>{const k=e.target.dataset.sc,c=$('#sk').value;if(!k||!c||!canEdit())return;(S.sch[c]=S.sch[c]||{})[k]=e.target.value;save()});
+
+// ویرایش نام/نمره و رمز
+function addEd(){
+  if(!canEdit())return;
+  $$('[data-del]').forEach(b=>{
+    if(b.previousElementSibling&&b.previousElementSibling.dataset&&b.previousElementSibling.dataset.ed)return;
+    const e=document.createElement('button');e.className='btn del edt';e.textContent='ویرایش';e.dataset.ed=b.dataset.del;b.before(e);
+  });
+}
+
+function openEd(key){
+  const[tp,id]=key.split(':');let title='',fields='';
+  if(tp==='c'){const o=S.classes.find(z=>z.id===id);title='ویرایش کلاس';fields=`<label class="mu">نام کلاس</label><input id="e1" value="${esc(o.name)}">`}
+  if(tp==='s'){const o=S.students.find(z=>z.id===id);title='ویرایش دانش‌آموز';fields=`<label class="mu">نام دانش‌آموز</label><input id="e1" value="${esc(o.name)}"><label class="mu">رمز ورود (خالی = رمز مشترک)</label><input id="e2" inputmode="numeric" value="${esc(S.pw[id]||'')}">`}
+  if(tp==='g'){const o=S.grades.find(z=>z.id===id);title='ویرایش نمره';fields=`<label class="mu">درس</label><input id="e1" value="${esc(o.subj)}"><label class="mu">نمره (از ۲۰)</label><input id="e2" inputmode="decimal" value="${o.score}">`}
+  const m=document.createElement('div');m.id='edm';
+  m.innerHTML=`<div class="card edc"><b>${title}</b>${fields}<div id="ee" style="color:#ff7d95;font-size:14px;min-height:20px"></div><div class="row"><button class="btn" id="eok">ذخیره</button><button class="btn del" id="eno" style="padding:10px 18px">انصراف</button></div></div>`;
+  document.body.appendChild(m);
+  $('#eno').onclick=()=>m.remove();
+  m.addEventListener('keydown',ev=>{if(ev.key==='Escape')m.remove();if(ev.key==='Enter')$('#eok').click()});
+  setTimeout(()=>{const f=$('#e1');if(f){f.focus();f.select()}},50);
+  m.addEventListener('click',ev=>{if(ev.target===m)m.remove()});
+  $('#eok').onclick=()=>{
+    const v1=$('#e1').value.trim();
+    if(!v1){$('#ee').textContent='این خانه نباید خالی باشه';return}
+    if(tp==='c')S.classes.find(z=>z.id===id).name=v1;
+    if(tp==='s'){S.students.find(z=>z.id===id).name=v1;const pw=en($('#e2').value.trim());if(pw)S.pw[id]=pw;else delete S.pw[id]}
+    if(tp==='g'){const sc=parseFloat(en($('#e2').value));if(!(sc>=0&&sc<=20)){$('#ee').textContent='نمره باید بین ۰ تا ۲۰ باشه';return}const g=S.grades.find(z=>z.id===id);g.subj=v1;g.score=sc}
+    save();m.remove();render();
+  };
+}
+document.head.insertAdjacentHTML('beforeend','<style>.btn.edt{transition:transform .15s,box-shadow .25s,background .25s}.btn.edt:hover{background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 0 14px -2px var(--a)}.btn.edt:active{transform:scale(.88)}.btn.edt.pop{animation:edpop .5s cubic-bezier(.2,.9,.3,1)}@keyframes edpop{0%{transform:scale(1);box-shadow:0 0 0 0 var(--a)}40%{transform:scale(1.18) rotate(-3deg);box-shadow:0 0 0 8px transparent}100%{transform:scale(1);box-shadow:0 0 0 14px transparent}}.btn.edt::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg)}.btn.edt.pop::after{animation:edshine .6s ease-out}@keyframes edshine{to{left:130%}}#edm .edc{animation:in .35s cubic-bezier(.2,.9,.3,1)}#edm{position:fixed;inset:0;z-index:300;background:rgba(6,7,15,.7);display:flex;align-items:center;justify-content:center;padding:20px}.edc{width:100%;max-width:360px;background:rgba(18,20,44,.97)!important;display:flex;flex-direction:column;gap:6px}.edc:hover{transform:none}.edc input{width:100%}.edc .row{margin-top:8px}</style>');
+function prune(){
+  const ids=new Set(S.students.map(x=>x.id)),cs=new Set(S.classes.map(x=>x.id));let ch=false;
+  for(const k in S.pw)if(!ids.has(k)){delete S.pw[k];ch=true}
+  for(const d in S.att)for(const k in S.att[d])if(!ids.has(k)){delete S.att[d][k];ch=true}
+  for(const k in S.sch)if(!cs.has(k)){delete S.sch[k];ch=true}
+  if(ch)save();
+}
+function extras(){prune();rAtt();rRc();rSch();addEd();$('[data-go="dat"]').hidden=!canEdit()}
+
+$('#ff').addEventListener('change',addEd);
+const R0=render;render=function(){R0();extras()};
+const S0=show;show=function(p){S0(p);extras();if(matchMedia('(max-width:760px)').matches){const b=$('.nb.on');if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})}};
+['ad','ac'].forEach(i=>$('#'+i).addEventListener('change',rAtt));
+$('#rs').addEventListener('change',rRc);$('#sk').addEventListener('change',rSch);
+
+// دانلود
+function dl(n,t,ty){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:ty}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1e3)}
+const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const x=b.dataset.x;
+  if(x==='print')window.print();
+  if(!canEdit()&&!x)return;
+  if(x==='csv'){dl('school.csv','\ufeff'+['نام,کلاس,درس,نمره'].concat(S.grades.map(g=>[sn(g.sid),cn((S.students.find(s=>s.id===g.sid)||{}).cid),g.subj,g.score].map(q).join(','))).join('\r\n'),'text/csv')}
+  if(x==='bak')dl('school-backup.json',JSON.stringify(S),'application/json');
+  if(b.dataset.at){const[id,k]=b.dataset.at.split(':'),d=$('#ad').value||tod(),m=S.att[d]=S.att[d]||{};if(m[id]===k)delete m[id];else m[id]=k;save();rAtt()}
+  if(b.dataset.ed){b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');const k=b.dataset.ed;setTimeout(()=>openEd(k),260)}
+});
+
+// رمز هنگام افزودن دانش‌آموز
+let pre=0;
+document.addEventListener('click',e=>{if(e.target.closest('[data-act="addS"]'))pre=S.students.length},true);
+document.addEventListener('click',e=>{if(e.target.closest('[data-act="addS"]')&&S.students.length>pre){const p=en($('#sp').value.trim());if(p){S.pw[S.students[S.students.length-1].id]=p;save()}$('#sp').value=''}});
+
+// ورود با رمز اختصاصی دانش‌آموز
+const L0=doLogin;
+doLogin=function(){
+  if($('#lu').value==='stu'&&S.pw[$('#ls').value]){const ok=en($('#lp').value.trim())===S.pw[$('#ls').value];$('#lp').value=ok?'0123':'#'}
+  L0();
+  if(!ROLE)$('#lp').value='';
 };
 
-function loginUser(){
- const u=document.getElementById("username").value.trim();
- const p=document.getElementById("password").value;
- if(accounts[u] && accounts[u].password===p){
-  document.getElementById("login").style.display="none";
-  document.getElementById("app").style.display="block";
-  document.getElementById("userLabel").textContent=accounts[u].name;
-  document.getElementById("error").textContent="";
- }else{
-  document.getElementById("error").textContent="نام کاربری یا رمز اشتباه است.";
- }
+// ورود فایل
+$('#fc').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f||!canEdit())return;
+  f.text().then(t=>{let n=0;t.replace(/^\ufeff/,'').split(/\r?\n/).forEach((ln,i)=>{
+    const [a,b]=ln.split(/[,،;]/).map(z=>z.replace(/^"|"$/g,'').trim());if(!a||!b||(i===0&&a==='نام'))return;
+    let k=S.classes.find(c=>c.name===b);if(!k){k={id:uid(),name:b,cat:'راهنمایی'};S.classes.push(k)}
+    S.students.push({id:uid(),name:a,cid:k.id});n++});
+    save();render();$('#dm').textContent=fa(n)+' دانش‌آموز اضافه شد.';e.target.value=''});
+});
+$('#fj').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f||!canEdit())return;
+  f.text().then(t=>{try{const j=JSON.parse(t);if(!Array.isArray(j.classes)||!Array.isArray(j.students)||!Array.isArray(j.grades))throw 0;
+    Object.assign(S,{att:{},sch:{},pw:{}},j);save();render();$('#dm').textContent='پشتیبان بازیابی شد.'}catch(x){$('#dm').textContent='فایل معتبر نیست.'}e.target.value=''});
+});
+render();
+});
+</script>
+
+
+<script>
+(()=>{
+const g=k=>{try{return localStorage.getItem(k)}catch(e){return null}},s=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+$('footer').insertAdjacentHTML('beforebegin',`
+<section class="pg" id="set"><h2>تنظیمات</h2>
+<div class="card" style="margin-bottom:12px"><b>🎨 حالت نمایش</b>
+<div class="row seg"><button class="btn" data-th="dark">🌙 تاریک</button><button class="btn" data-th="light">☀️ روشن</button><button class="btn" data-th="auto">📱 مثل گوشی</button></div></div>
+<div class="card" style="margin-bottom:12px"><b>🔠 اندازه نوشته</b>
+<div class="row seg"><button class="btn" data-fs="0.9">کوچک</button><button class="btn" data-fs="1">متوسط</button><button class="btn" data-fs="1.15">بزرگ</button><button class="btn" data-fs="1.3">خیلی بزرگ</button></div></div>
+<div class="card"><b>📲 نصب روی گوشی</b>
+<p class="mu" id="im" style="margin:6px 0 10px"></p><button class="btn" id="ib" hidden>نصب برنامه</button></div></section>`);
+const mq=matchMedia('(prefers-color-scheme: light)'),tc=$('#tc');
+function mark(){
+  const th=g('theme1')||'dark',fs=g('zoom1')||'1';
+  $$('[data-th]').forEach(b=>b.classList.toggle('act',b.dataset.th===th));
+  $$('[data-fs]').forEach(b=>b.classList.toggle('act',b.dataset.fs===fs));
 }
-
-function logout(){
- document.getElementById("app").style.display="none";
- document.getElementById("login").style.display="grid";
- document.getElementById("password").value="";
+function theme(){
+  const v=g('theme1')||'dark',l=v==='light'||(v==='auto'&&mq.matches);
+  document.documentElement.dataset.theme=l?'light':'dark';tc.content=l?'#eef0ff':'#06070f';mark();
 }
-
-function show(id,btn){
- document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
-}
-
-let attendance=[];
-try{attendance=JSON.parse(localStorage.getItem("smartAttendance")||"[]")}catch(e){}
-
-function renderAttendance(){
- const list=document.getElementById("attendanceList");
- list.innerHTML="";
- attendance.forEach(name=>{
-  const item=document.createElement("div");
-  item.className="item";
-  item.textContent=name+" — حاضر";
-  list.appendChild(item);
- });
-}
-
-function addAttendance(){
- const input=document.getElementById("studentName");
- const name=input.value.trim();
- if(!name){alert("نام دانش‌آموز را وارد کن.");return}
- attendance.push(name);
- localStorage.setItem("smartAttendance",JSON.stringify(attendance));
- input.value="";
- renderAttendance();
-}
-
-function calculate(){
- const vals=["g1","g2","g3"].map(id=>document.getElementById(id).value);
- if(vals.some(v=>v==="")){alert("هر سه نمره را وارد کن.");return}
- const nums=vals.map(Number);
- if(nums.some(n=>!Number.isFinite(n)||n<0||n>20)){alert("نمره باید بین صفر تا ۲۰ باشد.");return}
- document.getElementById("average").textContent="معدل: "+(nums.reduce((a,b)=>a+b,0)/3).toFixed(2);
-}
-
-let bulbOn=false;
-function toggleBulb(){
- bulbOn=!bulbOn;
- document.getElementById("bulb").textContent=bulbOn?"💡":"⚫";
- document.getElementById("switch").textContent=bulbOn?"خاموش کردن لامپ":"روشن کردن لامپ";
-}
-
-function quiz(correct){
- document.getElementById("quizResult").textContent=correct?"آفرین! پاسخ درست است 🌟":"اشتباه است؛ دوباره تلاش کن.";
-}
-
-renderAttendance();
+mq.addEventListener&&mq.addEventListener('change',theme);
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.th){s('theme1',b.dataset.th);theme()}
+  if(b.dataset.fs){s('zoom1',b.dataset.fs);document.documentElement.style.setProperty('--zm',b.dataset.fs);mark()}
+});
+theme();
+let dp=null;const ib=$('#ib'),im=$('#im');
+const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),app=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+im.textContent=app?'✅ برنامه روی دستگاهت نصبه.':ios?'توی سافاری دکمه‌ی اشتراک‌گذاری (Share) رو بزن و «Add to Home Screen» رو انتخاب کن.':'اگه دکمه‌ی نصب پایین نیومد، از منوی مرورگر گزینه‌ی «نصب برنامه» یا «افزودن به صفحه اصلی» رو بزن. سایت باید روی آدرس https باز شده باشه.';
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;ib.hidden=false;im.textContent='با دکمه‌ی زیر برنامه رو نصب کن. بعد از نصب، بدون اینترنت هم باز می‌شه.'});
+ib.addEventListener('click',async()=>{if(!dp)return;dp.prompt();try{await dp.userChoice}catch(e){}dp=null;ib.hidden=true});
+addEventListener('appinstalled',()=>{ib.hidden=true;im.textContent='✅ برنامه نصب شد.'});
+addEventListener('load',()=>{
+  const b=document.createElement('button');b.className='nb';b.dataset.go='set';b.textContent='⚙️ تنظیمات';
+  const sup=$('[data-go="sup"]');$('nav').insertBefore(b,sup||$('.who'));
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
+});
+})();
 </script>
 </body>
 </html>
