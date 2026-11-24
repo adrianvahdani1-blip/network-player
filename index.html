@@ -150,6 +150,8 @@ input,select{font-size:16px}
 nav{height:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
 }
+.lgc .btn.gbtn{background:var(--card);color:var(--tx);border:1px solid var(--bd);margin-top:10px;padding:11px}
+#gn{margin-bottom:12px;border-color:var(--a)}
 </style>
 </head>
 <body>
@@ -170,6 +172,8 @@ nav::-webkit-scrollbar{display:none}
     <input id="lp" type="password" inputmode="numeric" autocomplete="off" placeholder="رمز عبور">
     <div id="le" role="alert"></div>
     <button class="btn" data-act="login">ورود</button>
+    <button class="btn gbtn" data-act="guest">ادامه به‌صورت مهمان</button>
+    <div class="mu" style="margin-top:8px;font-size:12px">فقط برای دیدن محیط سایت با اطلاعات نمونه. هیچ تغییری ذخیره نمی‌شه.</div>
   </div>
 </div>
 <div class="bgw"><div class="bg" id="b1"></div><div class="bg" id="b2"></div></div><canvas id="fx"></canvas>
@@ -668,6 +672,48 @@ addEventListener('load',()=>{
   const sup=$('[data-go="sup"]');$('nav').insertBefore(b,sup||$('.who'));
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
 });
+})();
+</script>
+
+<script>
+(()=>{
+USERS.guest={n:'مهمان',p:null,edit:0};
+const tod=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const day=n=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4-n*864e5).toISOString().slice(0,10);
+const mk=()=>({
+  classes:[{id:'dc1',name:'هفتم الف',cat:'راهنمایی'},{id:'dc2',name:'دهم ریاضی',cat:'دبیرستان'},{id:'dc3',name:'سوم ب',cat:'ابتدایی'}],
+  students:[{id:'ds1',name:'دانش‌آموز نمونه ۱',cid:'dc1'},{id:'ds2',name:'دانش‌آموز نمونه ۲',cid:'dc1'},{id:'ds3',name:'دانش‌آموز نمونه ۳',cid:'dc2'},{id:'ds4',name:'دانش‌آموز نمونه ۴',cid:'dc2'},{id:'ds5',name:'دانش‌آموز نمونه ۵',cid:'dc3'}],
+  grades:[['ds1','ریاضی',19],['ds1','علوم',17.5],['ds1','ادبیات',18],['ds2','ریاضی',15],['ds2','علوم',16.5],['ds3','فیزیک',14],['ds3','ریاضی',17],['ds4','شیمی',18.5],['ds5','املا',20],['ds5','ریاضی',16]].map((g,i)=>({id:'dg'+i,sid:g[0],subj:g[1],score:g[2]})),
+  att:{[tod()]:{ds1:'p',ds2:'a'},[day(1)]:{ds1:'p',ds2:'l'},[day(2)]:{ds1:'a',ds2:'p'}},
+  sch:{dc1:{'0-0':'ریاضی','0-1':'علوم','1-0':'ادبیات','1-2':'ورزش','2-1':'ریاضی','3-0':'هنر','4-1':'علوم'}},
+  pw:{}
+});
+let REAL=null;
+const NOTE=$('#ro-note').textContent;
+$('main').insertAdjacentHTML('afterbegin','<div class="card" id="gn" hidden>👀 حالت مهمان: اطلاعات نمونه‌ست و فقط می‌تونی بخش‌ها رو ببینی. هیچ تغییری ذخیره نمی‌شه.</div>');
+
+const SR0=setRole;
+setRole=function(r){
+  SR0(r);
+  $('#gn').hidden=r!=='guest';
+  $('#ro-note').textContent=r==='guest'?'👁️ در حالت مهمان فقط می‌تونی نمونه‌ی نمره‌ها رو ببینی.':NOTE;
+};
+const LO0=doLogout;
+doLogout=function(){
+  if(REAL){S=REAL;REAL=null}
+  $('#gn').hidden=true;
+  LO0();
+  render();
+};
+function guest(){
+  if(!REAL)REAL=S;
+  S=mk();MYSID=null;
+  $('#le').textContent='';$('#lp').value='';
+  setRole('guest');
+  // مهمان هیچ‌وقت توی حافظه‌ی نشست ذخیره نشه تا با رفرش به اطلاعات اصلی دسترسی نگیره
+  try{sessionStorage.removeItem('role1');sessionStorage.removeItem('sid1')}catch(e){}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="guest"]');if(b)guest()});
 })();
 </script>
 </body>
