@@ -715,6 +715,64 @@ function guest(){
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act="guest"]');if(b)guest()});
 })();
+<script>
+(()=>{
+const MODELS=['gemini-4-hydrogen','gemini-2.5-flash'];
+const SYS='تو دستیار هوشمند مدرسه استقلال هستی. به فارسی، ساده و کوتاه جواب بده. برای اطلاعات به‌روز از جست‌وجوی اینترنت استفاده کن.';
+const g=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
+const s=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+let H=[],busy=false;
+
+$('footer').insertAdjacentHTML('beforebegin',`
+<section class="pg" id="ai"><h2>🤖 دستیار هوشمند</h2>
+<div class="card" style="margin-bottom:12px"><b>🔑 کلید Gemini</b>
+<p class="mu" style="margin:4px 0">فقط روی همین دستگاه ذخیره می‌شه، توی کد سایت نیست.</p>
+<div class="row"><input id="ak" type="password" placeholder="AIza..." autocomplete="off" style="direction:ltr"><button class="btn" id="aks">ذخیره</button></div>
+<div class="mu" id="akm" style="margin-top:6px"></div></div>
+<div class="card"><div id="am" style="min-height:140px;max-height:55vh;overflow-y:auto"></div>
+<div class="row"><input id="aq" placeholder="سؤالت رو بنویس..." style="flex:3 1 200px"><button class="btn" id="as">ارسال</button><button class="btn del" id="ac" style="flex:0 0 auto;padding:10px 14px">پاک کردن</button></div></div></section>`);
+
+const b=document.createElement('button');b.className='nb';b.dataset.go='ai';b.textContent='🤖 دستیار';
+$('nav').insertBefore(b,$('[data-go="sup"]')||$('.who'));
+
+const R1=render;
+render=function(){R1();b.hidden=!canEdit()};
+b.hidden=!canEdit();
+
+function add(role,t){
+  const d=document.createElement('div');d.className='li';d.style.cssText='display:block;white-space:pre-wrap;overflow-wrap:anywhere';
+  d.innerHTML='<b></b> <span></span>';
+  d.firstChild.textContent=role==='user'?'تو:':'دستیار:';
+  d.lastChild.textContent=t;
+  $('#am').appendChild(d);$('#am').scrollTop=1e9;return d.lastChild;
+}
+async function ask(){
+  if(busy)return;
+  const k=g('aikey1'),q=$('#aq').value.trim();
+  if(!canEdit()){add('model','این بخش برای مهمان و دانش‌آموز فعال نیست.');return}
+  if(!k){$('#akm').textContent='اول کلید رو وارد و ذخیره کن.';return}
+  if(!q)return;
+  $('#aq').value='';add('user',q);H.push({role:'user',parts:[{text:q}]});H=H.slice(-10);
+  busy=true;const out=add('model','...');let err='';
+  for(const m of MODELS){
+    try{
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{
+        method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},
+        body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:H,tools:[{google_search:{}}]})});
+      const d=await r.json();
+      if(!r.ok){err=(d.error&&d.error.message)||'خطا';if(r.status===404||r.status===400&&/model/i.test(err))continue;break}
+      const t=((d.candidates&&d.candidates[0]&&d.candidates[0].content.parts)||[]).map(p=>p.text||'').join('').trim()||'جوابی دریافت نشد.';
+      out.textContent=t;H.push({role:'model',parts:[{text:t}]});busy=false;return;
+    }catch(e){err='اتصال برقرار نشد. اینترنت یا فیلترشکن رو چک کن.'}
+  }
+  out.textContent='خطا: '+err;H.pop();busy=false;
+}
+$('#aks').addEventListener('click',()=>{const v=$('#ak').value.trim();if(!v)return;s('aikey1',v);$('#ak').value='';$('#akm').textContent='✅ کلید ذخیره شد.'});
+$('#as').addEventListener('click',ask);
+$('#aq').addEventListener('keydown',e=>{if(e.key==='Enter')ask()});
+$('#ac').addEventListener('click',()=>{H=[];$('#am').innerHTML=''});
+if(g('aikey1'))$('#akm').textContent='✅ کلید ذخیره شده.';
+})();
 </script>
 </body>
 </html>
